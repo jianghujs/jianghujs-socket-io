@@ -1,0 +1,103 @@
+<!-- 用户信息 -->
+<script type="text/x-template" id="_LeftUserWidget">
+  <v-card
+    dark
+    :color="'light-blue darken-4'"
+    class="rounded-0 userInfoCard"
+    style="border-bottom: 1px solid #cccccc;"
+    height="52"
+  >
+    <div class="d-flex flex-no-wrap justify-space-between align-center">
+      <v-avatar size="35px" style="background-color: #EEEEEE" class="ma-2">
+        <dx-img :src="upload + userInfo.userAvatar" userAvatar enableViewer></dx-img>
+      </v-avatar>
+
+      <div class="d-flex flex-column justify-center align-start">
+        <v-card-title class="ma-0 pa-0 nickname" style="line-height: 1">
+          <span>
+            {{ userInfo.username || "·" }}
+          </span>
+        </v-card-title>
+      </div>
+      <v-spacer></v-spacer>
+      <div class="userInfoCard__settings d-flex">
+        <v-btn icon class="mr-2" @click="show">
+          <v-icon>mdi-cog</v-icon>
+        </v-btn>
+      </div>
+      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+        <v-list>
+          <v-list-item v-for="(item, index) in items" :key="item.inx" @click="mclick(item.inx)">
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
+  </v-card>
+</script>
+
+<script>
+  Vue.component('LeftUserWidget', {
+    template: '#_LeftUserWidget',
+    props: {
+      userInfo: {
+        type: Object
+      }
+    },
+    data() {
+      return {
+        showMenu: false,
+        x: 0,
+        y: 0,
+        sync: window.sync,
+        upload: window.appInfo.upload,
+        items: [
+          { inx: 10, title: '退出登录' },
+        ],
+        // 需要一个 socketClient 放在 data 中，否则 online 状态会没有响应式
+        socketClient: null
+      };
+    },
+    computed: {
+      isSocketOnline() {
+        if (!window.socket) {
+          return 1;
+        }
+        if (window.socket && window.socket.online === null) {
+          return 1;
+        }
+        if (window.socket && window.socket.online === false) {
+          return 2;
+        }
+        if (window.socket && window.socket.online === true) {
+          return 0;
+        }
+        return 2;
+      },
+    },
+    async created() {
+      this.socketClient = window.socket;
+    },
+    mounted() {
+    },
+    methods: {
+      show(e) {
+        e.preventDefault();
+        this.showMenu = false;
+        this.x = e.clientX;
+        this.y = e.clientY;
+        this.$nextTick(() => {
+          this.showMenu = true;
+        });
+      },
+      mclick(e) {
+        this.$emit('userinfo_menu_click', e);
+      },
+    }
+  });
+</script>
+<style>
+  .userinfo_icon {
+    content: url("https://api.iconify.design/ph/gear-six-bold.svg?color=white");
+  }
+</style>

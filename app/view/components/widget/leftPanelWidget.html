@@ -1,0 +1,255 @@
+<!-- 左边栏 -->
+<script type="text/x-template" id="_LeftPanel">
+  <div>
+    <v-scroll-x-transition>
+      <v-navigation-drawer
+        app
+        width="285"
+        class="navigation-drawer mob-app-left"
+        v-show="true"
+        permanent
+        touchless
+      >
+        <!--   用户信息   -->
+        <LeftUserWidget
+          :is-muted.sync="isMuted"
+          @userinfo_menu_click="onUserWidgetMenuClick"
+          :userInfo="user"
+        />
+
+        <v-list class="leftDataList" ref="leftDataList">
+          <v-list-item-group
+            :value="nowChatSessionId"
+            @change="onLeftItemChange"
+            color="light-blue lighten-5"
+            active-class
+          >
+            <template v-for="(n, index) in dataListTotal">
+              <div class="listItem" :style="{ 'top': index * 70 + 'px' }">
+                <v-list-item
+                  :key="getDataId(dataList[index])"
+                  v-if="index * 70 >= leftListScrollTop - 210 && index * 70 <= leftListScrollTop + leftListScrollHeight + 210"
+                  class="pa-0 ma-0"
+                  :value="getDataId(dataList[index])"
+                  :class="{ 'activeItem': nowChatSessionId === getDataId(dataList[index])}"
+                  @click="$emit('mobileShowChattingPage')"
+                >
+                  <v-list-item-content class="pa-0 ma-0">
+                    <ChatWidget
+                      :ref="'chatWidget_' + getDataId(dataList[index])"
+                      :data="dataList[index]"
+                    />
+                  </v-list-item-content>
+                </v-list-item>
+                <div v-else class="leftDataListItemEmpty d-flex">
+                  <div class="empty_avatar ma-2"></div>
+                  <div class="empty_chatInfos d-flex">
+                    <div class="empty_title ma-2"></div>
+                    <div class="empty_message ma-2"></div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </v-list-item-group>
+        </v-list>
+      </v-navigation-drawer>
+    </v-scroll-x-transition>
+  </div>
+</script>
+
+
+<script>
+  Vue.component('LeftPanel', {
+    template: '#_LeftPanel',
+    props: {
+      user: {
+        type: Object,
+        default: () => { }
+      },
+      nowChatSessionId: {
+        type: String,
+        default: ''
+      },
+      chatListBackUps: {
+        type: Array,
+        default: () => []
+      },
+      chatList: {
+        type: Array,
+        default: () => []
+      },
+      getDataId: {
+        type: Function,
+        default: () => { }
+      },
+      methods: {
+        type: Object,
+        default: {}
+      }
+    },
+    data() {
+      return {
+        isMuted: false, // 消息静音，系统
+        leftListScrollTop: 0,
+        leftListScrollHeight: 0,
+        mutedIdList: [],
+      };
+    },
+    computed: {
+      isChat() {
+        return this.nowChatItem && this.nowChatItem.hasOwnProperty('chatId');
+      },
+      // 左侧列表数据
+      dataList() {
+        return this.chatList;
+      },
+      dataListTotal() {
+        return this.dataList.length;
+      },
+    },
+    watch: {
+    },
+    mounted() { },
+    async created() {
+      this.initLeftDataListScroll();
+    },
+    methods: {
+      async init() {
+        await this.getChatSessionList();
+      },
+      // 获取会话列表
+      async getChatSessionList() {
+        const newChatList = (
+          await window.jianghuAxios({
+            data: {
+              appData: {
+                pageId: 'chat',
+                actionId: 'getChatSession'
+              }
+            }
+          })
+        ).data.appData.rows;
+  
+        const newChatListBackUps = newChatList.slice();
+        this.$emit('chatList', newChatList)
+        this.$emit('chatListBackUps', newChatListBackUps)
+        if (newChatList.length) {
+          if (!this.nowChatSessionId) {
+            this.$nextTick(() => {
+              this.$emit('nowChatSessionId', newChatList.chatId)
+            });
+          } else {
+            if (this.isChat) {
+              if (!newChatList.some(item => item.chatId === this.nowChatSessionId)) {
+                this.$emit('nowChatSessionId', '')
+              }
+            }
+          }
+        } else {
+          this.$emit('nowChatSessionId', '')
+        }
+      },
+      // 当左侧菜单切换
+      onLeftMenuChange(index) {
+        this.$emit('pushState', [ 'chatList', 'friendList', 'groupList'][index]);
+        if (this.menuIndex !== index) {
+          this.menuIndex = index;
+        }
+      },
+      /**
+       * 事件回调
+       * @param value
+       */
+      // 左侧点击
+      onLeftItemChange(value) {
+        if (!value) return false;
+        const checkIdIsExistNowDataList = this.dataList.some(v => {
+          return getDataId(v) === value;
+        });
+        if (checkIdIsExistNowDataList) {
+          this.$emit('nowChatSessionId', value);
+        }
+        return true;
+      },
+      /**
+       * 当左侧列表开始滑动
+       * @param event
+       */
+      leftListOnScroll(event) {
+        if (this.willRanderLeftListTimer) {
+          clearTimeout(this.willRanderLeftListTimer);
+        }
+        this.willRanderLeftListTimer = setTimeout(() => {
+          this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
+          this.leftListScrollHeight = this.$refs.leftDataList.$el.offsetHeight;
+        }, 60);
+      },
+      /**
+       * 绑定左侧的上下滑动
+       */
+      initLeftDataListScroll() {
+        try {
+          this.$nextTick(() => {
+            this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
+            this.leftListScrollHeight =
+              this.$refs.leftDataList.$el.offsetHeight;
+            this.$refs.leftDataList.$el.onscroll = this.leftListOnScroll;
+          });
+        } catch (e) {
+          requestAnimationFrame(() => {
+            this.initLeftDataListScroll();
+          });
+        }
+      },
+
+      // 左上角用户的操作菜单
+      async onUserWidgetMenuClick(e) {
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'allPage',
+              actionId: 'logout',
+              actionData: { needSetCookies: true }
+            }
+          }
+        });
+        localStorage.removeItem(window.appInfo.appId + '_userInfo');
+        localStorage.removeItem(window.appInfo.appId + '_authToken');
+        localStorage.removeItem(window.appInfo.appId + '_refreshToken');
+        location.href = `/${window.appInfo.appId}/page/login`;
+      }
+    }
+  });
+</script>
+<style>
+
+.leftDataListItemEmpty {
+    align-items: stretch;
+  }
+
+  .leftDataListItemEmpty .empty_chatInfos {
+    flex: 1;
+    flex-flow: column;
+    align-items: flex-start;
+  }
+
+  .leftDataListItemEmpty .empty_message {
+    flex: 1;
+    width: 90%;
+    background: #EEEEEE;
+  }
+
+  .leftDataListItemEmpty .empty_title {
+    flex: 1;
+    width: 50%;
+    background: #EEEEEE;
+  }
+
+  .leftDataListItemEmpty .empty_avatar {
+    width: 40px;
+    height: 40px;
+    background: #EEEEEE;
+    border-radius: 20px;
+  }
+
+</style>

@@ -1,0 +1,360 @@
+<!--聊天对话界面-->
+<script type="text/x-template" id="_MiddlePanel">
+  <div>
+    <!-- 主聊天消息界面 -->
+    <v-main class="chatMain mob-app-main">
+      <ChattingMessagePage
+        :key="nowChatSessionId"
+        :chatId="nowChatSessionId"
+        :isGroup="isGroup"
+        ref="chattingPage"
+        @quoteMsg="onQuoteMsg"
+        @revokeMsg="onRevokeMsg"
+        @showAccount="$emit('showAccount', $event)"
+        @reSendMsg="reSendMsg"
+        @click="chatInputBlur"
+        @appendMsg="appendMsg"
+      />
+    </v-main>
+
+    <!-- 消息输入框 -->
+    <v-footer
+      app
+      color="transparent"
+      :height="274"
+      inset
+      fixed
+      class="vFooter ma-0 pa-0 mob-app-footer"
+      :class="{ 'mobExpandChat': mobExpandChat }"
+    >
+      <ChatInputWidget
+        ref="chatInput"
+        :mobExpandChat="mobExpandChat"
+        :nowChatSessionId="nowChatSessionId"
+        :sendMsg="sendMsg"
+        :draft="draft"
+        :msgValue="messageTextareaValue"
+        :mobileMessageTextareaFocus="mobileMessageTextareaFocus"
+        @atGroupUser="$emit('atGroupUser', $event)"
+        @preventDefault="$emit('preventDefault', $event)"
+        @scrollToBottom="scrollToBottom"
+        @mobileMessageTextareaFocus="mobileMessageTextareaFocus = $event"
+        @msgValue="$emit('onMsgValueChange', $event)"
+        @onChatInputInit="$emit('onChatInputInit', $event)"
+      />
+    </v-footer>
+  </div>
+</script>
+
+<script>
+  Vue.component('MiddlePanel', {
+    template: '#_MiddlePanel',
+    props: {
+      isGroup: {
+        type: Boolean,
+        default: false
+      },
+      nowChatSessionId: {
+        type: String,
+        default: null
+      },
+      nowChatItem: {
+        type: Object,
+        default: () => { }
+      },
+      methods: {
+        type: Object,
+        default: {}
+      },
+      draft: {
+        type: Object,
+        default: {}
+      },
+      chatListBackUps: {
+        type: Array,
+        default: []
+      }
+    },
+    data() {
+      return {
+        messageTextareaValue: null,
+        moreSheetOpen: false,
+        currentResendMsg: {},
+        mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
+      };
+    },
+    computed: {
+      isMobile() {
+        return this.$vuetify.breakpoint.xs;
+      },
+      // 指示移动端时是否展开消息输入框
+      mobExpandChat() {
+        return true;
+      },
+    },
+    watch: {
+    },
+    created() { },
+    destroyed() { },
+    mounted() {
+      this.methods.sendMsg = this.sendMsg;
+    },
+    methods: {
+      include() {
+        return [ document.querySelector('.emoticon-open-btn') ];
+      },
+      getChattingPage() {
+        return this.$refs.chattingPage;
+      },
+      getChatInput() {
+        return this.$refs.chatInput;
+      },
+      getTextarea() {
+        return this.$refs.messageTextareaDom;
+      },
+      messageTextareaDomBlur() {
+        this.$refs.chatInput.messageTextareaDomBlur();
+      },
+      scrollToBottom() {
+        this.$refs.chattingPage.scrollToBottom();
+      },
+      clearCheckList() {
+        this.$refs.chattingPage.checkList = [];
+      },
+      closeMultiSelect() {
+        if (this.$refs.chattingPage) {
+          this.$refs.chattingPage.multiSelectClose();
+        }
+      },
+      // 当撤销消息
+      onRevokeMsg(item) {
+        this.sendRevokeMsg(item);
+      },
+      /**
+       * 撤销消息
+       * @param item
+       */
+      async sendRevokeMsg(item) {
+        const result = await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'chat',
+              actionId: 'revokeMessage',
+              actionData: {
+                messageFingerprint: item.messageFingerprint
+              }
+            }
+          }
+        });
+      },
+      // 当引用消息
+      onQuoteMsg(item) {
+        let messageContent = item.messageContent;
+        if (item.messageContentType === 'userCard') {
+          try {
+            messageContent = `[${item.messageContent},,,${item.messageContentType}]`;
+          } catch (error) {
+            messageContent = item.messageContent;
+          }
+        } else if (item.messageContentType !== 'text') {
+          try {
+            messageContent = `[${JSON.parse(item.messageContent).downloadPath
+            },,,${item.messageContentType}]`;
+          } catch (error) {
+            messageContent = item.messageContent;
+          }
+        }
+        this.$refs.chatInput.setMsgValue(
+          `${messageContent} \n------------------------\n Re @${item.fromUsername}: `
+        );
+        this.$refs.chatInput.makeMsgTextarearFocus();
+      },
+      /**
+       * 重新发送消息，弹窗
+       * @param selectMsg
+       */
+      async reSendMsg(selectMsg) {
+        this.currentResendMsg = { ...selectMsg };
+        if (await window.confirmDialog({
+          title: '该消息发送失败，是否重发？',
+          confirmColor: '#01579b'
+        })) {
+          this.doReSendMsg();
+        }
+      },
+      /** 重新发送消息 */
+      async doReSendMsg() {
+        if (window.socket && !window.socket.online) {
+          window.vtoast.fail('离线中...，请稍后尝试发送');
+          return false;
+        }
+
+        if (this.currentResendMsg) {
+          await window.socket.emitMsg(
+            this.currentResendMsg,
+            this.getSendMsgActionId()
+          );
+          this.$forceUpdate();
+          // 成功后
+          // console.log('this.currentResendMsg', this.currentResendMsg);
+          this.messageTextareaValue = null;
+          this.$refs.chatInput.setMsgValue(this.messageTextareaValue);
+          this.$refs.chattingPage.scrollToBottom(true);
+        }
+        return null;
+      },
+      /**
+       * 获取发送消息socket actionID
+       * @param forwardType
+       */
+      getSendMsgActionId(forwardType = 0) {
+        if (forwardType === 1) return 'userSendMessageToGroup';
+        else if (forwardType === 2) return 'userSendMessageToUser';
+        return this.isGroup
+          ? 'userSendMessageToGroup'
+          : 'userSendMessageToUser';
+      },
+      appendMsg(newMsg) {
+        this.$refs.chatInput.setMsgValue(`${this.$refs.chatInput.messageTextareaValue || ''}${newMsg || ''}`)
+      },
+      async uploadFileMsg(
+        file,
+        isBase64File,
+        tempParams,
+        socketParams
+      ) {
+        let uploadResult;
+        const fileDirectory = userInfo.userId || 'chatFile';
+        // 文件流
+        if (file) {
+          uploadResult = await window.jianghuAxios_uploadByStream({ file, fileDirectory });
+        }
+
+        // base64上传
+        if (isBase64File) {
+          const { filename, downloadPath } = JSON.parse(
+            socketParams.messageContent
+          );
+          uploadResult = await window.jianghuAxios_uploadByBase64({ base64: downloadPath, name: filename, fileDirectory });
+        }
+        return uploadResult;
+      },
+      async sendMsg(
+        {
+          messageContent = this.$refs.chatInput.messageTextareaValue || '',
+          messageContentType = 'text',
+          messageFingerprint = uuid(),
+          file = null,
+          isBase64File = false,
+          targetUserId = null
+        },
+        update = true,
+        forwardType = 0
+      ) {
+
+        this.scrollToBottom();
+        // 不在线，不发送
+        if (window.socket && window.socket.online === false) {
+          window.vtoast.fail('离线中...，请稍后尝试发送');
+          return;
+        }
+        // 超过7000个字，不发送
+        if (messageContent.length > 7000 && messageContentType === 'text') {
+          window.vtoast.fail('消息内容长度不得超过7000个文字', false, 'bottom');
+          return;
+        }
+        // 消息内容为空
+        if (!messageContent) {
+          return;
+        }
+
+        const needUpload =
+          (messageContentType === 'file' ||
+            messageContentType === 'image' ||
+            messageContentType === 'audio') &&
+          (file || isBase64File);
+        const socketParams = {
+          messageContent,
+          messageContentType,
+          toUserId: targetUserId || this.nowChatSessionId,
+          toGroupId: targetUserId || this.nowChatSessionId,
+          messageFingerprint
+        };
+        const tempParams = {
+          ...socketParams,
+          fromUserId: global.user.userId,
+          fromUsername: global.user.username,
+          fromUserAvatar: global.user.userAvatar,
+          loading: true
+        };
+        // 先更新一个 loading 消息
+        this.getChattingPage().refreshMessage(tempParams, update);
+        setTimeout(
+          () => {
+            if (tempParams.loading === true) {
+              tempParams.loading = false;
+              tempParams.error = true;
+            }
+          },
+          needUpload ? 50000 : 3000
+        );
+
+        if (needUpload) {
+          const uploadResult = await this.uploadFileMsg(
+            file,
+            isBase64File,
+            tempParams,
+            socketParams
+          );
+          if (
+            !uploadResult ||
+            !uploadResult.data.appData.filename ||
+            !uploadResult.data.appData.downloadPath ||
+            !uploadResult.data.appData.binarySize
+          ) {
+            this.getChattingPage().refreshMessage(
+              {
+                ...tempParams,
+                loading: false,
+                error: true
+              },
+              update
+            );
+          } else {
+            const { filename, downloadPath, binarySize } = uploadResult.data.appData;
+            socketParams.messageContent = JSON.stringify({
+              filename,
+              downloadPath,
+              binarySize
+            });
+            await window.socket.emitMsg(
+              socketParams,
+              this.getSendMsgActionId(forwardType)
+            );
+          }
+        } else {
+          await window.socket.emitMsg(
+            socketParams,
+            this.getSendMsgActionId(forwardType)
+          );
+        }
+        this.$forceUpdate();
+        // 成功后
+        // console.log('socketParams', socketParams);
+        this.messageTextareaValue = '';
+        this.$emit('onMsgValueChange', null);
+        this.scrollToBottom(true);
+      },
+      chatInputBlur() {
+        this.mobileMessageTextareaFocus = false
+      },
+    }
+  });
+</script>
+<style>
+   .chatMain {
+    box-sizing: border-box;
+    height: 100vh;
+    background: #f5f7fa;
+  }
+</style>

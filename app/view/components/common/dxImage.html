@@ -1,0 +1,101 @@
+<!-- dx-img 图片组件封装 -->
+<script type="text/x-template" id="_dxImg">
+  <img
+    v-if="finalSrc !== ''"
+    style="width: 100%; height: 100%; background: #ffffff;"
+    :style="{ 'object-fit': !!userAvatar || !!groupAvatar ? 'cover' : 'contain', 'padding': !!userAvatar || !!groupAvatar ? '0' : '4px' }"
+    :src="finalSrc"
+    @click="imagePopup"
+  />
+  <span class="imgError" v-else>图片丢失</span>
+</script>
+
+<script>
+  Vue.component('dxImg', {
+    name: 'dxImg',
+    template: '#_dxImg',
+    props: {
+      // 图片地址
+      src: String,
+      // 是否要能够点击后展示大图
+      enableViewer: Boolean,
+      // 不同类型会有不同的默认图
+      userAvatar: Boolean,
+      groupAvatar: Boolean,
+      emoji: Boolean,
+      chatImage: Boolean,
+      noImage: Boolean
+    },
+    data() {
+      return {
+        upload: window.appInfo.upload,
+        public: window.appInfo.public,
+        finalSrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+        lazySrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+      }
+    },
+    watch: {
+      src: {
+        immediate: true,
+        handler(newVal, oldVal) {
+          // 如果 src 为空，则替换为 lazySrc
+          if ((!newVal || newVal.endsWith('undefined')) && (!oldVal || oldVal.endsWith('undefined'))) {
+            this.finalSrc = this.lazySrc
+          } else {
+            const img = new Image();
+            img.src = newVal;
+            img.onload = () => {
+              this.finalSrc = newVal
+            }
+            img.onerror = () => {
+              this.finalSrc = this.lazySrc
+            }
+          }
+        }
+      }
+    },
+    created() {
+      // 默认图片
+      if (this.userAvatar) {
+        this.lazySrc = this.upload + '/userAvatar/default.jpg'
+      } else if (this.groupAvatar) {
+        this.lazySrc = this.upload + '/groupAvatar/default.jpg'
+      } else if (this.emoji) {
+        this.lazySrc = '';// this.public + '/img/login_loading.gif'
+      } else if (this.chatImage) {
+        // todo chat default page
+        this.lazySrc = '';// this.public + '/img/login_loading.gif'
+      }
+    },
+    methods: {
+      imagePopup() {
+        if (this.enableViewer) {
+          // TODO: 聊天列表中点击可以上下翻页
+          window.viewImage(this.finalSrc)
+        }
+        this.$emit('click')
+        this.$nextTick(() => {
+          setTimeout(() => {
+            try {
+              window.document.querySelector('.viewer-canvas').querySelector('img').onclick = function () {
+                window.document.querySelector('.viewer-close').click()
+              }
+            } catch (e) { }
+          }, 500)
+        })
+      }
+    }
+  })
+
+</script>
+<style>
+  .imgError {
+    display: block;
+    line-height: 160px;
+    width: 160px;
+    text-align: center;
+    background: #ffffff;
+    height: 100%;
+    color: #cccccc;
+  }
+</style>

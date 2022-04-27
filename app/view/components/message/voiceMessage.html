@@ -1,0 +1,162 @@
+<script type="text/x-template" id="_VoiceMessage">
+  <div :ref="'voiceDom_' + id" class="message voiceContainer" @click="toggleChatItemVoice">
+    <span
+      class="voice_icon"
+      :class="{ 'voice_icon_right': isFromMe, 'voice_icon_left': !isFromMe, 'voice_icon_play': playing }"
+    />
+    <span>{{ label }}</span>
+  </div>
+</script>
+
+<script>
+  Vue.component('VoiceMessage', {
+    template: '#_VoiceMessage',
+    props: [ 'content', 'id', 'isFromMe', 'progress', 'loading' ],
+    data() {
+      return {
+        audio: null,
+        label: '...',
+        playing: false
+      };
+    },
+    watch: {
+      content(value, oldValue) {
+        this.initVoice();
+      }
+    },
+    mounted() {
+      this.initVoice();
+    },
+    methods: {
+      initVoice() {
+        if (this.loading) {
+          this.label = '发送中';
+        }
+        if (!JSON.parse(this.content).downloadPath.startsWith('/')) {
+          return false;
+        }
+        // this.audio = this.voiceDom(window.appInfo.upload + JSON.parse(this.content).downloadPath)
+        if (this.loading) {
+          this.label = '发送中';
+        } else {
+          const ua = navigator.userAgent.toLowerCase();
+          const isWeixin = ua.indexOf('micromessenger') !== -1;
+          this.audio = new Audio(
+            window.appInfo.upload + JSON.parse(this.content).downloadPath
+          );
+          const checkNetworkState = count => {
+            this.label =
+              this.audio.networkState === 3
+                ? '无效语音'
+                : isWeixin
+                  ? '语音消息'
+                  : '加载中';
+            if (
+              this.audio.networkState !== 1 &&
+              this.audio.networkState !== 3
+            ) {
+              requestAnimationFrame(() => {
+                checkNetworkState(count > 10000 ? 0 : ++count);
+              });
+            } else {
+              this.label = this.playDuration(this.audio.duration);
+            }
+          };
+          requestAnimationFrame(() => {
+            checkNetworkState(0);
+          });
+          const that = this;
+          this.audio.oncanplay = function () {
+            console.log('audio.oncanplay');
+            that.label = that.playDuration(that.audio.duration);
+          };
+          this.audio.onplay = function () {
+            that.playing = true;
+            window.playIngAudio = that.audio;
+            that.label = that.playDuration(that.audio.currentTime);
+          };
+          this.audio.ontimeupdate = function () {
+            that.label = that.playDuration(that.audio.currentTime);
+          };
+          this.audio.onpause = function () {
+            that.label = that.playDuration(that.audio.duration);
+            that.playing = false;
+            window.playIngAudio = null;
+          };
+          this.audio.onended = function () {
+            that.label = that.playDuration(that.audio.duration);
+            that.playing = false;
+            window.playIngAudio = null;
+          };
+        }
+        return false;
+      },
+      playDuration(voiceTime) {
+        const fen = parseInt(`${voiceTime / 60}`);
+        return (fen ? fen + '′' : '') + (parseInt(voiceTime) % 60) + '″';
+      },
+      // eslint-disable-next-line consistent-return
+      toggleChatItemVoice() {
+        // 正在播放的其他语音条，直接停止
+        if (this.label === '无效语音' || this.label === '加载中') {
+          return false;
+        }
+        // 正在播放的语音条，先要停止
+        if (window.playIngAudio) {
+          window.playIngAudio.pause();
+        }
+        // 监听, 没有正播放 || 有但不是当前语音条
+        // try {
+        //   console.log('ontimeupdate', window.playIngAudio.src, this.content)
+        // } catch (err) {}
+        // eslint-disable-next-line no-mixed-operators
+        if (
+          !window.playIngAudio ||
+          (window.playIngAudio &&
+            !window.playIngAudio.src.includes(this.content))
+        ) {
+          // 新的语音条，继续播放
+          if (this.audio) {
+            this.audio.play();
+          }
+        }
+      }
+    }
+  });
+</script>
+<style lang="scss">
+  .voiceContainer {
+    display: flex;
+    align-items: center;
+  }
+  .voice_icon {
+    height: 17px;
+    width: 17px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 100%;
+  }
+  .voice_icon_right {
+    background-image: url("/<$ ctx.app.config.appId $>/public/img/voice1.png");
+    transform: rotate(180deg);
+    margin-left: 5px;
+  }
+  .voice_icon_left {
+    background-image: url("/<$ ctx.app.config.appId $>/public/img/voice1.png");
+    margin-right: 5px;
+  }
+  .voice_icon_play {
+    animation: voiceAn_anim 1s linear alternate infinite;
+  }
+  @keyframes voiceAn_anim {
+    0% {
+      background-image: url("/<$ ctx.app.config.appId $>/public/img/voice1.png");
+    }
+    50% {
+      background-image: url("/<$ ctx.app.config.appId $>/public/img/voice.png");
+    }
+    100% {
+      background-image: url("/<$ ctx.app.config.appId $>/public/img/voice1.png");
+    }
+  }
+</style>
