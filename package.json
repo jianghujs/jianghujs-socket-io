@@ -1,7 +1,7 @@
 {
-  "name": "jianghujs_demo_socket_io_demo",
+  "name": "jianghujs_demo_socket_io",
   "version": "1.0.0",
-  "description": "jianghujs_demo_socket_io_demo",
+  "description": "jianghujs_demo_socket_io",
   "private": true,
   "egg": {
     "declarations": true,
@@ -47,9 +47,9 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --node-options--max-http-header-size=102400 --port=7001 --daemon --title=jianghujs_demo_socket_io_demo",
-    "startd": "DEBUG=knex:* egg-scripts start --port=7001 --node-options--max-http-header-size=102400 --daemon --title=jianghujs_demo_socket_io_demo --ignore-stderr",
-    "stop": "egg-scripts stop --title=jianghujs_demo_socket_io_demo",
+    "start": "egg-scripts start --node-options--max-http-header-size=102400 --port=7001 --daemon --title=jianghujs_demo_socket_io",
+    "startd": "DEBUG=knex:* egg-scripts start --port=7001 --node-options--max-http-header-size=102400 --daemon --title=jianghujs_demo_socket_io --ignore-stderr",
+    "stop": "egg-scripts stop --title=jianghujs_demo_socket_io",
     "restart": "npm run stop && npm run start",
     "dev": "egg-bin dev --workers=1 --node-options--max-http-header-size=102400 --port=7001",
     "debug": "egg-bin debug",

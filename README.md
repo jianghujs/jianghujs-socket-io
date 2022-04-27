@@ -1,4 +1,4 @@
-# jianghujs_demo_socket_io_demo
+# jianghujs_demo_socket_io
 
 ## 配置
 
@@ -10,7 +10,7 @@
    port: 3306,
    user: 'root',
    password: '123456',
-   database: 'jianghujs_demo_socket_io_demo'
+   database: 'jianghujs_demo_socket_io'
    ```
 4. 启动 npm run dev
    
@@ -18,9 +18,9 @@
 
 ```sql
 # 数据库初始化
-create database `jianghujs_demo_socket_io_demo` default character set utf8mb4 collate utf8mb4_bin;
-use jianghujs_demo_socket_io_demo;
-# 运行 sql/jianghujs_demo_socket_io_demo.sql 文件
+create database `jianghujs_demo_socket_io` default character set utf8mb4 collate utf8mb4_bin;
+use jianghujs_demo_socket_io;
+# 运行 sql/jianghujs_demo_socket_io.sql 文件
 ```
 
 ## 测试账号 & 测试环境
