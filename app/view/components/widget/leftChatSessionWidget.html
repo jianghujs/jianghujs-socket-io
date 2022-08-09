@@ -7,9 +7,9 @@
   >
     <div class="d-flex flex-no-wrap justify-space-between">
       <v-badge bordered right :color="isMuted() ? 'grey' : 'red'" :content="data_.offlineMessageCount" :value="data_.offlineMessageCount" offset-x="23" offset-y="22" >
-        <template v-if="isGroup">
+        <template v-if="isRoom">
           <v-avatar size="40px" class="ma-2">
-            <dx-img :src="upload + data_.chatAvatar" groupAvatar></dx-img>
+            <dx-img :src="upload + data_.chatAvatar" roomAvatar></dx-img>
           </v-avatar>
         </template>
         <template v-else>
@@ -29,9 +29,10 @@
       </v-badge>
 
       <div class="d-flex flex-column justify-center align-start" style="overflow: hidden; flex: 1">
-        <v-card-title class="ma-0 pa-0 pr-5 itemTitle">
-          <v-icon size="14" v-if="isMuted()">mdi-volume-off</v-icon>
-          {{ data_.chatName }}
+        <v-card-title class="ma-0 pa-0 pr-1 itemTitle" style="width: 100%">
+          <v-row class="ma-0 pa-0">
+            <div style="flex: 1"><v-icon size="14" v-if="isMuted()">mdi-volume-off</v-icon>{{ data_.chatName }}</div>
+          </v-row>
         </v-card-title>
         <div class="d-flex align-center" style="width: 100%">
           <v-card-subtitle
@@ -46,11 +47,27 @@
           >{{ getTimerStr(data_.messageTimeString) }}</span>
         </div>
       </div>
-      <v-menu offset-y >
+      <v-menu v-if="!data_.friendDeviceType || data_.friendDeviceType !== 'bot_xiaochengxu'" offset-y >
         <template #activator="{ on, attrs }">
           <v-btn text icon v-bind="attrs" v-on="on" @click.stop style="position: absolute; right: 0; top: 7px">
+            <v-icon size="18">
+              mdi-dots-vertical
+            </v-icon>
           </v-btn>
         </template>
+        <v-list>
+          <v-list-item-group>
+            <v-list-item @click="toggleMuted()">
+              <v-list-item-title>{{ isMuted() ? '取消免打扰---' : '免打扰' }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="toggleTop()">
+              <v-list-item-title>{{ isTop() ? '取消置顶---' : '置顶' }}</v-list-item-title>
+            </v-list-item>
+            <!-- <v-list-item @click="deleteChatSession">
+              <v-list-item-title>删除</v-list-item-title>
+            </v-list-item> -->
+          </v-list-item-group>
+        </v-list>
       </v-menu>
     </div>
   </v-card>
@@ -86,6 +103,7 @@
         // Tip: userInfo有时候慢于chatList, 所以会导致 列表渲染异常, 这里要规避下
         // 如果最新的对话有引用，则不在引用中查找 at
         let realContent = this.data_.messageContent;
+        if (!realContent) return false;
         if (realContent.includes('\n------------------------\n Re @')) {
           const index = realContent.lastIndexOf(
             '\n------------------------\n Re @'
@@ -102,8 +120,8 @@
         }
         return realContent.includes('@所有人');
       },
-      isGroup() {
-        return this.data.messageType === 'group';
+      isRoom() {
+        return this.data.messageType === 'room';
       },
       data_() {
         return this.data;
@@ -128,7 +146,7 @@
         this.data_.offlineMessageCount = 0;
       },
       // 更新接收来的信消息，plusCount：如果当前回话中，不需要增加红点数子
-      reRenderSessionBySocketMessage(params, { plusCount = false }) {
+      reRenderSessionBySocketMessage(params) {
         if (
           params.noticeType === 'onlineNotice' ||
           params.noticeType === 'offlineNotice'
@@ -138,9 +156,6 @@
         }
         for (const paramsKey in params) {
           this.data[paramsKey] = params[paramsKey];
-        }
-        if (plusCount) {
-          this.data.offlineMessageCount += 1;
         }
         this.chatWidgetStyle = {
           willChange: true,
@@ -173,7 +188,7 @@
                 type: this.data.messageType,
                 chatId: this.data.chatId,
                 messageType: this.data.messageType,
-                userIdOrGroupId: this.data.chatId,
+                userIdOrRoomId: this.data.chatId,
                 top
               }
             }
@@ -181,7 +196,7 @@
         });
         this.data.topChatOrder = top
           ? window.dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ')
-          : '';
+          : null;
       },
       async toggleMuted() {
         const muted = !this.isMuted();
@@ -194,13 +209,18 @@
                 type: this.data.messageType,
                 chatId: this.data.chatId,
                 messageType: this.data.messageType,
-                userIdOrGroupId: this.data.chatId,
+                userIdOrRoomId: this.data.chatId,
                 muted
               }
             }
           }
         });
         this.data.muted = muted;
+        if (isApp) {
+          this.$emit('toggleMuted', {
+            [this.data.chatId]: muted
+          });
+        }
       },
       isTop() {
         return !!this.data.topChatOrder;
@@ -227,8 +247,8 @@
         return content.replace(/</g, '&lt;');
       },
       getMessageContent,
-      getTimerStr(messageTime) {
-        const _messageTime = dayjs(messageTime);
+      getTimerStr(messageTimeString) {
+        const _messageTime = dayjs(messageTimeString);
         const diffSecond = dayjs().diff(_messageTime, 'second');
         const todayHour = dayjs().hour();
         const minute = dayjs().minute();
@@ -253,6 +273,7 @@
 <style scoped>
   .chatItem {
     height: 70px;
+    width: 100%;
     box-shadow: none !important;
     background-color: transparent;
   }

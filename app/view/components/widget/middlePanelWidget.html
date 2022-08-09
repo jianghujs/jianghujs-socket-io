@@ -3,17 +3,10 @@
   <div>
     <!-- 主聊天消息界面 -->
     <v-main class="chatMain mob-app-main">
+      <middleNoticeWidget v-if="isMobile"/>
       <ChattingMessagePage
-        :key="nowChatSessionId"
-        :chatId="nowChatSessionId"
-        :isGroup="isGroup"
+        :sessionId="nowChatSessionId"
         ref="chattingPage"
-        @quoteMsg="onQuoteMsg"
-        @revokeMsg="onRevokeMsg"
-        @showAccount="$emit('showAccount', $event)"
-        @reSendMsg="reSendMsg"
-        @click="chatInputBlur"
-        @appendMsg="appendMsg"
       />
     </v-main>
 
@@ -21,7 +14,7 @@
     <v-footer
       app
       color="transparent"
-      :height="274"
+      :height="isMoreSelectMode ? 53 : (isMobile ? (textareaExpanded ? 106 : 53) : 274)"
       inset
       fixed
       class="vFooter ma-0 pa-0 mob-app-footer"
@@ -29,77 +22,233 @@
     >
       <ChatInputWidget
         ref="chatInput"
-        :mobExpandChat="mobExpandChat"
-        :nowChatSessionId="nowChatSessionId"
-        :sendMsg="sendMsg"
-        :draft="draft"
-        :msgValue="messageTextareaValue"
-        :mobileMessageTextareaFocus="mobileMessageTextareaFocus"
-        @atGroupUser="$emit('atGroupUser', $event)"
-        @preventDefault="$emit('preventDefault', $event)"
-        @scrollToBottom="scrollToBottom"
-        @mobileMessageTextareaFocus="mobileMessageTextareaFocus = $event"
-        @msgValue="$emit('onMsgValueChange', $event)"
-        @onChatInputInit="$emit('onChatInputInit', $event)"
+        v-if="!isMoreSelectMode"
       />
+      <div
+        class="d-flex moreSelToolbar"
+        :class="{ moreSelToolbarMob: isMobile }"
+        v-if="isMoreSelectMode"
+      >
+        <button @click="forwardOneByOne">
+          <v-icon>mdi-tray-arrow-up</v-icon>逐条转发
+        </button>
+        <button @click="resetMultiSelectionStatus">
+          <v-icon>mdi-close</v-icon>关闭
+        </button>
+      </div>
     </v-footer>
+      <!-- 好友等选择框 -->
+    <SelectFriend v-model="selectFriend" ctrl-type="sendUserCard" :friends="myFriendListBackUps"
+      @done="sendCardMsg" />
+      <!-- 转发选择框 -->
+    <SelectFriend ref="selectForwardFriend" v-model="selectForwardFriend" :ctrl-type="friendListCtrlType"
+      :friends="friendAndRoomMergedList" @close="doUiAction('selectForwardFriendClose')" @done="doUiAction('onSelectForwardFriend', {friends: $event})" />
+    <voice-call-dialog v-model="voiceCallStatus" :params="{voiceType, voiceTargetId, voiceTargetName}"></voice-call-dialog>
   </div>
 </script>
 
 <script>
-  Vue.component('MiddlePanel', {
-    template: '#_MiddlePanel',
-    props: {
-      isGroup: {
-        type: Boolean,
-        default: false
-      },
-      nowChatSessionId: {
-        type: String,
-        default: null
-      },
-      nowChatItem: {
-        type: Object,
-        default: () => { }
-      },
-      methods: {
-        type: Object,
-        default: {}
-      },
-      draft: {
-        type: Object,
-        default: {}
-      },
-      chatListBackUps: {
-        type: Array,
-        default: []
-      }
+  window.registerData(
+    {
+      voiceCallStatus: false,
+      voiceTargetName: '',
+      voiceType: 'callToFriend', // 'callInRoom'
+      voiceTargetId: null, // 通话对象ID 用户ID\群聊ID
+      isMoreSelectMode: false, // 开启多选模式
+      selectForwardFriend: false,
+      friendListCtrlType: '',
+      selectFriend: false,
+      moreSheetOpen: false,
+      currentResendMsg: {},
+      appForward: false,
+      mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
     },
-    data() {
-      return {
-        messageTextareaValue: null,
-        moreSheetOpen: false,
-        currentResendMsg: {},
-        mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
-      };
-    },
-    computed: {
-      isMobile() {
-        return this.$vuetify.breakpoint.xs;
-      },
+    {
       // 指示移动端时是否展开消息输入框
       mobExpandChat() {
+        if (this.$vuetify.breakpoint.xs) {
+          return this.mobileMessageTextareaFocus;
+        }
         return true;
-      },
-    },
+      }
+    }
+  )
+
+
+  Vue.component('MiddlePanel', {
+    template: '#_MiddlePanel',
+    mixins: [ window.jianghuUiActionMixins ],
+    data: () => window.vueData,
+    vueComponent: 'middlePanel',
+    computed: window.vueComputed,
     watch: {
+      nowChatSessionId(v) {
+        if (this.isMoreSelectMode) this.resetMultiSelectionStatus();
+      }
     },
-    created() { },
+    created() {
+      // 注册APP转发对象调用方法
+      window.forwardToChatSession = this.appOpenForwardOneByOneFriendDialog;
+      window.forwardToChatSessionByStream = this.appForwardToChatSessionByStream;
+    },
     destroyed() { },
     mounted() {
       this.methods.sendMsg = this.sendMsg;
+      this.resetMultiSelectionStatus();
     },
     methods: {
+      // app端启动选择转发对象
+      appOpenForwardOneByOneFriendDialog() {
+        console.log('app端启动选择转发对象');
+        this.appForward = true;
+        this.openForwardOneByOneFriendDialog();
+      },
+      async appForwardToChatSessionByStream(forwardUserId, filename, base64) {
+        // App端传过来的byteBuffer
+        const mime = base64.split(',')[0].match(/:(.*?);/)[1];
+        const file = base64ToFile({ base64, name: filename });
+        await this.sendMsg({
+          messageContent: '',
+          targetUserId: forwardUserId,
+          messageContentType: mime.indexOf('image/') > -1 ? duoxingMessageContentTypeEnum.image : duoxingMessageContentTypeEnum.file,
+          file
+        })
+        appPostMessage({ action: 'forwardToChatSessionDone' });
+        // var blob = new Blob([byteBuffer], { type: 'application/octet-stream' });
+      },
+      selectForwardFriendClose() {
+        this.appForward = false;
+      },
+      // 发起通话
+      voiceCall(item) {
+        // item? null 当前回话，群成员/对话好友 , !null, 要通话的会员
+        // voiceType: 'callToFriend', // 'callInRoom'
+        if (!this.nowChatItem && !item) {
+          window.vtoast.fail('当前暂无会话对象')
+          return false;
+        }
+        // 1. 排除自己, 排除小程序
+        if (item && item.fromUserId === global.user.userId) {
+          return false;
+        }
+        if (this.nowChatItem && this.nowChatItem.userType === 'xiaochengxu') {
+          window.vtoast.fail('当前对象是小程序，无法通话')
+          return false;
+        }
+        this.voiceType = item || !this.isRoom ? 'callToFriend' : 'callInRoom';
+        // 2. 通过选择好友/群发起通过
+        this.voiceTargetName = item ? item.fromUserName : this.nowChatItem.chatName || this.nowChatItem.friendUsername || this.nowChatItem.roomName;
+        this.voiceTargetId = item ? item.fromUserId : this.nowChatSessionId;
+        this.voiceCallStatus = !!this.voiceTargetId;
+        return true
+      },
+      // 选择多选
+      moreSel() {
+        this.isMoreSelectMode = true;
+      },
+      // 初始化转发
+      resetMultiSelectionStatus() {
+        this.isMoreSelectMode = false;
+        this.clearCheckList();
+        this.closeMultiSelect();
+      },
+      // 单条发送
+      forwardSimple() {
+        this.openForwardSimpleFriendDialog();
+      },
+      // 逐条发送
+      forwardOneByOne() {
+        this.openForwardOneByOneFriendDialog();
+      },
+      openForwardSimpleFriendDialog() {
+        this.friendListCtrlType = 'sendForwardSimple';
+        this.doUiAction('pushState', { path: 'sendForwardSimple' });
+        this.selectForwardFriend = !this.selectForwardFriend;
+        this.$refs.selectForwardFriend.selectedItem = [];
+        window.history.back();
+      },
+      openForwardOneByOneFriendDialog() {
+        console.log('打开转发对象选择框');
+        this.friendListCtrlType = 'sendForwardOneByOne';
+        this.doUiAction('pushState', { path: 'sendForwardOneByOne' });
+        this.selectForwardFriend = !this.selectForwardFriend;
+        this.$refs.selectForwardFriend.selectedItem = [];
+        window.history.back();
+      },
+      async onSelectForwardFriend({ friends }) {
+        // APP转发拦截
+        if (this.appForward) {
+          this.appForward = false;
+          console.log(`>>> 带转发用户信息 ${JSON.stringify(friends)}`)
+          appPostMessage({ action: 'forwardToChatSession', forwardUserId: friends[0].friendId || friends[0].roomId });
+          return;
+        }
+        // 非App转发
+        const chattingPage = this.getChattingPage();
+        if (this.friendListCtrlType === 'sendForwardSimple') {
+          await this.forwardMsg(
+            friends,
+            chattingPage.chatHistoryList.filter(
+              d => d.messageFingerprint === chattingPage.forwardId
+            )[0]
+          );
+        }
+        if (this.friendListCtrlType === 'sendForwardOneByOne') {
+          const checkList = chattingPage.checkList.sort().reverse();
+          // console.log('checkList', checkList, chattingPage.chatHistoryList)
+          for (const f of checkList) {
+            await this.forwardMsg(
+              friends,
+              chattingPage.chatHistoryList.filter(
+                d => d.messageFingerprint === f
+              )[0]
+            );
+          }
+          this.resetMultiSelectionStatus();
+        }
+      },
+      /**
+       * 发送名片
+       * @param friend
+       */
+      sendCardMsg(friend) {
+        for (const item of friend) {
+          this.sendMsg({
+            messageContent: JSON.stringify(item),
+            messageContentType: duoxingMessageContentTypeEnum.userCard
+          });
+        }
+      },
+      forwardMsg(friends, msg) {
+        for (const friend of friends) {
+          if (friend.friendId) {
+            this.sendMsg(
+              {
+                messageContent: msg.messageContent,
+                messageContentType: msg.messageContentType,
+                targetUserId: friend.friendId
+              },
+              false,
+              2
+            );
+          } else {
+            this.sendMsg(
+              {
+                messageContent: msg.messageContent,
+                messageContentType: msg.messageContentType,
+                targetUserId: friend.roomId
+              },
+              false,
+              1
+            );
+          }
+        }
+      },
+      // 打开好友列表选择框
+      openFriendDialog() {
+        this.doUiAction('pushState', { path: 'sendUserCard' });
+        this.selectFriend = !this.selectFriend;
+      },
       include() {
         return [ document.querySelector('.emoticon-open-btn') ];
       },
@@ -115,9 +264,6 @@
       messageTextareaDomBlur() {
         this.$refs.chatInput.messageTextareaDomBlur();
       },
-      scrollToBottom() {
-        this.$refs.chattingPage.scrollToBottom();
-      },
       clearCheckList() {
         this.$refs.chattingPage.checkList = [];
       },
@@ -126,16 +272,12 @@
           this.$refs.chattingPage.multiSelectClose();
         }
       },
-      // 当撤销消息
-      onRevokeMsg(item) {
-        this.sendRevokeMsg(item);
-      },
       /**
        * 撤销消息
        * @param item
        */
       async sendRevokeMsg(item) {
-        const result = await window.jianghuAxios({
+        await window.jianghuAxios({
           data: {
             appData: {
               pageId: 'chat',
@@ -150,7 +292,7 @@
       // 当引用消息
       onQuoteMsg(item) {
         let messageContent = item.messageContent;
-        if (item.messageContentType === 'userCard') {
+        if (item.messageContentType === duoxingMessageContentTypeEnum.userCard) {
           try {
             messageContent = `[${item.messageContent},,,${item.messageContentType}]`;
           } catch (error) {
@@ -164,9 +306,7 @@
             messageContent = item.messageContent;
           }
         }
-        this.$refs.chatInput.setMsgValue(
-          `${messageContent} \n------------------------\n Re @${item.fromUsername}: `
-        );
+        this.messageTextareaValue = `${messageContent} \n------------------------\n Re @${item.fromUsername}: `
         this.$refs.chatInput.makeMsgTextarearFocus();
       },
       /**
@@ -175,9 +315,18 @@
        */
       async reSendMsg(selectMsg) {
         this.currentResendMsg = { ...selectMsg };
+        const { messageContentType } = this.currentResendMsg;
+        if (messageContentType === 'file') {
+          await window.confirmDialog({
+            title: '文件上传失败,请重新上传文件!',
+            confirmColor: 'primary',
+            cancelBtn: false
+          })
+          return;
+        }
         if (await window.confirmDialog({
           title: '该消息发送失败，是否重发？',
-          confirmColor: '#01579b'
+          confirmColor: 'primary'
         })) {
           this.doReSendMsg();
         }
@@ -198,8 +347,7 @@
           // 成功后
           // console.log('this.currentResendMsg', this.currentResendMsg);
           this.messageTextareaValue = null;
-          this.$refs.chatInput.setMsgValue(this.messageTextareaValue);
-          this.$refs.chattingPage.scrollToBottom(true);
+          this.doUiAction('scrollToBottom', { mustToBottom: true })
         }
         return null;
       },
@@ -208,51 +356,62 @@
        * @param forwardType
        */
       getSendMsgActionId(forwardType = 0) {
-        if (forwardType === 1) return 'userSendMessageToGroup';
+        if (forwardType === 1) return 'userSendMessageToRoom';
         else if (forwardType === 2) return 'userSendMessageToUser';
-        return this.isGroup
-          ? 'userSendMessageToGroup'
+        return this.isRoom
+          ? 'userSendMessageToRoom'
           : 'userSendMessageToUser';
-      },
-      appendMsg(newMsg) {
-        this.$refs.chatInput.setMsgValue(`${this.$refs.chatInput.messageTextareaValue || ''}${newMsg || ''}`)
       },
       async uploadFileMsg(
         file,
-        isBase64File,
         tempParams,
         socketParams
       ) {
         let uploadResult;
-        const fileDirectory = userInfo.userId || 'chatFile';
+        const fileDirectory = getUploadDirectory(userInfo.userId || 'chatFile');
         // 文件流
         if (file) {
-          uploadResult = await window.jianghuAxios_uploadByStream({ file, fileDirectory });
-        }
-
-        // base64上传
-        if (isBase64File) {
-          const { filename, downloadPath } = JSON.parse(
-            socketParams.messageContent
-          );
-          uploadResult = await window.jianghuAxios_uploadByBase64({ base64: downloadPath, name: filename, fileDirectory });
+          try {
+            // 使用 progress-linear https://vuetifyjs.com/zh-Hans/components/progress-linear/#section-989c8272
+            const that = this
+            this.getChattingPage().refreshChatItem({
+              ...tempParams,
+              progress: 1
+            });
+            uploadResult = await window.jianghuAxios.httpUploadByStream({ file, fileDirectory,
+              onProgress: (total, loaded) => {
+                let progress = Number((loaded * 100 / total).toFixed(2))
+                if (progress == 100) {
+                  progress = 99
+                }
+                that.getChattingPage().refreshChatItem({
+                  ...tempParams,
+                  progress
+                });
+              }
+            })
+          } catch (err) {
+            console.log(err)
+          }
+          this.getChattingPage().refreshChatItem({
+            ...tempParams,
+            progress: 100
+          });
         }
         return uploadResult;
       },
       async sendMsg(
         {
-          messageContent = this.$refs.chatInput.messageTextareaValue || '',
+          messageContent = this.messageTextareaValue || '',
           messageContentType = 'text',
           messageFingerprint = uuid(),
           file = null,
-          isBase64File = false,
           targetUserId = null
         },
         update = true,
         forwardType = 0
       ) {
-
-        this.scrollToBottom();
+        this.doUiAction('scrollToBottom')
         // 不在线，不发送
         if (window.socket && window.socket.online === false) {
           window.vtoast.fail('离线中...，请稍后尝试发送');
@@ -264,20 +423,15 @@
           return;
         }
         // 消息内容为空
-        if (!messageContent) {
+        if (messageContentType === 'text' && !messageContent) {
           return;
         }
 
-        const needUpload =
-          (messageContentType === 'file' ||
-            messageContentType === 'image' ||
-            messageContentType === 'audio') &&
-          (file || isBase64File);
         const socketParams = {
           messageContent,
           messageContentType,
           toUserId: targetUserId || this.nowChatSessionId,
-          toGroupId: targetUserId || this.nowChatSessionId,
+          toRoomId: targetUserId || this.nowChatSessionId,
           messageFingerprint
         };
         const tempParams = {
@@ -285,7 +439,8 @@
           fromUserId: global.user.userId,
           fromUsername: global.user.username,
           fromUserAvatar: global.user.userAvatar,
-          loading: true
+          loading: true,
+          process: 0
         };
         // 先更新一个 loading 消息
         this.getChattingPage().refreshMessage(tempParams, update);
@@ -296,21 +451,20 @@
               tempParams.error = true;
             }
           },
-          needUpload ? 50000 : 3000
+          file ? 5000000 : 3000
         );
 
-        if (needUpload) {
+        if (file) {
           const uploadResult = await this.uploadFileMsg(
             file,
-            isBase64File,
             tempParams,
             socketParams
           );
           if (
             !uploadResult ||
-            !uploadResult.data.appData.filename ||
-            !uploadResult.data.appData.downloadPath ||
-            !uploadResult.data.appData.binarySize
+            !uploadResult.data.appData.resultData.filename ||
+            !uploadResult.data.appData.resultData.downloadPath ||
+            !uploadResult.data.appData.resultData.binarySize
           ) {
             this.getChattingPage().refreshMessage(
               {
@@ -321,7 +475,7 @@
               update
             );
           } else {
-            const { filename, downloadPath, binarySize } = uploadResult.data.appData;
+            const { filename, downloadPath, binarySize } = uploadResult.data.appData.resultData;
             socketParams.messageContent = JSON.stringify({
               filename,
               downloadPath,
@@ -342,19 +496,47 @@
         // 成功后
         // console.log('socketParams', socketParams);
         this.messageTextareaValue = '';
-        this.$emit('onMsgValueChange', null);
-        this.scrollToBottom(true);
+        window.vtoast.dismiss();
+        this.doUiAction('scrollToBottom', { mustToBottom: true })
       },
-      chatInputBlur() {
-        this.mobileMessageTextareaFocus = false
-      },
+      /**
+       * 已读
+       * @return {Promise<void>}
+       */
+      async delMessageOffline() {
+        const chatId = this.nowChatSessionId
+        if (this.chatListBackUps) {
+          const clickChatSession = this.chatListBackUps.find(
+            chatSession => chatSession.chatId === chatId
+          );
+          if (clickChatSession && clickChatSession.offlineMessageCount) {
+            clickChatSession.offlineMessageCount = 0;
+            await window.jianghuAxios({
+              data: {
+                appData: {
+                  pageId: 'chat',
+                  actionId: 'delMessageOffline',
+                  actionData: {
+                    messageType: clickChatSession.messageType,
+                    userIdOrRoomId: `${chatId}`
+                  }
+                }
+              }
+            });
+          }
+        }
+      }
     }
   });
 </script>
 <style>
-   .chatMain {
-    box-sizing: border-box;
-    height: 100vh;
-    background: #f5f7fa;
+@media screen and (max-width: 600px) {
+  .chatMain .v-main__wrap {
+    display: flex;
+    flex-direction: column;
   }
+  .chatMain .v-main__wrap .chattingPage {
+    flex: 1;
+  }
+}
 </style>

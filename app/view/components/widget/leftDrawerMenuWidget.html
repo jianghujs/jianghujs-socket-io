@@ -1,0 +1,105 @@
+<!-- 左栏聊天菜单 -->
+<script type="text/x-template" id="_LeftDrawerMenu">
+  <div>
+    <div class="leftMenu">
+      <v-btn
+        class="rounded-0"
+        style="height: 50px"
+        :class="{ 'active': index === 0 }"
+        text
+        icon
+        :color="(index === 0 ? 'primary' : 'grey darken-1')"
+        @click="menuChange(0)"
+      >
+        <v-icon>mdi-chat</v-icon>
+        <span>聊天</span>
+      </v-btn>
+      <v-btn
+        class="rounded-0"
+        :class="{ 'active': index === 1 }"
+        text
+        style="height: 50px"
+        icon
+        :color="(index === 1 ? 'primary' : 'grey darken-1')"
+        @click="menuChange(1)"
+      >
+        <v-icon>mdi-account-circle</v-icon>
+        <span>通讯录</span>
+      </v-btn>
+      <v-btn
+        class="rounded-0"
+        :class="{ 'active': index === 2 }"
+        text
+        style="height: 50px"
+        icon
+        :color="(index === 2 ? 'primary' : 'grey darken-1')"
+        @click="menuChange(2)"
+      >
+        <v-icon>mdi-lightbulb-auto-outline</v-icon>
+        <span>智能牧养</span>
+      </v-btn>
+    </div>
+  </div>
+</script>
+
+<script>
+  Vue.component('LeftDrawerMenu', {
+    template: '#_LeftDrawerMenu',
+    props: {
+      count: {
+        type: Array,
+        default: () => []
+      },
+      menuIndex: {
+        type: Number,
+        default: 0
+      }
+    },
+    watch: {
+      menuIndex(value) {
+        this.index = value || 0;
+      }
+    },
+    data() {
+      return {
+        drawer: true,
+        index: 0,
+
+        ctrlType: null
+      };
+    },
+    methods: {
+      menuChange(index) {
+        this.index = index;
+        this.$emit('change', index);
+      },
+    }
+  });
+</script>
+
+<style>
+  .leftMenu {
+    display: flex;
+    background-color: #efefef;
+  }
+
+  .leftMenu .active::before {
+    content: none;
+  }
+
+  .leftMenu .active {
+    background-color: #ffffff;
+  }
+
+  .leftMenu .v-btn {
+    flex: 1;
+  }
+
+  .leftMenu .v-btn__content {
+    flex-flow: column;
+  }
+
+  .leftMenu .v-btn__content span {
+    font-size: 12px;
+  }
+</style>

@@ -1,101 +1,234 @@
 <!-- dx-img 图片组件封装 -->
 <script type="text/x-template" id="_dxImg">
-  <img
-    v-if="finalSrc !== ''"
-    style="width: 100%; height: 100%; background: #ffffff;"
-    :style="{ 'object-fit': !!userAvatar || !!groupAvatar ? 'cover' : 'contain', 'padding': !!userAvatar || !!groupAvatar ? '0' : '4px' }"
-    :src="finalSrc"
+<div ref="dxImgDiv" class="dxImgDiv">
+  <canvas v-if="useCanvas" class="dxImageCanvas" :style="{'border-radius': userAvatar ? '50%' : '5px'}"
+          :width="width" :height="height" ref="canvas" @click="imagePopup"></canvas>
+  <div v-if="finalSrc && finalSrc !== '' && !render"
+    class="dxImgDom"
+    :style="{ 'background-size': chatImage || noticeImage || emoji ? 'contain' : 'cover', 'background-image': 'url(' + finalSrc + ')'}"
     @click="imagePopup"
-  />
-  <span class="imgError" v-else>图片丢失</span>
+  ></div>
+  <span class="imgError" v-if="!finalSrc || finalSrc === ''">图片加载中</span>
+</div>
 </script>
 
 <script>
-  Vue.component('dxImg', {
-    name: 'dxImg',
-    template: '#_dxImg',
-    props: {
-      // 图片地址
-      src: String,
-      // 是否要能够点击后展示大图
-      enableViewer: Boolean,
-      // 不同类型会有不同的默认图
-      userAvatar: Boolean,
-      groupAvatar: Boolean,
-      emoji: Boolean,
-      chatImage: Boolean,
-      noImage: Boolean
-    },
-    data() {
-      return {
-        upload: window.appInfo.upload,
-        public: window.appInfo.public,
-        finalSrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
-        lazySrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+// 已加载的图片暂存
+window.preloadImages = {};
+Vue.component('dxImg', {
+  name: 'dxImg',
+  template: '#_dxImg',
+  props: {
+    userId: String,
+    // 图片地址
+    src: String,
+    // 是否要能够点击后展示大图
+    enableViewer: Boolean,
+    // 不同类型会有不同的默认图
+    userAvatar: Boolean,
+    roomAvatar: Boolean,
+    emoji: Boolean,
+    chatImage: Boolean,
+    noticeImage: Boolean,
+    noImage: Boolean
+  },
+  data() {
+    return {
+      upload: window.appInfo.upload,
+      public: window.appInfo.public,
+      finalSrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+      lazySrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+      width: 100,
+      height: 100,
+      useCanvas: false,
+      render: false,
+      setParentWhCount: 0
+    }
+  },
+  watch: {
+    userId: {
+      immediate: true,
+      handler(newVal, oldVal) {
       }
     },
-    watch: {
-      src: {
-        immediate: true,
-        handler(newVal, oldVal) {
-          // 如果 src 为空，则替换为 lazySrc
-          if ((!newVal || newVal.endsWith('undefined')) && (!oldVal || oldVal.endsWith('undefined'))) {
-            this.finalSrc = this.lazySrc
-          } else {
-            const img = new Image();
-            img.src = newVal;
-            img.onload = () => {
-              this.finalSrc = newVal
-            }
-            img.onerror = () => {
-              this.finalSrc = this.lazySrc
-            }
-          }
+    src: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        // 如果 src 为空，则替换为 lazySrc
+        if ((!newVal || newVal.endsWith('undefined')) && (!oldVal || oldVal.endsWith('undefined'))) {
+          this.finalSrc = this.lazySrc;
+          this.useCanvas = false;
+          this.render = false;
+        } else {
+          this.imgLoaded();
         }
       }
-    },
-    created() {
-      // 默认图片
+    }
+  },
+  created() {
+    // 默认图片
+    if(this.userAvatar) {
+      this.width = 48;
+      this.height = 48;
+    }
+    this.setDefaultImg();
+  },
+  methods: {
+    setDefaultImg() {
       if (this.userAvatar) {
-        this.lazySrc = this.upload + '/userAvatar/default.jpg'
-      } else if (this.groupAvatar) {
-        this.lazySrc = this.upload + '/groupAvatar/default.jpg'
+        this.lazySrc = this.upload + '<$ ctx.app.config.duoxingConfig.defaultAvatar.user $>'
+      } else if (this.roomAvatar) {
+        this.lazySrc = this.upload + '<$ ctx.app.config.duoxingConfig.defaultAvatar.room $>'
       } else if (this.emoji) {
         this.lazySrc = '';// this.public + '/img/login_loading.gif'
       } else if (this.chatImage) {
-        // todo chat default page
         this.lazySrc = '';// this.public + '/img/login_loading.gif'
       }
     },
-    methods: {
-      imagePopup() {
-        if (this.enableViewer) {
-          // TODO: 聊天列表中点击可以上下翻页
-          window.viewImage(this.finalSrc)
+    imgOnLoad (imgKey, img) {
+      this.finalSrc = this.src;
+      this.drawChatImage(img);
+      if (this.chatImage) {
+        if (window.vueData.isChatFirstLoad) {
+          requestAnimationFrame(() => {
+            window.$vueComponent.chatSession.scrollToBottom({mustToBottom: true})
+          })
         }
-        this.$emit('click')
-        this.$nextTick(() => {
-          setTimeout(() => {
-            try {
-              window.document.querySelector('.viewer-canvas').querySelector('img').onclick = function () {
-                window.document.querySelector('.viewer-close').click()
-              }
-            } catch (e) { }
-          }, 500)
-        })
       }
+    },
+    imgLoaded() {
+      this.setParentWh();
+      this.setDefaultImg();
+      this.finalSrc = this.lazySrc;
+      const imgKey = encodeURI(this.src);
+      let img;
+      if (preloadImages.hasOwnProperty(imgKey)) {
+        this.finalSrc = preloadImages[imgKey].src;
+        img = preloadImages[imgKey];
+        this.imgOnLoad(imgKey, img);
+      } else {
+        img = new Image();
+        img.src = this.src;
+        img.onload = () => {
+          if (!preloadImages.hasOwnProperty(imgKey)) {
+            preloadImages[imgKey] = img;
+          }
+          this.imgOnLoad(imgKey, img)
+        }
+        img.onerror = () => {
+          this.useCanvas = false;
+          this.finalSrc = this.lazySrc;
+        }
+      }
+    },
+    setParentWh() {
+      this.setParentWhCount++;
+      if (!this.$refs.dxImgDiv || !this.$refs.dxImgDiv.parentElement || !this.$refs.dxImgDiv.parentElement.clientWidth) {
+        if(this.setParentWhCount < 50) {
+          setTimeout(() => {
+            this.setParentWh();
+          }, 300)
+        } else {
+          this.width = this.width || 100;
+          this.height = this.height || 100;
+        }
+      } else {
+        this.width = this.$refs.dxImgDiv.parentElement.clientWidth;
+        this.height = this.$refs.dxImgDiv.parentElement.clientHeight;
+      }
+    },
+    drawChatImage(img) {
+      const isGif = img.src.indexOf('.gif') !== -1;
+      this.useCanvas = !isGif && (img.width > 600 || img.height > 600);
+      if (this.useCanvas) {
+        if (this.width && this.height) {
+          const canvas = this.$refs.canvas;
+          if (canvas) {
+            const ratio = window.devicePixelRatio || 1;
+            const ctx = canvas.getContext('2d');
+            ctx.width = this.width * ratio;
+            ctx.height = this.height * ratio;
+            canvas.width = this.width * ratio;
+            canvas.height = this.height * ratio;
+            canvas.style.width = this.width + 'px';
+            canvas.style.height = this.height + 'px';
+            ctx.fillStyle = `rgb(255, 255, 255)`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if(this.userAvatar) {
+              const cropLeft = img.width > img.height ? (img.width - img.height) / 2 : 0;
+              const cropTop = img.width > img.height ? 0 : (img.height - img.width) / 2;
+              const cropWh = img.width > img.height ? img.height : img.width;
+              ctx.drawImage(img, cropLeft, cropTop, cropWh, cropWh, 0, 0, canvas.width, canvas.height);
+            } else {
+              const left = img.width > img.height ? 0 : (img.height - img.width) * (canvas.height / img.height) / 2;
+              const top = img.width > img.height ? (img.width - img.height) * (canvas.width / img.width) / 2 : 0;
+              ctx.drawImage(img, 0, 0, img.width, img.height, left, top, canvas.width - left * 2, canvas.height - top * 2);
+            }
+            ctx.scale(1 / ratio, 1 / ratio)
+            setTimeout(() => {
+              this.render = true;
+            }, 300)
+          } else {
+            setTimeout(() => {
+              this.drawChatImage(img);
+            }, 300)
+          }
+        } else {
+          setTimeout(() => {
+            this.drawChatImage(img);
+          }, 300)
+        }
+      } else {
+        this.render = false;
+      }
+    },
+    imagePopup() {
+      if (this.enableViewer) {
+        // TODO: 聊天列表中点击可以上下翻页
+        window.viewImage(this.src)
+      }
+      this.$emit('click')
+      this.$nextTick(() => {
+        setTimeout(() => {
+          try {
+            window.document.querySelector('.viewer-canvas').querySelector('img').onclick = function () {
+              window.document.querySelector('.viewer-close').click()
+            }
+          } catch (e) {
+          }
+        }, 500)
+      })
     }
-  })
+  }
+})
 
 </script>
 <style>
-  .imgError {
-    display: block;
-    line-height: 160px;
-    width: 160px;
-    text-align: center;
-    background: #ffffff;
-    height: 100%;
-    color: #cccccc;
-  }
+.dxImgDiv {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  background: #ffffff;
+  width: 100%;
+  height: 100%
+}
+.dxImgDom {
+  width: 100%; height: 100%; background-color: #ffffff; background-position: center center; position: absolute; left: 0;top: 0; z-index: 1;
+  //transition: opacity .15s;
+  //opacity: 0;
+}
+.dxImageCanvas {
+  position: absolute; left: 0;top: 0; z-index: 2;
+  //transition: opacity .15s;
+  //opacity: 0;
+}
+.imgError {
+  display: block;
+  line-height: 160px;
+  width: 160px;
+  text-align: center;
+  background: #ffffff;
+  height: 100%;
+  color: #cccccc;
+}
 </style>

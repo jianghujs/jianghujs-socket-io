@@ -2,63 +2,97 @@
 <script type="text/x-template" id="_LeftUserWidget">
   <v-card
     dark
-    :color="'light-blue darken-4'"
+    color="primary"
     class="rounded-0 userInfoCard"
     style="border-bottom: 1px solid #cccccc;"
     height="52"
   >
     <div class="d-flex flex-no-wrap justify-space-between align-center">
       <v-avatar size="35px" style="background-color: #EEEEEE" class="ma-2">
-        <dx-img :src="upload + userInfo.userAvatar" userAvatar enableViewer></dx-img>
+        <dx-img :src="upload + user.userAvatar" userAvatar enableViewer></dx-img>
       </v-avatar>
 
       <div class="d-flex flex-column justify-center align-start">
         <v-card-title class="ma-0 pa-0 nickname" style="line-height: 1">
           <span>
-            {{ userInfo.username || "·" }}
+            {{ user.username || "·" }}
           </span>
         </v-card-title>
+        <v-card-subtitle class="ma-0 pa-0 pt-1 card_subtitle" :style="{'max-width': 'calc('+ (isMobile ? '100vw' : '285px') +' - 130px)'}">
+          <span>{{ ['连接成功', '连接中...', '连接断开'][isSocketOnline] }} </span>
+          <v-badge right bordered light dot
+            :color="['green accent-3', 'amber darken-1', 'deep-orange accent-3'][isSocketOnline]"
+            offset-x="-1" offset-y="0"
+          >
+          </v-badge>
+          <span class="pl-5">{{ dataSyncStatus == 'success' ? '同步成功' : '同步中...' }}</span>
+          <v-badge right bordered light dot
+            :color="dataSyncStatus == 'success' ? 'green accent-3' : 'amber darken-1'"
+            offset-x="-1" offset-y="0"
+          >
+          </v-badge>
+          <span class="pl-5"></span>
+        </v-card-subtitle>
       </div>
       <v-spacer></v-spacer>
+      <v-btn text dark :small="!isMobile" icon class="rounded-0" color="blue lighten-2" @click="toggleMute">
+        <v-icon :size="isMobile ? 20 : 16" v-if="isMuted" color="white">mdi-volume-off</v-icon>
+        <v-icon :size="isMobile ? 20 : 16" v-else color="white">mdi-volume-high</v-icon>
+      </v-btn>
       <div class="userInfoCard__settings d-flex">
-        <v-btn icon class="mr-2" @click="show">
-          <v-icon>mdi-cog</v-icon>
-        </v-btn>
+        <v-menu offset-y>
+          <template #activator="{ on, attrs }">
+            <v-btn text dark :small="!isMobile"  icon class="rounded-0" color="blue lighten-2" v-bind="attrs" v-on="on">
+              <v-icon :size="isMobile ? 20 : 16" color="white">mdi-plus-box</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, index) in plusMenu" :key="index" @click="doUiAction(item.uiAction)">
+                <v-list-item-title class="body-2">{{ item.name }}</v-list-item-title>
+              </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
-      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
-        <v-list>
-          <v-list-item v-for="(item, index) in items" :key="item.inx" @click="mclick(item.inx)">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <div class="userInfoCard__settings d-flex mr-2">
+        <v-menu offset-y>
+          <template #activator="{ on, attrs }">
+            <v-btn text dark :small="!isMobile" icon class="rounded-0" color="blue lighten-2" v-bind="attrs" v-on="on">
+              <v-icon :size="isMobile ? 20 : 16" color="white">mdi-cog</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, index) in items" :key="item.inx" @click="mclick(item.inx)">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
     </div>
   </v-card>
 </script>
 
 <script>
-  Vue.component('LeftUserWidget', {
-    template: '#_LeftUserWidget',
-    props: {
-      userInfo: {
-        type: Object
-      }
+  window.registerData(
+    {
+      showMenu: false,
+      x: 0,
+      y: 0,
+      sync: window.sync,
+      upload: window.appInfo.upload,
+      items: [
+        { inx: 1, title: '个人信息' },
+        { inx: 2, title: '修改头像' },
+        { inx: 10, title: '退出登录' },
+        { inx: 15, title: '应用重载' }
+      ],
+      plusMenu: [
+        { name: '创建群组', uiAction: 'onCreateRoom' },
+        { name: '消息群发', uiAction: 'openMultiSendDialog' }
+      ],
+      // 需要一个 socketClient 放在 data 中，否则 online 状态会没有响应式
+      socketClient: null
     },
-    data() {
-      return {
-        showMenu: false,
-        x: 0,
-        y: 0,
-        sync: window.sync,
-        upload: window.appInfo.upload,
-        items: [
-          { inx: 10, title: '退出登录' },
-        ],
-        // 需要一个 socketClient 放在 data 中，否则 online 状态会没有响应式
-        socketClient: null
-      };
-    },
-    computed: {
+    {
       isSocketOnline() {
         if (!window.socket) {
           return 1;
@@ -72,13 +106,38 @@
         if (window.socket && window.socket.online === true) {
           return 0;
         }
-        return 2;
+        return 1;
+      }
+    }
+  )
+
+
+  Vue.component('LeftUserWidget', {
+    template: '#_LeftUserWidget',
+    mixins: [ window.jianghuUiActionMixins ],
+    data: () => window.vueData,
+    vueComponent: 'leftUser',
+    computed: window.vueComputed,
+    watch: {
+      isMuted: {
+        deep: true,
+        handler(value) {
+          this.$forceUpdate();
+        }
       },
+      user: {
+        immediate: true,
+        handler(value, value1) {
+        }
+      }
     },
     async created() {
       this.socketClient = window.socket;
     },
     mounted() {
+      if (isApp) {
+        this.items.push({ inx: 20, title: '版本信息' });
+      }
     },
     methods: {
       show(e) {
@@ -91,13 +150,41 @@
         });
       },
       mclick(e) {
-        this.$emit('userinfo_menu_click', e);
+        if (e === 7) {
+          this.toggleMute();
+        } else {
+          this.$emit('userinfo_menu_click', e);
+        }
       },
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        webOptions('isMuted', this.isMuted);
+      }
     }
   });
 </script>
 <style>
   .userinfo_icon {
     content: url("https://api.iconify.design/ph/gear-six-bold.svg?color=white");
+  }
+
+
+  .card_subtitle {
+    font-size: 12px;
+    line-height: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #FFFFFF
+  }
+
+  @keyframes syncAnim {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0.1;
+    }
   }
 </style>

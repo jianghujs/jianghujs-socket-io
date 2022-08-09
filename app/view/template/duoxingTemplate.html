@@ -12,7 +12,8 @@
   <link href="/<$ ctx.app.config.appId $>/public/css/global.css" rel="stylesheet" />
   <link href="/<$ ctx.app.config.appId $>/public/css/materialdesignicons.min.css" rel="stylesheet" />
   <link href="/<$ ctx.app.config.appId $>/public/css/vuetify.min.css" rel="stylesheet" />
-  
+  <link href="/<$ ctx.app.config.appId $>/public/css/vditor.css" rel="stylesheet" />
+
   <script type="text/javascript">
     window.appInfo = {
       appId: '<$ ctx.app.config.appId $>',
@@ -32,7 +33,26 @@
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/socket.io.js"></script>
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/font2pinyun.js"></script>
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/clipboard.min.js"></script>
-  {% include 'util/utils.html' %} {% include 'util/socket.html' %} {% block css %} {% endblock %}
+  <script src="/<$ ctx.app.config.appId $>/public/js/lib/vditor.min.js"></script>
+
+  {% include 'common/utils.html' %} {% include 'common/socket.html' %} {% include
+  'common/appMessage.html' %} {% block css %} {% endblock %}
+  <style>
+    body {
+      --cPrimaryColor: <$ ctx.app.config.primaryColor $>;
+    }
+
+    body .v-application .primary {
+      background-color: var(--cPrimaryColor) !important;
+      border-color: var(--cPrimaryColor) !important;
+    }
+
+
+    body .v-application .primary--text {
+      color: var(--cPrimaryColor) !important;
+      caret-color: var(--cPrimaryColor) !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -51,15 +71,18 @@
     </script>
   <div id="app"></div>
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/vue.js"></script>
-  <script src="https://unpkg.com/vue-infinite-loading@^2/dist/vue-infinite-loading.js"></script>
+  <script src="/<$ ctx.app.config.appId $>/public/js/lib/vue-infinite-loading.js"></script>
   <script src="/<$ ctx.app.config.appId $>/public/js//lib/vuetify.js"></script>
+
   {% include 'components/common/imgViewer.html' %}
-  {% include 'component/jhToast.html' %}
   {% include 'components/common/dxImage.html' %}
+  {% include 'component/jhToast.html' %}
   {% include 'component/jhConfirmDialog.html' %}
   {% include 'common/jianghuAxios.html' %}
-  {% if ctx.userInfo and  ctx.userInfo.user and ctx.userInfo.user.userId %}
-  {% include 'util/versionCheck.html' %} {% endif %} {% block vue_body %}{%
+  {% include 'common/uiAction.html' %}
+  {% if ctx.userInfo and ctx.userInfo.user and ctx.userInfo.user.userId %}
+  <!-- 版本检查 -->
+  {% include 'common/versionCheck.html' %} {% endif %} {% block vue_body %}{%
   endblock %}
 </body>
 

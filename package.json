@@ -5,10 +5,10 @@
   "private": true,
   "egg": {
     "declarations": true,
-    "framework": "egg-jianghu"
+    "framework": "@jianghujs/jianghu"
   },
   "dependencies": {
-    "egg-jianghu": "1.1.51",
+    "@jianghujs/jianghu": "^3.0.25",
     "@socket.io/redis-adapter": "^7.1.0",
     "ajv": "^8.7.1",
     "ajv-formats": "^2.1.1",

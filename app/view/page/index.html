@@ -3,32 +3,26 @@
 <!-- vue template 代码块 -->
 {% block vue_template %}
 <v-app id="inspire">
-  <!-- 左边栏 -->
-  <LeftPanel ref="leftPanel" :user="user" :getDataId="getDataId" :chatList="chatList" :chatListBackUps="chatListBackUps"
-    :nowChatSessionId="nowChatSessionId" :nowChatItem="nowChatItem" :methods="methods" :isChat="isChat"
-    @pushState="pushState" @chatList="chatList=$event" @chatListBackUps="chatListBackUps=$event"
-    @refreshUserInfo="getUserInfo" @getAccountInfo="$refs.rightPanel.getAccountInfo()"
-    @nowChatSessionId="nowChatSessionId=$event" />
-
-  <!-- 中间栏目 -->
-  <MiddlePanel ref="middlePanel" :draft="draft" :methods="methods"
-    :nowChatSessionId="nowChatSessionId"
-    :chatListBackUps="chatListBackUps"
-    :isGroup="isGroup"
-    @onChatInputInit="onChatInputInit" @onMsgValueChange="onMsgValueChange"
-    @preventDefault="preventDefault"/>
+<!-- 左边栏 -->
+<LeftPanel ref="leftPanel"/>
+<!-- 中间栏目 -->
+<MiddlePanel ref="middlePanel" :nowChatSessionId="nowChatSessionId"/>
 </v-app>
 {% endblock %}
 
 <!-- vue script 代码块 -->
 <!-- 注意：本项目的 vue 为每个页面使用一个 vue 实例 -->
-{% block vue_body %} 
+{% block vue_body %}
 {% include 'components/widget/leftUserWidget.html' %} {% include
 'components/widget/leftChatSessionWidget.html' %} {% include
+'components/widget/leftDrawerMenuWidget.html' %} {% include
 'components/widget/leftPanelWidget.html' %} {% include
+'components/widget/rightPanelWidget.html' %} {% include
 'components/widget/middlePanelWidget.html' %} {% include
+'components/widget/middleNoticeWidget.html' %} {% include
 'components/widget/middleChatInputWidget.html' %} {% include
 'components/widget/middleChatMessageWidget.html' %} {% include
+'components/message/cardMessage.html' %} {% include
 'components/message/imageMessage.html' %} {% include
 'components/message/fileMessage.html' %} {% include
 'components/message/textMessage.html' %} {% include
@@ -38,819 +32,1302 @@
 'components/common/emotion.html' %}
 
 <script type="module">
-  const didaAudio = new Audio(
-    '/<$ ctx.app.config.appId $>/public/audio/dida.wav'
-  );
-  new Vue({
-    el: '#app',
-    template: '#app-template',
-    vuetify: new Vuetify(),
-    components: {},
-    data: () => ({
-      methods: {},
-      messageTextareaValue: '',
-      authToken: localStorage.getItem(window.appInfo.appId + '_authToken'),
-      refreshToken: localStorage.getItem(window.appInfo.appId + '_refreshToken'),
-      chatList: [],
-      chatListBackUps: [],
-      user: {
-        // Tip: 设置默认图片, 避免页面image初始化渲染异常
-        userAvatar: '/userAvatar/default.jpg'
-      },
-      allowPageList: [],
-      allowUiLevelList: [],
-      nowChatSessionId: null,
-      nowChatItem: {},
-      draft: JSON.parse(localStorage.getItem('draft') || '{}'),
-    }),
-    computed: {
-      isChat() {
-        return this.nowChatItem && this.nowChatItem.hasOwnProperty('chatId');
-      },
-      isGroup() {
-        return this.nowChatItem && (this.nowChatItem.hasOwnProperty('groupId') || this.nowChatItem?.messageType === 'group');
-      },
+window.registerData(
+  {
+    methods: {},
+    messageTextareaValue: '',
+    authToken: localStorage.getItem(window.appInfo.appId + '_authToken'),
+    refreshToken: localStorage.getItem(window.appInfo.appId + '_refreshToken'),
+    accountDialog: false, // 好友信息弹框
+    nowChatItem: {},
+    nowChatSessionId: null,
+    chatList: [],
+    chatListBackUps: [],
+    myFriendList: [],
+    myFriendListBackUps: [],
+    userRoomRoleList: [],
+    userRoomRoleListBackUps: [],
+    botList: [],
+    botListBackUps: [],
+    searchUserUid: null,
+    recorder: null,
+    user: {
+      // Tip: 设置默认图片, 避免页面image初始化渲染异常
+      userAvatar: '<$ ctx.app.config.duoxingConfig.defaultAvatar.user $>'
     },
-    async created() {
+    allowPageList: [],
+    allowUiLevelList: [],
+    nowSelectionStart: -1, // @的时候，记录光标位置
+    rightDrawerTouchX: 0,
+    rightDrawerTouchY: 0,
+    draft: JSON.parse(localStorage.getItem('draft') || '{}'),
+    mutedIdList: [],
+    dataSyncStatus: '',
+    getDataId,
+    isChatFirstLoad: true,
+    friendDeviceId: null,
+    roomSliderShow: null,
+    inputRoomSliderShowDialog: false,
+    roomSliderHistoryDialog: false,
+    contentEditorHtml: null, // 直播间发布roomSliderShow的text编辑器保存的时候获取的html
+    contentEditorMarkdown: null, // 直播间发布roomSliderShow的text编辑器保存的时候获取的 markdown
+    contentEditor: null, // 直播间发布roomSliderShow的text编辑器是否初始化状态
+  },
+  {
+    pageTitle() {
+      return this.getDataName(this.nowChatItem);
+    },
+    isApp() {
+      return isApp;
+    },
+    isMobile() {
+      return window.innerWidth < 500;
+    },
+    currentUserId() {
+      return this.user.userId;
+    },
+    isChat() {
+      return this.nowChatItem && this.nowChatItem.hasOwnProperty('chatId');
+    },
+    isFriend() {
+      return this.nowChatItem && this.nowChatItem.hasOwnProperty('friendId');
+    },
+    isRoom() {
+      return this.nowChatItem && (this.nowChatItem.hasOwnProperty('roomId') || this.nowChatItem.messageType === 'room');
+    },
+    isXiaochengxu() {
+      return !this.isChat && !this.isFriend && !this.isRoom;
+    },
+    friendAndRoomMergedList() {
+      return this.myFriendListBackUps.concat(this.userRoomRoleListBackUps);
+    }
+  }
+)
+
+const didaAudio = new Audio(
+  '/<$ ctx.app.config.appId $>/public/audio/dida.wav'
+);
+new Vue({
+  el: '#app',
+  template: '#app-template',
+  vuetify: new Vuetify(),
+  mixins: [ window.jianghuUiActionMixins ],
+  data: () => window.vueData,
+  vueComponent: 'root',
+  computed: window.vueComputed,
+  components: {},
+  async created() {
+    // 手机端，除了输入框，其他地方禁止系统菜单
+    this.doUiAction('setSyncStatusToSyncing');
+    this.doUiAction('disableSystemEvent');
+    this.doUiAction('registerSystemBackEvent');
+    this.doUiAction('initWebSocket');
+    this.doUiAction('initDefaultVariable');
+    this.doUiAction('getConstantList');
+    await this.doUiAction('getUserInfo');
+    await this.doUiAction('setSyncStatusToSuccess');
+    this.handlerSystemBack();
+  },
+  watch: {
+    mobileLeftHide(value) {
+      window.mobileLeftHide = value;
+    },
+    async nowChatSessionId(v) {
+      try {
+        this.messageTextareaValue = v ? this.draft[v] : null;
+      } catch (e) {
+        this.messageTextareaValue = null;
+      }
+      this.isChatFirstLoad = true;
+      this.$forceUpdate();
+    }
+  },
+  methods: {
+    async showConfirmDialog({ title }) {
+      console.log('title', title)
+      return await window.confirmDialog({
+        title,
+        confirmColor: 'primary'
+      })
+    },
+    showLoading({ message }) {
+      window.vtoast.loading({ message });
+    },
+    showSuccess({ message }) {
+      window.vtoast.success({ message });
+    },
+    handlerSystemBack() {
+      history.pushState({}, '', `?chatList=${new Date().getTime()}`);
+      window.addEventListener('popstate', () => {
+        if (location.href.indexOf('/page/index?chatList=') > -1) {
+          history.pushState({}, '', `?chatList=${new Date().getTime()}`);
+        }
+      });
+    },
+    initDefaultVariable() {
+      this.socketClient = window.socket;
+      this.doUiAction('pushState', { path: 'chatList' });
+    },
+    setSyncStatusToSyncing() {
+      this.dataSyncStatus = 'syncing'
       window.sync = {
         ing: true
       };
-      this.pushState('chatList');
-
-      // 用户信息需要最先获取，因为可能触发 refreshToken，请求如果同时进行会出现 token 失效
-      await this.initSocket();
-      this.getUserInfo();
-      await this.$refs.leftPanel.init();
+    },
+    setSyncStatusToSuccess() {
+      this.dataSyncStatus = 'success'
       window.sync.ing = false;
     },
-    watch: {
-      nowChatSessionId(v) {
-        try {
-          this.messageTextareaValue = v ? this.draft[v] : null;
-        } catch (e) {
-          this.messageTextareaValue = null;
-        }
-        this.setMsgValue(this.messageTextareaValue);
-        this.nowChatItem = v ? this.$refs.leftPanel.dataList.find(v2 => {
-          return this.getDataId(v2) === v;
-        }) : null;
-        this.$forceUpdate();
+    // ✅禁止系统菜单和文字选中
+    disableSystemEvent() {
+      document.oncontextmenu = function () {
+        event.returnValue =
+          !this.isMobile ||
+          (this.isMobile &&
+            (event.target.localName === 'textarea' || event.target.localName === 'input'));
+      };
+      document.onselectstart = function () {
+        event.returnValue =
+          !this.isMobile ||
+          (this.isMobile &&
+            (event.target.localName === 'textarea' || event.target.localName === 'input'));
+      };
+    },
+    /** 注册移动端返回按钮的处理 */
+    registerSystemBackEvent() {
+      // app端注册返回键
+      window.onpopstate = () => {
+        this.mobChatBack();
+      };
+    },
+    /** 初始化socket */
+    initWebSocket() {
+      window.socket.init();
+      window.socket.addListeners('reConnect', result => this.doUiAction('onSocketReConnect', result));
+      window.socket.addListeners('userNotice', result => this.doUiAction('onUserNotice', result));
+      window.socket.addListeners('userMessage', result => this.doUiAction('onUserMessage', result));
+      window.socket.addListeners('roomNotice', result => this.doUiAction('onRoomNotice', result));
+      window.socket.addListeners('roomMessage', result => this.doUiAction('onRoomMessage', result));
+      window.socket.addListeners('toggleChatSession', result => this.doUiAction('onToggleChatSession', result));
+      window.socket.addListeners('delMessageOffline', result => this.doUiAction('onDelMessageOffline', result));
+      window.socket.addListeners('deleteChatSession', result => this.doUiAction('onDeleteChatSession', result));
+    },
+    async getConstantList() {
+      const data = (
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'allPage',
+              actionId: 'getConstantList',
+              whereIn: {
+                constantKey: [ 'appLinkActionConfig' ]
+              }
+            }
+          }
+        })
+      ).data.appData.resultData;
+      const { rows: constantList } = data;
+      if (constantList.length) {
+        localStorage.setItem('appLinkActionConfig', constantList[0].constantValue)
       }
     },
-    mounted() {
+    async getUserInfo() {
+      await refreshUserInfo();
+      this.reFilterList(this.searchKeyword);
+      this.user = global.user;
+      this.userRoomRoleList = _.cloneDeep(global.userRoomRoleList);
+      this.userRoomRoleListBackUps = _.cloneDeep(global.userRoomRoleList);
+      this.allowPageList = global.allowPageList;
+      // TODO: 目前还没有启用
+      this.allowUiLevelList = global.allowUiLevelList;
+      if (this.isRoom && !this.userRoomRoleList.some(item => item.roomId === this.nowChatSessionId)) {
+        this.nowChatSessionId = null;
+      }
     },
-    methods: {
-      async getUserInfo() {
-        await refreshUserInfo();
-        this.user = global.user;
-        this.allowPageList = global.allowPageList;
-      },
-      preventDefault,
-      onMsgValueChange($event) {
-        this.messageTextareaValue = $event;
-        this.setMsgValue($event)
-      },
-      /**
-       * 断线重连监听
-       * @param hasDisconnectOrError
-       */
-      async onSocketReConnect(hasDisconnectOrError) {
-        if (hasDisconnectOrError) {
-          window.sync.ing = true;
-          await this.getUserInfo();
-          await this.getChatSessionList();
-          window.sync.ing = false;
-        }
-      },
 
-      /** 初始化socket */
-      initSocket() {
-        window.socket.init();
-        window.onSocketReConnect = this.onSocketReConnect;
-        window.socket.addListeners('reConnect', this.onSocketReConnect);
-        window.socket.addListeners('userNotice', this.onUserNotice);
-        window.socket.addListeners('userMessage', this.onUserMessage);
-        window.socket.addListeners('groupNotice', this.onGroupNotice);
-        window.socket.addListeners('groupMessage', this.onGroupMessage);
-      },
-      onUserNotice(result) {
-        this.renderChatSession(result);
-        this.renderNoticeUI(result);
-        this.handleNoticeMessage(result);
-      },
-      onGroupNotice(result) {
-        this.renderChatSession(result);
-        this.renderNoticeUI(result);
-        this.handleNoticeMessage(result);
-      },
-      onUserMessage(result) {
-        this.renderChatSession(result);
-        this.handleNoticeMessage(result);
-      },
-      onGroupMessage(result) {
-        this.renderChatSession(result);
-        this.handleNoticeMessage(result);
-      },
-
-      updateChatListItem(params) {
-        const nowIndex = this.chatListBackUps.findIndex(v => {
-          return v.chatId === this.getDataId(params);
+    // 过滤和排序列表
+    reFilterList(searchKeyword) {
+      searchKeyword = Object.prototype.toString.call(searchKeyword) === '[object Object]' ? '' : searchKeyword
+      searchKeyword = searchKeyword || this.searchKeyword;
+      // 群组好友只需要过滤
+      this.myFriendList = this.myFriendListBackUps.filter(v =>
+        (searchKeyword
+          ? v.friendUsername
+            .toUpperCase()
+            .includes(searchKeyword.toUpperCase())
+          : true)
+      );
+      this.userRoomRoleList = this.userRoomRoleListBackUps
+        .map(v => {
+          v.searchMatch = null;
+          return v;
+        })
+        .filter(v => {
+          if (!searchKeyword) {
+            return true;
+          }
+          if (v.roomName.toUpperCase().includes(searchKeyword.toUpperCase())) {
+            return true;
+          }
+          if (v.roomExtend && v.roomExtend.allRoomUsername
+            && v.roomExtend.allRoomUsername.toUpperCase().includes(searchKeyword.toUpperCase())) {
+            return true;
+          }
+          return false;
         });
-        if (nowIndex >= 0) {
-          for (const key of Object.keys(params)) {
-            if (params[key]) {
-              this.chatListBackUps[nowIndex][key] = params[key];
-            }
+
+      // 会话需要置顶过滤+排序
+      this.chatList = this.chatListBackUps
+        .slice()
+        .filter(v => {
+          if (!searchKeyword) {
+            return true;
           }
+          if (v.chatName && v.chatName.toUpperCase().includes(searchKeyword.toUpperCase())) {
+            return true;
+          }
+          if (v.chatRoomExtend && v.chatRoomExtend.allRoomUsername
+            && v.chatRoomExtend.allRoomUsername.toUpperCase().includes(searchKeyword.toUpperCase())) {
+            return true;
+          }
+          return false;
+        })
+        .map(o => {
+          let maxTime = o.messageTimeString;
+          if (o.topChatOrder && o.topChatOrder.localeCompare(o.messageTimeString) > 0) {
+            maxTime = o.topChatOrder;
+          }
+          o.orderCompare = o.topChatOrder ? 'T' + maxTime : maxTime;
+          return o;
+        })
+        .sort((a, b) => {
+          return b.orderCompare.localeCompare(a.orderCompare);
+        });
+
+      // chatListBackUps 也要重排
+      if (this.chatListBackUps) {
+        this.chatListBackUps = this.chatListBackUps
+          .map(o => {
+            let maxTime = o.messageTimeString;
+            if (o.topChatOrder && o.topChatOrder.localeCompare(o.messageTimeString) > 0) {
+              maxTime = o.topChatOrder;
+            }
+            o.orderCompare = o.topChatOrder ? 'T' + maxTime : maxTime;
+            return o;
+          })
+          .sort((a, b) => {
+            return b.orderCompare.localeCompare(a.orderCompare);
+          });
+      }
+    },
+    preventDefault,
+    /** 手动触发系统后退 */
+    windowBack() {
+      this.$nextTick(() => {
+        if (isMobile) {
+          window.history.back();
         }
-      },
+      });
+    },
+    /**
+     * location.href 匹配
+     * @param searchList
+     */
+    matchLocationSearchStartWith(searchList) {
+      return (
+        historyNowPage &&
+        searchList.some(search => historyNowPage.startsWith(`?${search}`))
+      );
+    },
+    /** 手机端后退事件 */
+    mobChatBack() {
+      if (this.matchLocationSearchStartWith([ 'friendList', 'roomList' ])) {
+        this.menuIndex = 0;
+      }
+      if (this.matchLocationSearchStartWith([ 'createRoom', 'addFriend' ])) {
+        this.leftSelectFriend = false;
+        this.inputDialog = false;
+      }
+      if (
+        this.matchLocationSearchStartWith([
+          'showAccount',
+          'searchByKeyword',
+          'editUserInfo'
+        ])
+      ) {
+        this.accountDialog = false
+      }
+      if (this.matchLocationSearchStartWith([ 'editPasswordDialog' ])) {
+        this.editPasswordDialog = false
+      }
+      if (this.matchLocationSearchStartWith([ 'mobMain' ])) {
+        this.mobileLeftHide = false
+        this.mobileRightHide = true
+        this.mobileMessageTextareaFocus = false;
+        this.$refs.middlePanel.messageTextareaDomBlur();
+      }
+      if (this.matchLocationSearchStartWith([ 'mobAppRightOpen' ])) {
+        this.mobileRightHide = true
+      }
+      if (this.matchLocationSearchStartWith([ 'mobileMessageTextareaFocus' ])) {
+        this.mobileMessageTextareaFocus = false
+        this.$refs.middlePanel.messageTextareaDomBlur();
+      }
+      if (this.matchLocationSearchStartWith([ 'roomDialog' ])) {
+        this.doUiAction('closeRoomDialog');
+      }
+      historyNowPage = location.search;
+      this.$forceUpdate();
+      return false;
+    },
+    /**
+     * 移动端自适应：点击聊天展开聊天窗口
+     * @param root0
+     * @param root0.isRobot
+     * @param root0.friendDeviceId
+     */
+    mobileShowChattingPage({ isRobot, friendDeviceId }) {
+      if (isRobot) {
+        this.friendDeviceId = friendDeviceId;
+      } else {
+        this.friendDeviceId = null;
+      }
+      this.mobileLeftHide = true;
+      this.mobileRightHide = true;
+      this.pushState({ path: 'mobMain' });
+    },
+    onMobileRightHide(event) {
+      this.mobileRightHide = event
+    },
+    /**
+     * 断线重连监听
+     * @param hasDisconnectOrError
+     * @param hasDisconnectOrError.hasError
+     */
+    async onSocketReConnect({ hasError }) {
+      console.log('断线重连监听:index', hasError)
+      if (hasError) {
+        this.doUiAction('setSyncStatusToSyncing')
+        await this.doUiAction('getUserInfo');
+        await this.doUiAction('getFriendList');
+        await this.doUiAction('getChatSessionList', { type: 'onSocketReConnect' });
+        await this.doUiAction('getUserFriendRequest');
+        this.doUiAction('setSyncStatusToSuccess')
+      }
+    },
 
-      // 更新左侧列表的聊天内容和顺序
-      renderChatSession(params) {
-        // 撤回消息，不是撤回的最后一条消息，不用渲染左侧列表
-        const isRevokeButNotIsLastMessage =
-          params.messageStatus === 'revoke' &&
-          dayjs(this.nowChatItem.messageTimestamp).valueOf() > dayjs(params.messageTimestamp).valueOf();
-        if (isRevokeButNotIsLastMessage) return false;
 
-        // 收到消息后需要更新一下 chatList 中的数据
-        this.updateChatListItem(params);
+    onUserNotice(result) {
+      this.renderChatSession(result);
+      this.renderNoticeUI(result);
+      this.handleNoticeMessage(result);
+    },
+    onRoomNotice(result) {
+      this.renderChatSession(result);
+      this.renderNoticeUI(result);
+      this.handleNoticeMessage(result);
+    },
+    onUserMessage(result) {
+      this.renderChatSession(result);
+      this.handleNoticeMessage(result);
+    },
+    onRoomMessage(result) {
+      this.renderChatSession(result);
+      this.handleNoticeMessage(result);
+    },
+    onDelMessageOffline(result) {
+      this.doUiAction('getChatSessionList', { type: 'onDelMessageOffline' });
+    },
+    // socket 置顶的通知
+    onToggleChatSession(result) {
+      const nowIndex = this.chatListBackUps.findIndex(v => {
+        return v.chatId === result.chatId;
+      });
+      if (result.top === true || result.top === false) {
+        this.chatListBackUps[nowIndex].topChatOrder = result.top
+          ? window.dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ')
+          : '';
+      }
+      if (result.muted === true || result.muted === false) {
+        this.chatListBackUps[nowIndex].muted = result.muted;
+      }
+      this.reFilterList();
+    },
+    onDeleteChatSession(result) {
+      const nowIndex = this.chatList.findIndex(v => {
+        return v.chatId === result.chatId;
+      });
+      this.chatList.splice(nowIndex, 1);
+      const backIndex = this.chatListBackUps.findIndex(v => {
+        return v.chatId === result.chatId;
+      });
+      this.chatListBackUps.splice(backIndex, 1);
+    },
 
-        // 消息在左侧列表，并且不是正在聊天中，更新左侧列表对应消息，上下下线的通知不渲染
-        if (params.noticeType !== 'errorNotice') {
-          if (this.isExistInChatSession(params)) {
-            // 未读+1，如果是自己发的，就不需要 +1
-            if (params.fromUserId !== userInfo.userId) {
-              this.chatListBackUps.find(v => {
-                const findSessionByParams = v.chatId === this.getDataId(params);
-                if (findSessionByParams) {
-                  v.unreadCount += 1;
-                  return true;
-                }
-                return false;
-              });
-            }
-            // 更新最新内容
-            // 如果最新的对话有引用，则不在引用中查找 at
-            let atMe = false;
-            if (userInfo.userId !== params.fromUserId) {
-              let realContent = params.messageContent;
-              if (realContent.includes('\n------------------------\n Re @')) {
-                const index = realContent.lastIndexOf(
-                  '\n------------------------\n Re @'
-                );
-                realContent = realContent.slice(
-                  index + '\n------------------------\n '.length
-                );
+    // 更新左侧列表的聊天内容和顺序
+    renderChatSession(params) {
+      // 撤回消息，不是撤回的最后一条消息，不用渲染左侧列表
+      const isRevokeButNotIsLastMessage =
+        params.messageStatus === 'revoke' &&
+        dayjs(this.nowChatItem.messageTimeString).valueOf() > dayjs(params.messageTimeString).valueOf();
+      if (isRevokeButNotIsLastMessage) return false;
+
+      // 收到消息后需要更新一下 chatList 中的数据
+      this.$refs.leftPanel && this.$refs.leftPanel.updateChatListItem(params);
+
+      // 消息在左侧列表，并且不是正在聊天中，更新左侧列表对应消息，上下下线的通知不渲染
+      if (params.noticeType !== 'errorNotice') {
+        if (this.isExistInChatSession(params)) {
+          // 重排后再更新会话显示，否则会有取不到会话的情况
+          this.reFilterList();
+          // 未读+1，如果是自己发的，就不需要 +1
+          if (params.fromUserId !== userInfo.userId) {
+            this.chatList.find(v => {
+              const findSessionByParams = v.chatId === this.getDataId(params);
+              if (findSessionByParams) {
+                v.offlineMessageCount += 1;
+                return true;
               }
-              atMe =
-                realContent.includes(`@${userInfo.username}`) ||
-                realContent.includes('@所有人');
-            }
-            this.$nextTick(() => {
-              if (
-                this.$refs['chatWidget_' + this.getDataId(params)] &&
-                this.$refs['chatWidget_' + this.getDataId(params)].length
-              ) {
-                this.$refs[
-                  'chatWidget_' + this.getDataId(params)
-                ][0].reRenderSessionBySocketMessage(params, {
-                  plusCount:
-                    atMe ||
-                    (this.nowChatSessionId !== this.getDataId(params) &&
-                      params.fromUserId !== userInfo.userId)
-                });
-              }
+              return false;
             });
-          } else {
-            // 消息不带头像，需要更新聊天会话列表，避免没头像
-            this.getChatSessionList();
           }
+          // 更新最新内容
+          // 如果最新的对话有引用，则不在引用中查找 at
+          let atMe = false;
+          if (userInfo.userId !== params.fromUserId) {
+            let realContent = params.messageContent;
+            if (realContent.includes('\n------------------------\n Re @')) {
+              const index = realContent.lastIndexOf(
+                '\n------------------------\n Re @'
+              );
+              realContent = realContent.slice(
+                index + '\n------------------------\n '.length
+              );
+            }
+            atMe =
+              realContent.includes(`@${userInfo.username}`) ||
+              realContent.includes('@所有人');
+          }
+          this.$nextTick(() => {
+            if (
+              window.$vueComponent.leftPanel.$refs['chatWidget_' + this.getDataId(params)] &&
+              window.$vueComponent.leftPanel.$refs['chatWidget_' + this.getDataId(params)].length
+            ) {
+              window.$vueComponent.leftPanel.$refs[
+                'chatWidget_' + this.getDataId(params)
+              ][0].reRenderSessionBySocketMessage(params);
+            }
+          });
+        } else {
+          // 消息不带头像，需要更新聊天会话列表，避免没头像
+          this.doUiAction('getChatSessionList', { type: '消息不带头像，需要更新聊天会话列表，避免没头像' });
         }
+      }
 
-        // 渲染聊天内容
-        if (this.getDataId(params) === this.nowChatSessionId) {
-          this.$refs.middlePanel.getChattingPage().refreshMessage(params);
+      // 渲染聊天内容
+      if (this.getDataId(params) === this.nowChatSessionId) {
+        this.$refs.middlePanel && this.$refs.middlePanel.getChattingPage().refreshMessage(params);
+        this.$forceUpdate();
+      }
+      return null;
+    },
+    renderNoticeUI(params) {
+      if (this.isMsgMuted(params)) {
+        return;
+      }
+      // 渲染好友变动
+      if (params.hasOwnProperty('noticeType')) {
+        if (params.noticeType === 'addUserFriend') {
+          this.$refs.leftPanel.getUserFriendRequest();
+        } else if (
+          params.noticeType === 'acceptUserFriend' ||
+          params.noticeType === 'rejectUserFriend' ||
+          params.noticeType === 'delUserFriend'
+        ) {
+          // 被同意好友请求，要刷新
+          this.doUiAction('getChatSessionList', { type: '被同意好友请求，要刷新' });
+          this.$refs.leftPanel.onAcceptRequest();
+        } else if (
+          params.noticeType === 'createRoom' ||
+          params.noticeType === 'destroyRoom' ||
+          params.noticeType === 'addRoomUser' ||
+          params.noticeType === 'delRoomUser' ||
+          params.noticeType === 'setRoomUserRole' ||
+          params.noticeType === 'transferRoom' ||
+          params.noticeType === 'quitRoom'
+        ) {
+          // 群变动
+          const { toRoomId } = params;
+          this.doUiAction('getUserInfo');
+          this.doUiAction('getChatSessionList', { type: 'renderNoticeUI' });
+          if (this.nowChatSessionId === toRoomId) {
+            this.doUiAction('getRoomInfo')
+          }
+        } else if (
+          params.noticeType === 'errorNotice' &&
+          params.errorCode === 'chat_not_user_friend'
+        ) {
+          this.$refs.middlePanel
+            .getChattingPage()
+            .refreshMessage({
+              ...params.errorReasonSupplement,
+              loading: false,
+              error: true
+            });
           this.$forceUpdate();
         }
-        return null;
-      },
-      getChatSessionList() {
-        return this.$refs.leftPanel.getChatSessionList
-      },
-      renderNoticeUI(params) {
-        // 渲染好友变动
-        if (params.hasOwnProperty('noticeType')) {
-          if (
-            params.noticeType === 'errorNotice' &&
-            params.errorCode === 'chat_not_user_friend'
-          ) {
-            this.$refs.middlePanel
-              .getChattingPage()
-              .refreshMessage({
-                ...params.errorReasonSupplement,
-                loading: false,
-                error: true
-              });
-            this.$forceUpdate();
-          }
-        }
-      },
-      // 聊天操作框初始化完成后
-      onChatInputInit(method) {
-        // 暴露同步操作框内容的方法
-        this.setMsgValue = method;
-      },
-      pushState(path) {
-        if (location.search.includes(path)) {
-          history.replaceState({}, '', `?${path}=${Date.now()}`);
-        } else {
-          history.pushState({}, '', `?${path}=${Date.now()}`);
-        }
-        historyNowPage = location.search;
-      },
+      }
+    },
+    showAccount({ userId }) {
+      this.searchUserUid = userId;
+      this.accountDialog = true;
+      this.pushState({ path: 'showAccount' });
+    },
 
-      getDataName(item) {
-        if (item) {
-          if (item.hasOwnProperty('messageType')) {
-            return item.chatName;
-          }
-          return item.groupName || item.friendUsername;
+    pushState({ path }) {
+      if (location.search.includes(path)) {
+        history.replaceState({}, '', `?${path}=${Date.now()}`);
+      } else {
+        history.pushState({}, '', `?${path}=${Date.now()}`);
+      }
+      historyNowPage = location.search;
+    },
+
+    getDataName(item) {
+      if (item) {
+        if (item.hasOwnProperty('messageType')) {
+          return item.chatName;
         }
-        return null;
-      },
-      getDataId,
+        return item.roomName || item.friendUsername;
+      }
+      return null;
+    },
+    atRoomUser(event) {
+      if (!this.isRoom) {
+        return;
+      }
+      this.$nextTick(() => {
+        this.$refs.middlePanel.messageTextareaDomBlur();
+        this.nowSelectionStart = event.target.selectionStart;
+        this.pushState({ path: 'roomDialog' });
+        this.$refs.rightPanel.openUserList('atUser');
+      });
+    },
 
-      /**
-       * 判断消息是否在聊天列表中
-       * @param params
-       */
-      isExistInChatSession(params) {
-        const dataId = this.getDataId(params);
-        return this.chatList.some(v => this.getDataId(v) === dataId);
-      },
+    /**
+     * 获取发送消息socket actionID
+     * @param forwardType
+     */
+    getSendMsgActionId(forwardType = 0) {
+      if (forwardType === 1) return 'userSendMessageToRoom';
+      else if (forwardType === 2) return 'userSendMessageToUser';
+      return this.isRoom
+        ? 'userSendMessageToRoom'
+        : 'userSendMessageToUser';
+    },
+    /**
+     * 判断消息是否在聊天列表中
+     * @param params
+     */
+    isExistInChatSession(params) {
+      const dataId = this.getDataId(params);
+      return this.chatList.some(v => this.getDataId(v) === dataId);
+    },
 
-      /** 播放消息提示音 **/
-      async playBeep() {
+    /** 播放消息提示音 **/
+    async playBeep() {
+      if (!isApp) {
         try {
-            await didaAudio.play();
-          } catch (e) {
-            if (await window.confirmDialog({
-              title: '您的网页无法自动播放消息提示音，需要确认后播放',
-              titleClass: 'text-body-1'
-            })) {
-              this.playBeepConfirm();
-            }
+          await didaAudio.play();
+        } catch (e) {
+          if (await window.confirmDialog({
+            title: '您的网页无法自动播放消息提示音，需要确认后播放',
+            titleClass: 'text-body-1'
+          })) {
+            this.playBeepConfirm();
           }
-      },
-
-      /** 确认消息提示音 */
-      playBeepConfirm() {
-        didaAudio.play();
-      },
-
-      /**
-       * 通知处理
-       * @param params
-       */
-      handleNoticeMessage(params) {
-        if (params.noticeType) {
-          // 通知类，有内容
-          const isNotEmptyContent = !!params.messageContent;
-          const excludeNoticeType = [ 'onlineNotice', 'offlineNotice' ];
-          if (isNotEmptyContent) {
-            // excludeNoticeType includes params.noticeType
-            if (excludeNoticeType.includes(params.noticeType)) {
-              return;
-            }
-            if (!this.$refs.leftPanel.isMuted) {
-              // excludeNoticeType doesn't includes params.noticeType
-              window.vtoast.showAndNotify({
-                message: getMessageContent(params),
-                title: '通知'
-              });
-              this.playBeep();
-            }
-          }
-          return;
         }
-        // 消息类，不是自己发送的消息, 不是通知类消息
-        if (
-          params.fromUserId !== userInfo.userId &&
-          !this.$refs.leftPanel.isMuted
-        ) {
+      }
+    },
+
+    /** 确认消息提示音 */
+    playBeepConfirm() {
+      if (!isApp) {
+        didaAudio.play();
+      }
+    },
+
+    /**
+     * 通知处理
+     * @param params
+     */
+    handleNoticeMessage(params) {
+      const isNowRoom = this.nowChatSessionId === params.toRoomId;
+      if (params.noticeType && params.noticeType === 'refreshRoomNotice') {
+        // 只更新群直播间的公告信息
+        console.log('只更新群直播间的公告信息');
+        if (isNowRoom) {
+          this.doUiAction('getRoomInfo', { justGetRoomSliderShow: true })
+        }
+        return;
+      }
+      if (this.isMsgMuted(params)) {
+        return;
+      }
+      if (params.noticeType) {
+        // 通知类，有内容
+        const isNotEmptyContent = !!params.messageContent;
+        const excludeNoticeType = [ 'onlineNotice', 'offlineNotice' ];
+        if (isNotEmptyContent && params.messageType === 'room') {
+          // TODO: update room panel info
+          if (params.noticeType === 'setRoomInfo') {
+            this.chatList.find(item => {
+              if (item.chatId === params.toRoomId) {
+                item.chatName = params.toRoomName;
+              }
+              return item.chatId === params.toRoomId;
+            })
+            this.chatListBackUps.find(item => {
+              if (item.chatId === params.toRoomId) {
+                item.chatName = params.toRoomName;
+              }
+              return item.chatId === params.toRoomId;
+            })
+            this.userRoomRoleList.find(item => {
+              if (item.roomId === params.toRoomId) {
+                item.roomName = params.toRoomName;
+              }
+              return item.roomId === params.toRoomId;
+            })
+            this.userRoomRoleListBackUps.find(item => {
+              if (item.roomId === params.toRoomId) {
+                item.roomName = params.toRoomName;
+              }
+              return item.roomId === params.toRoomId;
+            })
+            if (this.nowChatSessionId === params.toRoomId) {
+              this.nowChatItem.roomName = params.toRoomName;
+            }
+            this.$refs.rightPanel && this.$refs.rightPanel.roomInfoChange(params.toRoomId);
+          }
+        }
+        if (isNotEmptyContent) {
+          // excludeNoticeType includes params.noticeType
+          if (excludeNoticeType.includes(params.noticeType)) {
+            // 用户上下线状态改变
+            this.myFriendListBackUps.some(friend => {
+              const isMessageUser = friend.friendId === params.fromUserId;
+              if (isMessageUser) {
+                friend.isOnline = params.noticeType === 'onlineNotice';
+              }
+              return isMessageUser;
+            });
+            return;
+          }
           window.vtoast.showAndNotify({
-            message: `【您有一条新消息】${params.fromUsername
-            }："${getMessageContent(params, true)}"`,
-            title: '新消息'
+            message: getMessageContent(params),
+            title: '通知'
           });
+          if (!this.$refs.leftPanel.isMuted) {
+            this.playBeep();
+          }
+        }
+        return;
+      }
+      // 消息类，不是自己发送的消息, 不是通知类消息
+      if (params.fromUserId !== userInfo.userId) {
+        window.vtoast.showAndNotify({
+          message: `【您有一条新消息】${params.fromUsername
+          }："${getMessageContent(params, true)}"`,
+          title: '新消息'
+        });
+        if (!this.$refs.leftPanel.isMuted) {
           this.playBeep();
         }
-      },
+      }
+    },
 
+    /**
+     * 消息所谓会话是否设置了免打扰
+     * @param msg
+     */
+    isMsgMuted(msg) {
+      if (!msg.toRoomId && msg.fromUserId === userInfo.userId) {
+        return false;
+      }
+      const chatId = msg.toRoomId || msg.fromUserId;
+
+      const chatSession = this.chatListBackUps.find(
+        chat => chat.chatId === chatId
+      );
+      if (!chatSession) {
+        return false;
+      }
+      return chatSession.muted;
     }
-  });
+  }
+});
 </script>
 <style>
-  .navigation-drawer {
-    max-height: 100vh !important;
-    overflow: hidden !important;
+.v-snack--top {
+  top: 60px !important;
+}
+
+.navigation-drawer .v-navigation-drawer__content {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.chatMain {
+  box-sizing: border-box;
+  height: 100vh;
+  background: #f5f7fa;
+}
+
+.navigation-drawer {
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+
+.vFooter .chatToolbar {
+  height: 50px !important;
+  flex: 1;
+}
+
+.vFooter .chatToolbar .v-toolbar__content {
+  height: 50px !important;
+}
+
+.v-navigation-drawer__content {
+  overflow: hidden !important;
+
+}
+
+.text-body-2 {
+  width: 100%;
+  height: 100%;
+}
+
+.text-body-2 .v-input {
+  font-size: 14px;
+}
+
+.text-body-2 .v-text-field {
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+}
+
+.text-body-2 .v-text-field.error--text {
+  border: 2px solid #ff5252;
+  border-radius: 4px;
+}
+
+.leftDataListItemEmpty {
+  align-items: stretch;
+}
+
+.leftDataListItemEmpty .empty_chatInfos {
+  flex: 1;
+  flex-flow: column;
+  align-items: flex-start;
+}
+
+.leftDataListItemEmpty .empty_message {
+  flex: 1;
+  width: 90%;
+  max-height: 14px;
+  background: #EEEEEE;
+}
+
+.leftDataListItemEmpty .empty_title {
+  flex: 1;
+  width: 50%;
+  max-height: 14px;
+  background: #EEEEEE;
+}
+
+.leftDataListItemEmpty .empty_avatar {
+  width: 40px;
+  height: 40px;
+  background: #EEEEEE;
+  border-radius: 20px;
+}
+
+
+.fileInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: -10000px;
+}
+
+.footer {
+  width: 100%;
+  border-top: 1px solid #cccccc;
+  height: 100%;
+  background-color: #fff;
+}
+
+.v-input__slot::before,
+.v-input__slot::after {
+  content: none !important;
+}
+
+.userInfoCard {
+  box-shadow: none !important;
+
+  position: relative;
+}
+
+.nickname {
+  font-size: 14px;
+  line-height: 1.5rem
+}
+
+.whatUp {
+  font-size: 12px;
+  white-space: nowrap
+}
+
+.controlBox {
+  width: 100%;
+  height: 30px;
+  border-bottom: 1px solid #EEEEEE;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  justify-content: space-between;
+  color: #999999;
+
+}
+
+.controlBox span {
+  color: red;
+}
+
+.leftDataList .v-item-group .listItem {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 70px;
+}
+
+.leftDataList {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.leftDataList::-webkit-scrollbar {
+  width: 5px;
+}
+
+.leftDataList::-webkit-scrollbar-track {
+  width: 5px;
+  background-color: #F1F1F1;
+}
+
+.leftDataList::-webkit-scrollbar-thumb {
+  width: 3px;
+  background-color: #E1E1E1;
+  border-radius: 3px;
+}
+
+.leftDataList .activeItem .chatItem {
+  background-color: <$ ctx.app.config.primaryColorA80 $> !important;
+}
+
+.leftDataList .activeItem {
+  background-color: #ffffff !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.leftDataList .isTopChat {
+  overflow: hidden;
+}
+
+.leftDataList .isTopChat::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transform: rotate(-45deg) translate(-2px, -16px);
+  min-height: 0;
+  left: 0;
+  top: 0;
+  z-index: 999999;
+  background-color: #B71C1C;
+}
+
+.searchKeyword .v-label {
+  color: #cccccc;
+  font-size: 12px;
+}
+
+.message {
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #FFFFFF;
+  font-size: 14px;
+  padding: 10px;
+  align-content: start;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.message .progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.newFriendBtn {
+  margin: 10px;
+  width: calc(100% - 20px);
+  min-width: auto !important;
+}
+
+.flex-row-around {
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+
+.contSelect {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.startRecord {
+  background: green;
+  animation: startRecordAnim 0.5s infinite;
+  animation-direction: alternate;
+}
+.v-badge__badge {
+  z-index: 3;
+}
+@keyframes startRecordAnim {
+  from {
+    background: transparent;
+    color: #666666
   }
 
+  to {
+    background: green;
+    color: #FFFFFF
+  }
+}
 
-  .vFooter .chatToolbar {
-    height: 50px !important;
-    flex: 1;
+@-webkit-keyframes startRecordAnim
+
+  /*Safari and Chrome*/
+{
+  from {
+    background: transparent;
+    color: #666666
   }
 
-  .vFooter .chatToolbar .v-toolbar__content {
-    height: 50px !important;
+  to {
+    background: green;
+    color: #FFFFFF
   }
+}
 
-  .v-navigation-drawer__content {
-    overflow: hidden !important;
+.playIcon::before {
+  content: "\F1591";
+  display: inline-block;
+  font: normal normal normal 24px/1 "Material Design Icons";
+  font-size: 18px;
+  text-rendering: auto;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+  color: green;
+  transform: translate(5px, 2px);
+}
 
-  }
+.moreSelToolbar {
+  flex-direction: row !important;
+  font-size: 14px;
+  width: 100%;
+}
 
-  .text-body-2 {
-    width: 100%;
-    height: 100%;
-  }
+.moreSelToolbar button {
+  flex: 1;
+}
 
-  .text-body-2 .v-input {
-    font-size: 14px;
-  }
+.moreSelToolbarMob {
+  padding-bottom: 0px;
+}
 
-  .text-body-2 .v-text-field {
-    border: 2px solid #ffffff;
-    border-radius: 4px;
-  }
+.mob-app-bar-nav-icon {
+  display: none;
+}
 
-  .text-body-2 .v-text-field.error--text {
-    border: 2px solid #ff5252;
-    border-radius: 4px;
-  }
+.mob-app-bar-basic-info {
+  display: none;
+}
 
-  .fileInput {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
+.mob-app-bar-basic-title {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+}
 
-  .footer {
-    width: 100%;
-    border-top: 1px solid #cccccc;
-    height: 100%;
-    background-color: #fff;
-  }
-
-  .v-input__slot::before,
-  .v-input__slot::after {
-    content: none !important;
-  }
-
-  .userInfoCard {
-    box-shadow: none !important;
-
-    position: relative;
-  }
-
-  .nickname {
-    font-size: 14px;
-    line-height: 1.5rem
-  }
-
-  .whatUp {
-    font-size: 12px;
-    white-space: nowrap
-  }
-
-  .controlBox {
-    width: 100%;
-    height: 30px;
-    border-bottom: 1px solid #EEEEEE;
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    justify-content: space-between;
-    color: #999999;
-
-  }
-
-  .controlBox span {
-    color: red;
-  }
-
-  .leftDataList .v-item-group .listItem {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 70px;
+.mob-app-bar-basic-info-back {
+  display: none;
+}
+.stopUserSelect {
+  user-select: none; -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;
+}
+@media screen and (max-width: 600px) {
+  .sendMsgEmoji {
+    right: 72px;
+    bottom: 8px;
   }
 
   .leftDataList {
-    height: calc(100vh - 190px);
-    overflow-y: scroll;
-    overflow-x: hidden;
+    height: calc(100vh - 180px) !important;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
   }
 
-  .leftDataList::-webkit-scrollbar {
-    width: 5px;
+  .mob-app-left {
+    width: 100% !important;
   }
 
-  .leftDataList::-webkit-scrollbar-track {
-    width: 5px;
-    background-color: #F1F1F1;
+  .mob_nickname {
+    display: block !important;
   }
 
-  .leftDataList::-webkit-scrollbar-thumb {
-    width: 3px;
-    background-color: #E1E1E1;
-    border-radius: 3px;
+  .pc_nickname {
+    display: none;
   }
 
-  .leftDataList .activeItem .chatItem {
-    background-color: #E3F2FD !important;
+  .mobExpandChat .emotionContainer {
+    bottom: 68px !important
   }
 
-  .leftDataList .activeItem {
-    background-color: #E3F2FD;
-    position: relative;
-    overflow: hidden;
+  .emotionContainer {
+    width: 100% !important;
+    bottom: 59px !important;
+    height: 223px !important;
   }
 
-  .leftDataList .isTopChat {
-    overflow: hidden;
+  .mobExpandChat .emotionContainer .arrow {
+    right: 58px !important;
   }
 
-  .leftDataList .isTopChat::after {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    transform: rotate(-45deg) translate(-2px, -16px);
-    min-height: 0;
-    left: 0;
-    top: 0;
-    z-index: 999999;
-    background-color: #B71C1C;
+  .emotionContainer .arrow {
+    left: auto !important;
+    right: 42px !important;
   }
 
-  .searchKeyword .v-label {
-    color: #cccccc;
-    font-size: 12px;
+  .fileContent {
+    max-width: 230px !important;
+    overflow: hidden !important;
   }
 
-  .message {
-    position: relative;
-    overflow: hidden;
-    border-radius: 5px;
-    background: #FFFFFF;
-    font-size: 14px;
-    padding: 10px;
-    align-content: start;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  .fileContentFileDesc {
+    display: inline-block !important;
+    font-size: 12px !important;
   }
 
-  .message .progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
+  .mob-app-footer {
   }
 
-  .newFriendBtn {
-    margin: 10px;
-    width: calc(100% - 20px);
-    min-width: auto !important;
+  .mob-app-left--hide {
+    display: none;
   }
 
-  .flex-row-around {
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
+  .mob-app-main {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
-
-  .contSelect {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
+  .mob-app-bar {
+    left: 0 !important;
+    right: 0 !important;
   }
 
-  .startRecord {
-    background: green;
-    animation: startRecordAnim 0.5s infinite;
-    animation-direction: alternate;
-  }
-
-  @keyframes startRecordAnim {
-    from {
-      background: transparent;
-      color: #666666
-    }
-
-    to {
-      background: green;
-      color: #FFFFFF
-    }
-  }
-
-  @-webkit-keyframes startRecordAnim
-
-  /*Safari and Chrome*/
-    {
-    from {
-      background: transparent;
-      color: #666666
-    }
-
-    to {
-      background: green;
-      color: #FFFFFF
-    }
-  }
-
-  .playIcon::before {
-    content: "\F1591";
-    display: inline-block;
-    font: normal normal normal 24px/1 "Material Design Icons";
-    font-size: 18px;
-    text-rendering: auto;
-    line-height: inherit;
-    -webkit-font-smoothing: antialiased;
-    color: green;
-    transform: translate(5px, 2px);
-  }
-
-  .moreSelToolbar {
-    flex-direction: row !important;
-    font-size: 14px;
-    width: 100%;
-  }
-
-  .moreSelToolbar button {
-    flex: 1;
-  }
-
-  .moreSelToolbarMob {
-    padding-bottom: 0px;
+  .mob-app-footer {
+    left: 0 !important;
+    right: 0 !important;
   }
 
   .mob-app-bar-nav-icon {
+    display: block;
+  }
+
+  .mob-app-right--hide {
     display: none;
   }
 
   .mob-app-bar-basic-info {
-    display: none;
-  }
-
-  .mob-app-bar-basic-title {
-    color: #FFFFFF;
-    font-size: 15px;
-    width: 100%;
+    display: block;
+    font-size: 14px !important;
+    font-weight: 500;
   }
 
   .mob-app-bar-basic-info-back {
-    display: none;
+    display: block;
   }
 
-  @media screen and (max-width: 600px) {
-    .sendMsgEmoji {
-      right: 72px;
-      bottom: 8px;
-    }
-
-    .leftDataList {
-      height: calc(100vh - 180px) !important;
-      -webkit-overflow-scrolling: touch;
-      overflow-scrolling: touch;
-    }
-
-    .mob-app-left {
-      width: 100% !important;
-    }
-
-    .mob_nickname {
-      display: block !important;
-    }
-
-    .pc_nickname {
-      display: none;
-    }
-
-    .mobExpandChat .emotionContainer {
-      bottom: 68px !important
-    }
-
-    .emotionContainer {
-      width: 100% !important;
-      bottom: 59px !important;
-      height: 223px !important;
-    }
-
-    .mobExpandChat .emotionContainer .arrow {
-      right: 58px !important;
-    }
-
-    .emotionContainer .arrow {
-      left: auto !important;
-      right: 42px !important;
-    }
-
-    .fileContent {
-      max-width: 230px !important;
-      overflow: hidden !important;
-    }
-
-    .fileContentFileDesc {
-      display: inline-block !important;
-      font-size: 12px !important;
-    }
-
-    .mob-app-footer {}
-
-    .mob-app-left--hide {
-      display: none;
-    }
-
-    .mob-app-main {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-
-    .mob-app-bar {
-      left: 0 !important;
-      right: 0 !important;
-    }
-
-    .mob-app-footer {
-      left: 0 !important;
-      right: 0 !important;
-    }
-
-    .mob-app-bar-nav-icon {
-      display: block;
-    }
-
-    .mob-app-right--hide {
-      display: none;
-    }
-
-    .mob-app-bar-basic-info {
-      display: block;
-      font-size: 15px !important;
-    }
-
-    .mob-app-bar-basic-info-back {
-      display: block;
-    }
-
-    .emotionContainer {
-      left: auto !important;
-    }
-
-    .v-overlay--active {}
-
-    .v-dialog__content--active {}
-
-    .footer {
-      border: 0 !important;
-    }
-
-    .text-body-2 textarea::-webkit-scrollbar,
-    .text-body-2 textarea::-webkit-scrollbar-track,
-    .text-body-2 textarea::-webkit-scrollbar-thumb {
-      width: 0 !important;
-    }
-
-    .text-body-2 textarea {
-      padding: 7px 5px 0 !important;
-      height: 70px !important;
-      line-height: 1.6 !important;
-      overflow: auto !important;
-    }
-
-    .text-body-2 .v-text-field {
-      max-height: 100%;
-    }
-
-    .v-input--dense>.v-input__control>.v-input__slot {
-      margin-bottom: 0 !important;
-    }
-
-    .v-application .v-input {
-      font-size: 12px !important;
-    }
-
-    .v-application .text-body-2 {
-      border: 1px solid #EEEEEE !important;
-      border-radius: 4px !important;
-      overflow: hidden !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      font-size: 12px !important;
-    }
-
-    .v-application .error--text .theme--light.v-counter {
-      transform: translateX(-3px);
-    }
-
-    .v-application .error--text .v-messages__message {
-      zoom: 0.9;
-      transform: translateX(5px);
-    }
-
-    .searchAndNewFriendBox .v-text-field {
-      flex: 1;
-    }
-
-    .newFriendBtn {
-      min-width: 0 !important;
-      width: auto !important;
-      max-width: 100px !important;
-      letter-spacing: 0 !important;
-      padding: 0 0 0 5px !important;
-    }
-
-    .searchAndNewFriendBox {
-      display: flex;
-      align-items: center;
-    }
-
-    .recordBtn {
-      flex: 1 !important;
-      border: 1px solid #cccccc !important;
-      padding: 6px 4px !important;
-      border-radius: 4px !important;
-      text-align: center !important;
-      font-size: 14px !important;
-      color: #666666 !important;
-    }
-
-    .recordSheet {
-      height: 90vh !important;
-      background: transparent !important;
-    }
-
-    .cancelSendAudioArea span {
-      height: 50px;
-      text-align: center;
-      color: #ffffff;
-      transition: all .2s linear;
-      border-radius: 100%;
-      line-height: 50px;
-      display: block;
-      margin: 40px auto;
-    }
-
-    .cancelSendAudioArea .recordAnim {
-      flex: 1;
-      background: url("app/public/img/play.gif") no-repeat bottom;
-    }
-
-    .cancelSendAudioArea.recordSendStatus span {
-      color: red;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .cancelSendAudioArea {
-      flex: 1;
-      display: flex;
-      flex-flow: column;
-    }
-
-    .canSendAudioArea.recordSendStatus span {
-      color: #32d300;
-    }
-
-    .canSendAudioArea span {
-      color: #cccccc;
-      transition: all .2s linear;
-    }
-
-    .canSendAudioArea {
-      height: 50px;
-      background: #ffffff;
-      border-top-left-radius: 100%;
-      border-top-right-radius: 100%;
-      padding-bottom: 100px;
-      width: 120vw;
-      transform: translateX(-10vw);
-      text-align: center;
-      line-height: 100px;
-      font-weight: 400;
-      font-size: 16px;
-      color: #999999;
-    }
-
-    .newMsgCount {
-      bottom: 139px !important;
-    }
-
-
+  .emotionContainer {
+    left: auto !important;
   }
+
+  .v-overlay--active {
+  }
+
+  .v-dialog__content--active {
+  }
+
+  .footer {
+    border: 0 !important;
+  }
+
+  .text-body-2 textarea::-webkit-scrollbar,
+  .text-body-2 textarea::-webkit-scrollbar-track,
+  .text-body-2 textarea::-webkit-scrollbar-thumb {
+    width: 0 !important;
+  }
+
+  .text-body-2 textarea {
+    padding: 7px 5px 0 !important;
+    height: 70px !important;
+    line-height: 1.6 !important;
+    overflow: auto !important;
+  }
+
+  .text-body-2 .v-text-field {
+    max-height: 100%;
+  }
+
+  .v-input--dense > .v-input__control > .v-input__slot {
+    margin-bottom: 0 !important;
+  }
+
+  .v-application .v-input {
+    font-size: 12px !important;
+  }
+
+  .v-application .text-body-2 {
+    border: 1px solid #EEEEEE !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+  }
+
+  .v-application .error--text .theme--light.v-counter {
+    transform: translateX(-3px);
+  }
+
+  .v-application .error--text .v-messages__message {
+    zoom: 0.9;
+    transform: translateX(5px);
+  }
+
+  .searchAndNewFriendBox .v-text-field {
+    flex: 1;
+  }
+
+  .newFriendBtn {
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: 100px !important;
+    letter-spacing: 0 !important;
+    padding: 0 0 0 5px !important;
+  }
+
+  .searchAndNewFriendBox {
+    display: flex;
+    align-items: center;
+  }
+
+  .recordBtn {
+    flex: 1 !important;
+    border: 1px solid #cccccc !important;
+    padding: 6px 4px !important;
+    border-radius: 4px !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    color: #666666 !important;
+  }
+
+  .recordSheet {
+    height: 90vh !important;
+    background: transparent !important;
+  }
+
+  .cancelSendAudioArea span {
+    height: 50px;
+    text-align: center;
+    color: #ffffff;
+    transition: all .2s linear;
+    border-radius: 100%;
+    line-height: 50px;
+    display: block;
+    margin: 40px auto;
+  }
+
+  .cancelSendAudioArea .recordAnim {
+    flex: 1;
+    background: url("app/public/img/play.gif") no-repeat bottom;
+  }
+
+  .cancelSendAudioArea.recordSendStatus span {
+    color: red;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .cancelSendAudioArea {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+  }
+
+  .canSendAudioArea.recordSendStatus span {
+    color: #32d300;
+  }
+
+  .canSendAudioArea span {
+    color: #cccccc;
+    transition: all .2s linear;
+  }
+
+  .canSendAudioArea {
+    height: 50px;
+    background: #ffffff;
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+    padding-bottom: 100px;
+    width: 120vw;
+    transform: translateX(-10vw);
+    text-align: center;
+    line-height: 100px;
+    font-weight: 400;
+    font-size: 16px;
+    color: #999999;
+  }
+
+  .newMsgCount {
+    bottom: 139px !important;
+  }
+
+
+}
 </style>
 {% endblock %}

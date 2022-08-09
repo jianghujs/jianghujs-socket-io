@@ -16,7 +16,7 @@ class DuoxingMessageService extends Service {
       .insert(params)
       .then((result) => result[0]);
 
-    const { fromUserId, toUserId, toGroupId, messageType, noticeType } = params;
+    const { fromUserId, toUserId, toRoomId, messageType, noticeType } = params;
     if (messageType === duoxingChatMessageTypeEnum.user) {
       // 如果可能为第一条消息，则初始化双方的会话
       if (mayFirst) {
@@ -69,28 +69,28 @@ class DuoxingMessageService extends Service {
         );
       }
 
-    } else if (messageType === duoxingChatMessageTypeEnum.group) {
+    } else if (messageType === duoxingChatMessageTypeEnum.room) {
       // 如果可能为第一条消息，则初始化群里所有人的会话
       if (mayFirst) {
         // 获取所有人
-        const groupUserList = await jianghuKnex(tableEnum._user_group_role)
-          .where({ groupId: toGroupId })
+        const roomUserList = await jianghuKnex(tableEnum.user_room_role)
+          .where({ roomId: toRoomId })
           .select();
-        const memberIds = groupUserList.map(groupUser => groupUser.userId);
+        const memberIds = roomUserList.map(roomUser => roomUser.userId);
         await this.checkAndInitSession(
           memberIds,
-          duoxingChatMessageTypeEnum.group,
-          toGroupId,
+          duoxingChatMessageTypeEnum.room,
+          toRoomId,
           messageHistoryId
         );
       }
       // 所有拥有该群的会话，不包括发送方
-      await this.updateChatSessionByGroupId(toGroupId, fromUserId, messageHistoryId, true);
+      await this.updateChatSessionByRoomId(toRoomId, fromUserId, messageHistoryId, true);
       // 再给发送方更新一条
       await this.updateSingleChatSession(
         fromUserId,
-        duoxingChatMessageTypeEnum.group,
-        toGroupId,
+        duoxingChatMessageTypeEnum.room,
+        toRoomId,
         messageHistoryId,
         false
       );
@@ -115,7 +115,7 @@ class DuoxingMessageService extends Service {
       .select();
   }
 
-  async getGroupTopChatIdList(groupIdList, useTable = false) {
+  async getRoomTopChatIdList(roomIdList, useTable = false) {
     const { jianghuKnex } = this.app;
 
     if (!this.viewName) {
@@ -123,9 +123,9 @@ class DuoxingMessageService extends Service {
     }
 
     return jianghuKnex(tableEnum.duoxing_message_history)
-      .where({ messageType: duoxingChatMessageTypeEnum.group })
-      .whereIn("toGroupId", groupIdList)
-      .groupBy("toGroupId")
+      .where({ messageType: duoxingChatMessageTypeEnum.room })
+      .whereIn("toRoomId", roomIdList)
+      .groupBy("toRoomId")
       .max({ id: "id" })
       .select();
   }
@@ -181,11 +181,11 @@ class DuoxingMessageService extends Service {
   }
 
   // 群组对话：对群里面所有用户的会话更新最新会话，并 +1 未读
-  async updateChatSessionByGroupId(groupId, excludeUserId, lastMessageHistoryId, addUnreadCount) {
+  async updateChatSessionByRoomId(roomId, excludeUserId, lastMessageHistoryId, addUnreadCount) {
     const { jianghuKnex } = this.app;
 
     const k = jianghuKnex(tableEnum.duoxing_chat_session, this.ctx)
-      .where({ chatId: groupId, type: duoxingChatMessageTypeEnum.group })
+      .where({ chatId: roomId, type: duoxingChatMessageTypeEnum.room })
       .whereNot({ userId: excludeUserId });
     if (addUnreadCount) {
       k.increment('unreadCount', 1);

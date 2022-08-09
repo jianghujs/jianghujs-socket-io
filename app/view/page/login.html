@@ -1,23 +1,14 @@
-{% extends 'template/jhTemplate.html'%}
+{% extends 'template/duoxingTemplate.html'%}
 
 <!-- vue template 代码块 -->
 {% block vue_template %}
 <v-app>
   <v-main>
-    <v-container
-      fluid
-      class="d-flex flex-column justify-center"
-      style="height: 100vh"
-    >
+    <v-container fluid class="d-flex flex-column justify-center" style="height: 100vh">
       <v-row align="center" justify="center">
         <v-col cols="12" sm="8" md="4">
           <v-card class="elevation-12">
-            <v-toolbar
-              color="secondary"
-              dark
-              flat
-              style="background: rgb(0, 87, 155) !important"
-            >
+            <v-toolbar color="primary" dark flat>
               <v-toolbar-title>
                 <$ ctx.app.config.appTitle $> - 登录
               </v-toolbar-title>
@@ -25,35 +16,16 @@
             </v-toolbar>
             <v-card-text>
               <v-form ref="form">
-                <v-text-field
-                  v-model="userId"
-                  label="账号"
-                  outlined
-                  prepend-inner-icon="mdi-account-circle"
-                  background-color="#ffffff"
-                  :rules="requireRules"
-                />
+                <v-text-field v-model="userId" label="账号" outlined prepend-inner-icon="mdi-account-circle"
+                  background-color="#ffffff" :rules="requireRules" />
 
-                <v-text-field
-                  v-model="password"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="showPassword ? 'text' : 'password'"
-                  @click:append="showPassword = !showPassword"
-                  label="密码"
-                  data-type="password"
-                  @keyup.enter.exact="login"
-                  outlined
-                  prepend-inner-icon="mdi-lock-question"
-                  background-color="#ffffff"
-                  :rules="requireRules"
-                />
+                <v-text-field v-model="password" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPassword ? 'text' : 'password'" @click:append="showPassword = !showPassword" label="密码"
+                  data-type="password" @keyup.enter.exact="login" outlined prepend-inner-icon="mdi-lock-question"
+                  background-color="#ffffff" :rules="requireRules" />
               </v-form>
               <v-card-actions>
-                <v-checkbox
-                  v-model="remember"
-                  color="success"
-                  :label="`记住密码`"
-                />
+                <v-checkbox v-model="remember" color="success" :label="`记住密码`" />
                 <v-spacer></v-spacer>
                 <v-btn elevation="2" depressed color="primary" @click="login">
                   登录
@@ -89,7 +61,9 @@
         loginErrorText: "",
       };
     },
-    created() {},
+    created() {
+      console.log("<$ ctx.userInfo.userId $>")
+    },
     mounted() {
       const urlParams = new URLSearchParams(location.search);
       if (urlParams.get("errorReason")) {
@@ -109,28 +83,34 @@
         const password = this.password;
         const userId = this.userId;
 
-        const data = await jianghuAxios({
+        const resultData = (await jianghuAxios({
           data: {
             appData: {
               pageId: "login",
               actionId: "passwordLogin",
-              actionData: { 
-                userId, password, deviceId 
+              actionData: {
+                userId, password, deviceId, deviceType: 'web'
               },
             },
           },
-        });
-        if (data.data.appData.authToken) {
+        })).data.appData.resultData;
+        if (resultData.authToken) {
           localStorage.setItem(
             `${window.appInfo.appId}_authToken`,
-            data.data.appData.authToken
+            resultData.authToken
           );
           localStorage.setItem(
             `${window.appInfo.appId}_userId`,
-            data.data.appData.userId
+            resultData.userId
           );
           localStorage.setItem(`${window.appInfo.appId}_deviceId`, deviceId);
           vtoast.success("登陆成功");
+          appPostMessage({
+            action: "userLogin",
+            password,
+            userId,
+            appId: window.appInfo.appId,
+          });
           let redirectTo = `/${window.appInfo.appId}`;
           if (redirectUrl) {
             redirectTo = decodeURIComponent(redirectUrl);
@@ -138,13 +118,21 @@
           location.href = redirectTo;
         }
       },
-      toLocaleUpperCaseForLastWord (str) {
-        if (str.length < 1) {
+      checkConversionCondition(str) {
+        const enableConversion = (
+          ((str[0] === '1') || (str[0] === '5') || (str[0] === 'm') ) 
+        );
+        return enableConversion;
+      }
+      ,
+      toLocaleUpperCaseForLastWord(str) {        
+        if (str.length < 1 || !this.checkConversionCondition(str)) {
           return str;
+        } else {
+          const strPrefix = str.substring(0, str.length - 1);
+          const strLastWord = str[str.length - 1];
+          return strPrefix + strLastWord.toLocaleUpperCase();
         }
-        const strPrefix = str.substring(0, str.length - 1);
-        const strLastWord = str[str.length - 1];
-        return strPrefix + strLastWord.toLocaleUpperCase();
       },
       async getDeviceId() {
         const { osName, osVersion } = this.getOsInfo();

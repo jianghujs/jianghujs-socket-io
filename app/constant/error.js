@@ -55,6 +55,7 @@ const errorInfoEnum = Object.freeze({
 
   // =============================chat error: 聊天错误===========================================
   chat_user_not_exist: { errorCode: "chat_user_not_exist", errorReason: "用户不存在" },
+  chat_room_not_found: { errorCode: "chat_room_not_found", errorReason: "群组不存在" },
   chat_already_group_user: { errorCode: "chat_already_group_user", errorReason: "已经是群成员" },
   chat_owner_cannot_exit: { errorCode: "chat_owner_cannot_exit", errorReason: "群主不能直接退出" },
   chat_already_friend: { errorCode: "chat_already_friend", errorReason: "已经是好友关系" },
@@ -85,6 +86,10 @@ const errorInfoEnum = Object.freeze({
     errorCode: "chat_can_not_add_yourself",
     errorReason: "不能添加自己为好友",
   },
+
+  // =============================bot xiaochengxu===========================================
+  xiaochengxu_not_found: { errorCode: "xiaochengxu_not_found", errorReason: "小程序暂不可用" },
+  xiaochengxu_not_online: { errorCode: "xiaochengxu_not_online", errorReason: "小程序不在线" },
 });
 
 module.exports = {

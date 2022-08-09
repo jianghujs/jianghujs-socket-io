@@ -13,7 +13,7 @@
    database: 'jianghujs_demo_socket_io'
    ```
 4. 启动 npm run dev
-   
+
 ## 数据库
 
 ```sql
@@ -38,7 +38,8 @@ use jianghujs_demo_socket_io;
 
 ## FAQ
 
-- egg-jianghu mysql view
+- @jianghujs/jianghu mysql view
+
 ```sql
 DROP VIEW IF EXISTS `_view01_user`;
 CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `_view01_user` AS select * from `_user`;

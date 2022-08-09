@@ -3,30 +3,30 @@
 const Service = require("egg").Service;
 const { BizError, errorInfoEnum } = require("../constant/error");
 const { tableEnum, socketForward, duoxingChatMessageTypeEnum, duoxingMessageStatusEnum } = require("../constant/constant");
-const validateUtil = require("egg-jianghu/app/common/validateUtil");
+const validateUtil = require("@jianghujs/jianghu/app/common/validateUtil");
 const _ = require("lodash");
 const dayjs = require("dayjs");
 const actionDataScheme = Object.freeze({
   getMessageHistory: {
     type: "object",
     additionalProperties: true,
-    required: ["messageType", "userIdOrGroupId"],
+    required: ["messageType", "userIdOrRoomId"],
     properties: {
       lastId: { anyOf: [{ type: "number" }, { type: "null" }] },
       pageSize: { anyOf: [{ type: "number" }, { type: "null" }] },
       messageType: { type: "string" },
-      userIdOrGroupId: { type: "string" },
+      userIdOrRoomId: { type: "string" },
     },
   },
   getMessageHistoryByMaxId: {
     type: "object",
     additionalProperties: true,
-    required: ["messageType", "userIdOrGroupId", "maxId"],
+    required: ["messageType", "userIdOrRoomId", "maxId"],
     properties: {
       maxId: { type: "number" },
       pageSize: { anyOf: [{ type: "number" }, { type: "null" }] },
       messageType: { type: "string" },
-      userIdOrGroupId: { type: "string" },
+      userIdOrRoomId: { type: "string" },
     },
   },
   revokeMessage: {
@@ -40,10 +40,10 @@ const actionDataScheme = Object.freeze({
   delMessageOffline: {
     type: "object",
     additionalProperties: true,
-    required: ["messageType", "userIdOrGroupId"],
+    required: ["messageType", "userIdOrRoomId"],
     properties: {
       messageType: { type: "string" },
-      userIdOrGroupId: { type: "string" },
+      userIdOrRoomId: { type: "string" },
     },
   },
   toggleChatSession: {
@@ -81,11 +81,7 @@ class DuoxingChatService extends Service {
     const { userId, username } = this.ctx.userInfo;
 
     // 获取会话
-    const chatSessionList = await jianghuKnex(tableEnum.view01_duoxing_chat_session)
-      .where({ userId })
-      .orderBy("topChatOrder", "desc")
-      .orderBy("lastMessageHistoryId", "asc")
-      .select();
+    const chatSessionList = await jianghuKnex(tableEnum.view01_duoxing_chat_session).where({ userId }).orderBy("topChatOrder", "desc").orderBy("lastMessageHistoryId", "desc").select();
     if (!chatSessionList || !chatSessionList.length) {
       return { rows: [] };
     }
@@ -107,9 +103,9 @@ class DuoxingChatService extends Service {
       if (chatSession.type === duoxingChatMessageTypeEnum.user) {
         chatSession.chatAvatar = chatSession.chatUserAvatar;
         chatSession.chatName = chatSession.chatUsername;
-      } else if (chatSession.type === duoxingChatMessageTypeEnum.group) {
-        chatSession.chatAvatar = chatSession.chatGroupAvatar;
-        chatSession.chatName = chatSession.chatGroupName;
+      } else if (chatSession.type === duoxingChatMessageTypeEnum.room) {
+        chatSession.chatAvatar = chatSession.chatRoomAvatar;
+        chatSession.chatName = chatSession.chatRoomName;
       } else {
         continue;
       }
@@ -127,7 +123,7 @@ class DuoxingChatService extends Service {
     const { userId, username } = this.ctx.userInfo;
     validateUtil.validate(actionDataScheme.getMessageHistory, actionData);
 
-    const { messageType, userIdOrGroupId } = actionData;
+    const { messageType, userIdOrRoomId } = actionData;
     const pageSize = actionData.pageSize || 20;
     const lastId = actionData.lastId || 2147483647;
 
@@ -136,8 +132,8 @@ class DuoxingChatService extends Service {
         .where("id", "<", lastId)
         .where({ messageType: duoxingChatMessageTypeEnum.user })
         .where(function () {
-          this.where({ toUserId: userIdOrGroupId, fromUserId: userId }).orWhere({
-            fromUserId: userIdOrGroupId,
+          this.where({ toUserId: userIdOrRoomId, fromUserId: userId }).orWhere({
+            fromUserId: userIdOrRoomId,
             toUserId: userId,
           });
         })
@@ -147,11 +143,11 @@ class DuoxingChatService extends Service {
       return { rows: messageHistoryList };
     }
 
-    if (duoxingChatMessageTypeEnum.group === messageType) {
+    if (duoxingChatMessageTypeEnum.room === messageType) {
       const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
         .where("id", "<", lastId)
-        .where({ messageType: duoxingChatMessageTypeEnum.group })
-        .where({ toGroupId: userIdOrGroupId })
+        .where({ messageType: duoxingChatMessageTypeEnum.room })
+        .where({ toRoomId: userIdOrRoomId })
         .orderBy("id", "desc")
         .limit(pageSize);
 
@@ -168,7 +164,7 @@ class DuoxingChatService extends Service {
     const { userId, username } = this.ctx.userInfo;
     validateUtil.validate(actionDataScheme.getMessageHistoryByMaxId, actionData);
 
-    const { messageType, userIdOrGroupId } = actionData;
+    const { messageType, userIdOrRoomId } = actionData;
     const pageSize = actionData.pageSize || 100;
     const maxId = actionData.maxId || 0;
 
@@ -177,8 +173,8 @@ class DuoxingChatService extends Service {
         .where("id", ">", maxId)
         .where({ messageType: duoxingChatMessageTypeEnum.user })
         .where(function () {
-          this.where({ toUserId: userIdOrGroupId, fromUserId: userId }).orWhere({
-            fromUserId: userIdOrGroupId,
+          this.where({ toUserId: userIdOrRoomId, fromUserId: userId }).orWhere({
+            fromUserId: userIdOrRoomId,
             toUserId: userId,
           });
         })
@@ -188,11 +184,11 @@ class DuoxingChatService extends Service {
       return { rows: messageHistoryList };
     }
 
-    if (duoxingChatMessageTypeEnum.group === messageType) {
+    if (duoxingChatMessageTypeEnum.room === messageType) {
       const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
         .where("id", ">", maxId)
-        .where({ messageType: duoxingChatMessageTypeEnum.group })
-        .where({ toGroupId: userIdOrGroupId })
+        .where({ messageType: duoxingChatMessageTypeEnum.room })
+        .where({ toRoomId: userIdOrRoomId })
         .orderBy("id", "desc")
         .limit(pageSize);
 
@@ -224,7 +220,7 @@ class DuoxingChatService extends Service {
     const {
       fromUserId,
       toUserId,
-      toGroupId,
+      toRoomId,
       messageContent,
       messageType,
       messageContentType,
@@ -247,7 +243,7 @@ class DuoxingChatService extends Service {
             fromUserId,
             fromUsername,
             toUserId,
-            toGroupId,
+            toRoomId,
             messageContent,
             messageContentType,
             messageType,
@@ -259,21 +255,21 @@ class DuoxingChatService extends Service {
         await this.ctx.service.duoxingSocket.socketEmit({ userId: toUserId, socketBody });
         await this.ctx.service.duoxingSocket.socketEmit({ userId, socketBody });
         break;
-      case duoxingChatMessageTypeEnum.group:
-        const groupUserList = await jianghuKnex(tableEnum.view01_user_group_role)
-          .where({ groupId: toGroupId })
+      case duoxingChatMessageTypeEnum.room:
+        const roomUserList = await jianghuKnex(tableEnum.view01_user_room_role)
+          .where({ roomId: toRoomId })
           .select();
-        for (const groupUser of groupUserList) {
-          const { userId: targetGroupUserId } = groupUser;
+        for (const roomUser of roomUserList) {
+          const { userId: targetRoomUserId } = roomUser;
           const appData = {
             appId,
             pageId: "socket",
-            actionId: "groupMessage",
+            actionId: "roomMessage",
             actionData: {
               messageFingerprint,
               fromUserId,
               fromUsername,
-              toGroupId,
+              toRoomId,
               messageContent,
               messageContentType,
               messageType,
@@ -283,7 +279,7 @@ class DuoxingChatService extends Service {
           };
           const socketBody = socketForward.bodyBuild({ appData });
           await this.ctx.service.duoxingSocket.socketEmit({
-            userId: targetGroupUserId,
+            userId: targetRoomUserId,
             socketBody,
           });
         }
@@ -303,10 +299,10 @@ class DuoxingChatService extends Service {
     const { userId, username } = this.ctx.userInfo;
     validateUtil.validate(actionDataScheme.delMessageOffline, actionData);
 
-    const { messageType, userIdOrGroupId } = actionData;
+    const { messageType, userIdOrRoomId } = actionData;
 
     await knex(tableEnum.duoxing_chat_session, this.ctx)
-      .where({ userId, type: messageType, chatId: userIdOrGroupId })
+      .where({ userId, type: messageType, chatId: userIdOrRoomId })
       .update({ unreadCount: 0 });
 
     // 通知其它端更新会话列表

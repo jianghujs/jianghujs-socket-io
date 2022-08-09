@@ -1,0 +1,93 @@
+{% include 'component/jhConfirmDialog.html' %}
+<script type="text/x-template" id="_VersionCheck">
+  <div>
+  </div>
+</script>
+
+<script>
+  Vue.component('VersionCheck', {
+    template: '#_VersionCheck',
+    vuetify: new Vuetify(),
+    name: 'VersionCheck',
+    data() {
+      return {
+        isFirstVersionCheck: true
+      };
+    },
+    created() { },
+    mounted() {
+      this.versionCheck();
+      setInterval(async () => {
+        await this.versionCheck();
+      }, 10000);
+    },
+    methods: {
+      // 版本号
+      async versionCheck() {
+        const versionConstantKey = 'version';
+        const constantKeyList = [versionConstantKey];
+        const data = (
+          await window.jianghuAxios({
+            data: {
+              appData: {
+                pageId: 'allPage',
+                actionId: 'getConstantList',
+                whereIn: {
+                  constantKey: constantKeyList
+                }
+              }
+            }
+          })
+        ).data.appData.resultData;
+        const { rows: constantList } = data;
+        const constantMap = {};
+        constantList.forEach(v => {
+          constantMap[v.constantKey] = JSON.parse(v.constantValue);
+        });
+        const serverVersion = constantMap.version;
+        // 灰度测试用户列表
+        if (!_.isEmpty(serverVersion.testUserIdList)) {
+          const userId = '<$ ctx.userInfo.userId $>';
+          const testUserIdList = serverVersion.testUserIdList.split(',');
+          // 存在测试用户ID，但是不包含我
+          if (!_.isEmpty(userId)) {
+            if (testUserIdList.indexOf(userId) == -1) {
+              // web端。直接清除掉即可
+              localStorage.removeItem(versionConstantKey);
+              // APP端。修改下版本号为低版本
+              serverVersion.apkVersion = '1.0.0'
+            }
+          }
+        }
+        localStorage.setItem('serverVersion', JSON.stringify(serverVersion))
+        const localVersion = localStorage.getItem(versionConstantKey);
+        if (isDesktop) {
+          desktopPostMessage({ action: 'appUpdate', serverVersion })
+        }
+        if (serverVersion) {
+          const { version, title, note } = serverVersion;
+
+          // 如果是第一次加载则 直接 覆盖version
+          if (!localVersion || this.isFirstVersionCheck === true) {
+            this.isFirstVersionCheck = false;
+            localStorage.setItem(versionConstantKey, version);
+            return;
+          }
+
+          if (localVersion !== version) {
+            const dialogDone = await window.confirmDialog({ title: '网站有更新，是否刷新', titleClass: 'text-h6', cancelBtn: false });
+            if (!dialogDone) {
+              return false;
+            }
+            localStorage.setItem(versionConstantKey, version);
+            this.versionConfirm();
+          }
+
+        }
+      },
+      versionConfirm() {
+        window.location.href = location.href;
+      }
+    }
+  });
+</script>

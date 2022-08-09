@@ -1,603 +1,658 @@
 <!--聊天对话界面-->
 <script type="text/x-template" id="_ChattingMessagePage">
-  <div ref="chattingPage" class="chattingPage py-sm-3 px-sm-7 pa-2" @click="$emit('click', $event)">
-    <template v-if="chatId">
-      <infinite-loading ref="infiniteLoading" :distance="0" direction="top" @infinite="loadMore">
-        <template #spinner>
-          <div class="emptyChatDetail">
-            <span>加载中</span>
-            <img src="../public/img/login_loading.gif" alt />
-          </div>
-        </template>
-        <template #no-results>
-          <div class="emptyChatDetail">暂无聊天详情</div>
-        </template>
-        <template #no-more>
-          <div class="emptyChatDetail">加载完了~</div>
-        </template>
-      </infinite-loading>
-      <template v-if="chatHistoryList && chatHistoryList.length > 0">
-        <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="index">
-          <v-checkbox
-            color="info"
-            hide-details
-            multiple
-            v-if="isMoreSel && item.messageStatus !== 'revoke' && !item.noticeType"
-            v-model="checkList"
-            :value="item.messageFingerprint"
-          ></v-checkbox>
-          <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }" style="flex:1">
-            <template v-if="item.messageStatus === 'revoke'">
-              <div class="revokeMsg">
-                <span>{{ isFromMe(item) ? '我' : item.fromUsername }} 撤回了消息</span>
-                 <span class="reEdit" v-if="isFromMe(item) && Date.now()-dayjs(item.messageTimestamp).valueOf()<=300000" @click="appendMsg(item.messageContent)" ><a>重新编辑</a></span>
-              </div>
-            </template>
-            <template v-else-if="item.noticeType">
-              <div class="noticeMsg">{{ item.messageContent }}</div>
-            </template>
-            <template v-else>
-              <v-avatar size="40px" class="ma-2 mt-1" @click="showAccount(item.fromUserId)">
-                <dx-img :src="upload + item.fromUserAvatar" userAvatar></dx-img>
-              </v-avatar>
-              <v-icon
-                class="msgArrow"
-                :class="{ 'isFromMe': isFromMe(item) }"
-                :color="isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'"
-              >mdi-menu-left</v-icon>
-              <div class="messageItemBox">
-                <div class="username" :class="{ 'isFromMe': isFromMe(item) }">
-                  <span>{{ item.fromUsername }}</span>
-                  <span
-                    class="mr-2 ml-2"
-                    style="font-size: 12px; color: #999999"
-                  >{{ formatChatTime(item.messageTimeString) }}</span>
-                </div>
-                <div class="messageLine d-flex" :class="{ 'isFromMe': isFromMe(item) }">
-                  <TextMessage
-                    v-if="item.messageContentType === 'text'"
-                    :content="item.messageContent"
-                    :id="item.historyId"
-                    @openMenu="openMenu"
-                  />
-                  <VoiceMessage
-                    v-if="item.messageContentType === 'audio'"
-                    :progress="item.progress"
-                    :loading="item.loading"
-                    :id="item.historyId"
-                    :content="item.messageContent"
-                    :is-me="isFromMe(item)"
-                  />
-                  <ImageMessage
-                    v-if="item.messageContentType === 'image'"
-                    :progress="item.progress"
-                    :content="item.messageContent"
-                    :id="item.historyId"
-                  />
-                  <FileMessage
-                    v-if="item.messageContentType === 'file'"
-                    :progress="item.progress"
-                    :content="item.messageContent"
-                    :id="item.historyId"
-                  />
-                  <CardMessage
-                    v-if="item.messageContentType === 'userCard'"
-                    :content="item.messageContent"
-                    @showAccount="showAccount"
-                    :id="item.historyId"
-                  />
-                  <VideoMessage
-                    v-if="item.messageContentType === 'video'"
-                    :progress="item.progress"
-                    :content="item.messageContent"
-                    :id="item.historyId"
-                  />
-                  <template
-                    v-if="item.loading || item.progress && item.progress > 0 && item.progress < 100"
-                  >
-                    <v-progress-circular indeterminate :size="15" :width="3" color="primary"></v-progress-circular>
-                  </template>
-                  <v-icon
-                    color="red"
-                    v-else-if="item.error === true"
-                    small
-                    @click="resendMsg(item)"
-                  >mdi-alert-circle</v-icon>
-                  <v-menu v-else-if="!isMoreSel" transition="slide-y-transition" bottom>
-                    <template #activator="{ on, attrs }">
-                      <v-btn
-                        dark
-                        icon
-                        :ref="'messageMenuBtn_' + item.historyId"
-                        v-bind="attrs"
-                        class="mt-0"
-                        v-on="on"
-                      >
-                        <v-icon color="grey lighten-1">mdi-dots-horizontal</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        v-for="(menu, i) in getChatMenu(item)"
-                        :key="i"
-                        @click="menu.method(item, item.historyId)"
-                        :class="menu.class"
-                      >
-                        <v-list-item-title>{{ menu.title }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                  <v-spacer></v-spacer>
-                </div>
-              </div>
-              <v-spacer />
-              <div style="width: 60px" />
-            </template>
-          </div>
-        </div>
-      </template>
+<div ref="chattingPage" class="chattingPage py-sm-3 px-sm-7 pa-2" @scroll="onPageScroll" @click="mobileMessageTextareaFocus = false">
+<template v-if="sessionId">
+  <div class="emptyChatDetail">
+    <template v-if="loadState === 'loading'">
+      <span>加载中</span>
+      <img src="../public/img/login_loading.gif" alt/>
     </template>
-    <div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
+    <template v-if="loadState === 'noMore'">
+      暂无聊天详情
+    </template>
+    <template v-if="loadState === 'finish'">
+      加载完了~
+    </template>
   </div>
+  <template v-if="chatHistoryList && chatHistoryList.length > 0">
+    <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.id">
+      <v-checkbox
+        color="primary"
+        hide-details
+        multiple
+        v-if="isMoreSel && item.messageStatus !== 'revoke' && !item.noticeType"
+        v-model="checkList"
+        :value="item.messageFingerprint"
+      ></v-checkbox>
+      <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }" style="flex:1">
+        <template v-if="item.messageStatus === 'revoke'">
+          <div class="revokeMsg">
+            <span>{{ isFromMe(item) ? '我' : item.fromUsername }} 撤回了消息</span>
+            <span class="reEdit" v-if="isFromMe(item) && Date.now()-dayjs(item.messageTimestamp).valueOf()<=300000" @click="appendMsg(item.messageContent)"><a>重新编辑</a></span>
+          </div>
+        </template>
+        <template v-else-if="item.noticeType">
+          <div class="noticeMsg">{{ item.messageContent }}</div>
+        </template>
+        <template v-else>
+          <v-avatar size="40px" class="ma-2 mt-1" @click="showAccount(item.fromUserId)">
+            <dx-img :src="upload + item.fromUserAvatar" userAvatar></dx-img>
+          </v-avatar>
+          <v-icon
+            class="msgArrow"
+            :class="{ 'isFromMe': isFromMe(item) }"
+            :color="isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'"
+          >mdi-menu-left
+          </v-icon>
+          <div class="messageItemBox">
+            <div class="username" :class="{ 'isFromMe': isFromMe(item) }">
+              <span>{{ item.fromUsername }}</span>
+              <span
+                class="mr-2 ml-2"
+                style="font-size: 12px; color: #999999"
+              >{{ formatChatTime(item.messageTimeString) }}</span>
+            </div>
+            <div class="messageLine d-flex" :class="{ 'isFromMe': isFromMe(item) }">
+              <TextMessage
+                v-if="item.messageContentType === 'text'"
+                :content="item.messageContent"
+                :id="item.messageFingerprint"
+                @openMenu="openMenu"
+              />
+              <VoiceMessage
+                v-if="item.messageContentType === 'audio'"
+                :progress="item.progress"
+                :loading="item.loading"
+                :id="item.messageFingerprint"
+                :content="item.messageContent"
+                :is-me="isFromMe(item)"
+              />
+              <ImageMessage
+                v-if="item.messageContentType === 'image'"
+                :progress="item.progress"
+                :content="item.messageContent"
+                :id="item.messageFingerprint"
+              />
+              <FileMessage
+                v-if="item.messageContentType === 'file'"
+                :progress="item.progress"
+                :content="item.messageContent"
+                :id="item.messageFingerprint"
+              />
+              <CardMessage
+                v-if="item.messageContentType === 'userCard'"
+                :content="item.messageContent"
+                @showAccount="showAccount"
+                :id="item.messageFingerprint"
+              />
+              <VideoMessage
+                v-if="item.messageContentType === 'video'"
+                :progress="item.progress"
+                :content="item.messageContent"
+                :id="item.messageFingerprint"
+              />
+              <template
+                v-if="item.loading || item.progress && item.progress > 0 && item.progress < 100"
+              >
+                <v-progress-circular indeterminate :size="15" :width="3" color="primary"></v-progress-circular>
+              </template>
+              <v-icon
+                color="red"
+                v-else-if="item.error === true"
+                small
+                @click="doUiAction('reSendMsg', item)"
+              >mdi-alert-circle
+              </v-icon>
+              <v-menu v-else-if="!isMoreSel" transition="slide-y-transition" bottom>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    dark
+                    icon
+                    :ref="'messageMenuBtn_' + item.messageFingerprint"
+                    v-bind="attrs"
+                    class="mt-0"
+                    v-on="on"
+                  >
+                    <v-icon color="grey lighten-1">mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list dense>
+                  <v-list-item
+                    dense
+                    v-for="(menu, i) in getChatMenu(item)"
+                    :key="i"
+                    @click="menu.method(item, item.messageFingerprint)"
+                    :class="menu.class"
+                  >
+                    <v-list-item-title>{{ menu.title }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+              <v-spacer></v-spacer>
+            </div>
+          </div>
+          <v-spacer/>
+          <div style="width: 60px"/>
+        </template>
+      </div>
+    </div>
+  </template>
+</template>
+<div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
+</div>
 </script>
 
 <script>
-  Vue.component('ChattingMessagePage', {
-    template: '#_ChattingMessagePage',
-    props: {
-      chatId: {
-        type: String,
-        default: ''
-      },
-      isGroup: {
-        type: Boolean,
-        default: false
+window.registerData(
+  {
+    noticeType: [
+      'createRoom',
+      'addRoomUser',
+      'delRoomUser',
+      'setRoomUserRole',
+      'transferRoom',
+      'quitRoom',
+      'destroyRoom'
+    ],
+    chatHistoryList: null,
+    newMsgCount: 0,
+    userInfo: JSON.parse(localStorage.getItem(window.appInfo.appId + '_userInfo')),
+    upload: window.appInfo.upload,
+    public: window.appInfo.public,
+    lastId: 0,
+    completed: false,
+    isMoreSel: false,
+    checkList: [],
+    forwardId: 0,
+    touchTimeHandle: '',
+    loadState: 'loading',
+    loading: false,
+    chatPageScrollHeightBeforeLoad: 0
+  },
+  {
+    chatHistoryListReverse() {
+      return this.chatHistoryList
+        ? this.chatHistoryList.slice().reverse()
+        : [];
+    }
+  }
+)
+
+
+Vue.component('ChattingMessagePage', {
+  template: '#_ChattingMessagePage',
+  mixins: [window.jianghuUiActionMixins],
+  data: () => window.vueData,
+  vueComponent: 'chatSession',
+  computed: window.vueComputed,
+  props: ["sessionId"],
+  watch: {
+    sessionId(value) {
+      this.chatPageScrollHeightBeforeLoad = 0;
+      this.loadState = 'loading';
+      if (this.$state) {
+        this.$state.reset();
       }
-    },
-    data() {
-      return {
-        noticeType: [
-          'createGroup',
-          'addGroupUser',
-          'delGroupUser',
-          'setGroupUserRole',
-          'transferGroup',
-          'quitGroup',
-          'destroyGroup'
-        ],
-        chatHistoryList: null,
-        newMsgCount: 0,
-        userInfo: JSON.parse(localStorage.getItem(window.appInfo.appId + '_userInfo')),
-        upload: window.appInfo.upload,
-        public: window.appInfo.public,
-        lastId: 0,
-        completed: false,
-        isMoreSel: false,
-        checkList: [],
-        forwardId: 0,
-        touchTimeHandle: ''
-      };
-    },
-    computed: {
-      chatHistoryListReverse() {
-        // console.log(this.chatHistoryList)
-        return this.chatHistoryList
-          ? this.chatHistoryList.slice().reverse()
-          : [];
-      }
-    },
-    watch: {
-      // chatId(v, ov) {
-      //   console.log('chatId---', v)
-      //   if (v) {
-      //   }
-      // }
-    },
-    created() {
+      this.chatHistoryList = [];
       this.lastId = 0;
-      // loadMore在此时会自动触发，不需要手动请求
-      // this.getNextChatHistoryList();
-    },
-    destroyed() {
-      if (this.chatId) {
-        window.socket.removeListeners('reConnect', this.onSocketReConnect);
+      this.getNextChatHistoryList("watch:sessionId");
+    }
+  },
+  created() {
+    this.delMessageOffline();
+    this.lastId = 0;
+    // loadMore在此时会自动触发，不需要手动请求
+    // this.getNextChatHistoryList();
+  },
+
+  mounted() {
+    const that = this;
+    setTimeout(() => {
+      window.document.querySelector('.chattingPage').onscroll = function () {
+        that.newMsgCount = 0;
+      };
+    }, 300);
+    // window.socket.addListeners('reConnect', this.onSocketReConnect);
+  },
+  methods: {
+    onPageScroll(event) {
+      if (event.target.scrollTop === 0) {
+        this.loadMore();
       }
     },
-    mounted() {
-      const that = this;
-      setTimeout(() => {
-        window.document.querySelector('.chattingPage').onscroll = function () {
-          that.newMsgCount = 0;
-        };
-      }, 300);
+    openMenu(messageFingerprint) {
+      try {
+        console.log(this.$refs['messageMenuBtn_' + messageFingerprint][0].$el);
+        this.$refs['messageMenuBtn_' + messageFingerprint][0].$el.click();
+      } catch (err) {
+        console.error(err);
+        requestAnimationFrame(() => {
+          this.openMenu(messageFingerprint);
+        });
+      }
     },
-    methods: {
-      openMenu(historyId) {
-        try {
-          console.log(this.$refs['messageMenuBtn_' + historyId][0].$el);
-          this.$refs['messageMenuBtn_' + historyId][0].$el.click();
-        } catch (err) {
-          console.error(err);
-          requestAnimationFrame(() => {
-            this.openMenu(historyId);
-          });
-        }
-      },
-      // 断线重连监听
-      async onSocketReConnect(hasDisconnectOrError) {
-        if (hasDisconnectOrError) {
-          this.lastId = 0;
-          this.getNextChatHistoryList();
-        }
-      },
-      dayjs: window.dayjs,
-      // 更新单条消息
-      refreshMessage(params, update = true) {
-        if (!update) return;
-        if (this.chatHistoryList) {
-          let msgExist = false;
-          this.chatHistoryList = this.chatHistoryList.map(v => {
-            // 如果消息已经存在，直接更新消息内容
-            if (v.messageFingerprint === params.messageFingerprint) {
-              // 发送消息，可能不是好友，或其他错误
-              v = { ...params };
-              msgExist = true;
-            }
-            return v;
-          });
-          if (!msgExist) {
-            // 如果消息不存在，将消息加到最后
-            const isBottom =
-              this.$refs.chattingPage.scrollTop >
-              this.$refs.chattingPage.scrollHeight -
-              this.$refs.chattingPage.offsetHeight -
-              30;
-            this.chatHistoryList.unshift(params);
-            if (isBottom) {
-              this.newMsgCount = 0;
-              this.scrollToBottom();
-            } else {
-              this.newMsgCount += 1;
-            }
+    // 断线重连监听
+    async onSocketReConnect({hasError}) {
+      console.log("断线重连监听:middleChatMessageWidget", hasError)
+      if (hasError) {
+        this.lastId = 0;
+        this.getNextChatHistoryList("onSocketReConnect");
+        this.delMessageOffline();
+      }
+    },
+    dayjs: window.dayjs,
+    // 更新单条消息
+    refreshMessage(params, update = true) {
+      if (!update) return;
+      if (this.chatHistoryList) {
+        let msgExist = false;
+        this.chatHistoryList = this.chatHistoryList.map(v => {
+          // 如果消息已经存在，直接更新消息内容
+          if (v.messageFingerprint === params.messageFingerprint) {
+            // 发送消息，可能不是好友，或其他错误
+            v = {...params};
+            msgExist = true;
+          }
+          return v;
+        });
+        if (!msgExist) {
+          // 如果消息不存在，将消息加到最后
+          const isBottom =
+            this.$refs.chattingPage.scrollTop >
+            this.$refs.chattingPage.scrollHeight -
+            this.$refs.chattingPage.offsetHeight -
+            30;
+          this.chatHistoryList.unshift(params);
+          if (isBottom) {
+            this.newMsgCount = 0;
+            this.scrollToBottom();
+          } else {
+            this.newMsgCount += 1;
           }
         }
-        if (isMobile && !window.mobileLeftHide) {
-          return;
-        }
-      },
-      isFromMe(item) {
-        if (!this.userInfo) {
-          this.userInfo = JSON.parse(
-            localStorage.getItem(window.appInfo.appId + '_userInfo')
-          );
-        }
-        return item.fromUserId === this.userInfo.userId;
-      },
-      // 格式化时间
-      formatChatTime,
-      getChatMenu(item) {
-        const menu = [
-          { title: '引用', method: this.quoteMsg },
-        ];
-        if (item.messageContentType === 'text') {
-          menu.push({ title: '复制', method: this.copyMsg });
-        }
-        if (
-          this.isFromMe(item) &&
-          new Date().getTime() - dayjs(item.messageTimestamp).valueOf() <= 300000
-        ) {
-          menu.push({ title: '撤销', method: this.revokeMsg });
-        }
-        return menu;
-      },
-      async getNextChatHistoryList() {
-        // console.log('getNextChatHistoryList')
-        const result = (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getMessageHistory',
-                actionData: {
-                  lastId: this.lastId,
-                  pageSize: 15,
-                  messageType: this.isGroup ? 'group' : 'user',
-                  userIdOrGroupId: `${this.chatId}`
-                }
+      }
+      if (isMobile && !window.mobileLeftHide) {
+        return;
+      }
+      if (!params.loading && !params.error) {
+        this.delMessageOffline();
+      }
+    },
+
+    refreshChatItem(item) {
+      if (this.chatHistoryList) {
+        const historyList = _.cloneDeep(this.chatHistoryList)
+        this.chatHistoryList = historyList.map(v => {
+          // 如果消息已经存在，直接更新消息内容
+          if (v.messageFingerprint === item.messageFingerprint) {
+            // 发送消息，可能不是好友，或其他错误
+            v = {...item};
+          }
+          return v;
+        });
+      }
+      this.$forceUpdate();
+    },
+    // 已读
+    async delMessageOffline() {
+      this.doUiAction('delMessageOffline')
+    },
+    isFromMe(item) {
+      if (!this.userInfo) {
+        this.userInfo = JSON.parse(
+          localStorage.getItem(window.appInfo.appId + '_userInfo')
+        );
+      }
+      return item.fromUserId === this.userInfo.userId;
+    },
+    // 格式化时间
+    formatChatTime,
+    getChatMenu(item) {
+      const menu = [
+        {title: '引用', method: this.quoteMsg},
+        {title: '转发', method: this.forwardMsg}
+      ];
+      if (isApp && !isIos) {
+        menu.push({title: '分享', method: this.shareMsg});
+      }
+      menu.push({title: '多选', method: this.multiSelect});
+      // if (item.fromUserId !== global.user.userId) {
+      //   menu.push({ title: '语音通话', method: this.voiceCall });
+      // }
+      if (item.messageContentType === 'text') {
+        menu.push({title: '复制', method: this.copyMsg});
+      }
+      // 我自己 && 5分钟内 方可撤之
+      if (
+        this.isFromMe(item) &&
+        new Date().getTime() - dayjs(item.messageTimeString).valueOf() <= 300000
+      ) {
+        menu.push({title: '撤销', method: this.revokeMsg});
+      }
+      if (item.messageContentType === 'image' && isApp) {
+        menu.push({
+          title: '保存到相册',
+          method: this.saveImageToPhotosAlbum
+        });
+      }
+      return menu;
+    },
+    async getNextChatHistoryList(type) {
+      if (this.lastId) {
+        // 不是当前群聊的第一次加载
+        this.isChatFirstLoad = false;
+      }
+      if (this.loading) return;
+      this.loading = true;
+      const result = (
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'chat',
+              actionId: 'getMessageHistory',
+              actionData: {
+                lastId: this.lastId,
+                pageSize: 15,
+                messageType: this.isRoom ? 'room' : 'user',
+                userIdOrRoomId: `${this.nowChatSessionId}`
               }
             }
+          }
+        })
+      ).data.appData.resultData;
+      if (this.lastId !== 0) {
+        this.chatHistoryList.push(...result.rows);
+        this.loadState = result.rows.length ? null : 'noMore';
+      } else {
+        // 第一次加载，滚动到最后
+        this.chatHistoryList = result.rows;
+        this.scrollToBottom({mustToBottom: true});
+        this.loadState = result.rows.length ? null : 'finish';
+      }
+      if (this.chatHistoryList.length) {
+        this.lastId = this.chatHistoryList.slice(-1)[0].id;
+      }
+      this.loading = false;
+      this.resetScrollTop(0)
+    },
+    resetScrollTop(count) {
+      const _chatPageScrollHeightBeforeLoad = this.$refs.chattingPage.scrollHeight;
+      if (_chatPageScrollHeightBeforeLoad > this.chatPageScrollHeightBeforeLoad) {
+        this.$refs.chattingPage.scrollTop = _chatPageScrollHeightBeforeLoad - this.chatPageScrollHeightBeforeLoad;
+      } else {
+        if (count < 50) {
+          requestAnimationFrame(() => {
+            this.resetScrollTop(++count);
           })
-        ).data.appData;
-        if (this.lastId !== 0) {
-          this.chatHistoryList.push(...result.rows);
-        } else {
-          // 第一次加载，滚动到最后
-          this.chatHistoryList = result.rows;
-          this.scrollToBottom(true);
         }
-        if (this.chatHistoryList.length) {
-          this.lastId = this.chatHistoryList.slice(-1)[0].id;
-        }
-
-        if (result.rows.length === 0) {
-          this.completed = true;
-        }
-      },
-      mustSetScrollTop() {
-        if (window.touchIng) return false;
-        requestAnimationFrame(() => {
-          try {
-            const scrollHeight = this.$refs.chattingPage.scrollHeight;
-            if (
-              this.$refs.chattingPage.offsetHeight +
-              this.$refs.chattingPage.scrollTop <
-              scrollHeight
-            ) {
-              this.$refs.chattingPage.scrollTop = scrollHeight;
-              this.mustSetScrollTop();
-            }
-          } catch (e) {
+      }
+    },
+    mustSetScrollTop() {
+      if (window.touchIng) return false;
+      requestAnimationFrame(() => {
+        try {
+          const scrollHeight = this.$refs.chattingPage.scrollHeight;
+          if (
+            this.$refs.chattingPage.offsetHeight +
+            this.$refs.chattingPage.scrollTop <
+            scrollHeight - 10
+          ) {
+            this.$refs.chattingPage.scrollTop = scrollHeight;
             this.mustSetScrollTop();
           }
-        });
-        return false;
-      },
-      scrollToBottom(mustToBottom) {
-        this.newMsgCount = 0;
-        this.$nextTick(() => {
-          requestAnimationFrame(() => {
-            try {
-              if (mustToBottom) {
-                this.mustSetScrollTop();
-              } else {
-                this.$refs.chattingPage.scrollTop =
-                  this.$refs.chattingPage &&
-                  this.$refs.chattingPage.scrollHeight;
-              }
-              this.$forceUpdate();
-            } catch (err) { }
-          });
-        });
-      },
-      async copyMsg(item, id) {
-        const copymsg = window.document.querySelector('#copymsg');
-        const btn = window.document.querySelector('#copymsgbtn');
-        copymsg.value = item.messageContent;
-        btn.click();
-        copymsg.blur();
-        window.vtoast.success('复制成功');
-      },
-      quoteMsg(item) {
-        this.$emit('quoteMsg', item);
-      },
-      saveImageToPhotosAlbum(item) {
-        appPostMessage({
-          action: 'imageSaveToAlbum',
-          name: JSON.parse(item.messageContent).filename,
-          path: `${location.origin}/${window.appInfo.appId}/upload/${JSON.parse(item.messageContent).downloadPath
-          }`
-        });
-      },
-      revokeMsg(item) {
-        const chatHistoryListIndex = this.chatHistoryList.findIndex((v, i) => {
-          return v.messageFingerprint === item.messageFingerprint;
-        });
-        this.chatHistoryList[chatHistoryListIndex].messageContent = '撤销消息';
-        this.chatHistoryList[chatHistoryListIndex].messageStatus = 'revoke';
-        this.$emit('revokeMsg', item);
-      },
-      resendMsg(item) {
-        this.$emit('reSendMsg', item);
-      },
-      deleteMsg(item) {
-        this.chatHistoryList = this.chatHistoryList.filter((v, i) => {
-          return v.id !== item.id;
-        });
-        this.$emit('deleteMsg', item);
-        this.$forceUpdate();
-      },
-      showAccount(item) {
-        this.$emit('showAccount', item);
-      },
-      async loadMore($state) {
-        await this.getNextChatHistoryList();
-        if (!this.completed) {
-          $state.loaded();
-        } else {
-          $state.complete();
+        } catch (e) {
+          this.mustSetScrollTop();
         }
-      },
-      appendMsg(msg) {
-        this.$emit('appendMsg', msg)
+      });
+      return false;
+    },
+    scrollToBottom(obj = {}) {
+      const mustToBottom = obj.mustToBottom
+      this.newMsgCount = 0;
+      this.$nextTick(() => {
+        try {
+          if (mustToBottom) {
+            this.mustSetScrollTop();
+          } else {
+            this.$refs.chattingPage.scrollTop =
+              this.$refs.chattingPage &&
+              this.$refs.chattingPage.scrollHeight;
+          }
+          this.$forceUpdate();
+        } catch (err) {
+        }
+      });
+    },
+    async copyMsg(item, id) {
+      const copymsg = window.document.querySelector('#copymsg');
+      const btn = window.document.querySelector('#copymsgbtn');
+      copymsg.value = item.messageContent;
+      btn.click();
+      copymsg.blur();
+      window.vtoast.success('复制成功');
+    },
+    shareMsg(item) {
+      appPostMessage({action: 'shareMsg', msg: item})
+    },
+    quoteMsg(item) {
+      this.doUiAction('onQuoteMsg', item)
+    },
+    saveImageToPhotosAlbum(item) {
+      appPostMessage({
+        action: 'imageSaveToAlbum',
+        name: JSON.parse(item.messageContent).filename,
+        path: `${location.origin}/${window.appInfo.appId}/upload/${JSON.parse(item.messageContent).downloadPath
+        }`
+      });
+    },
+    revokeMsg(item) {
+      const chatHistoryListIndex = this.chatHistoryList.findIndex((v, i) => {
+        return v.messageFingerprint === item.messageFingerprint;
+      });
+      this.chatHistoryList[chatHistoryListIndex].messageContent = '撤销消息';
+      this.chatHistoryList[chatHistoryListIndex].messageStatus = 'revoke';
+      this.doUiAction('sendRevokeMsg', item)
+    },
+    deleteMsg(item) {
+      this.chatHistoryList = this.chatHistoryList.filter((v, i) => {
+        return v.id !== item.id;
+      });
+      this.$emit('deleteMsg', item);
+      this.$forceUpdate();
+    },
+    showAccount(item) {
+      this.doUiAction('showAccount', {userId: item})
+    },
+    async loadMore() {
+      if (this.loadState !== 'finish' && this.loadState !== 'noMore') {
+        this.loadState = 'loading';
+        this.chatPageScrollHeightBeforeLoad = Math.max(this.$refs.chattingPage.scrollHeight, this.chatPageScrollHeightBeforeLoad);
+        if (!this.loading) {
+          if (this.lastId !== 0) {
+            // 第一次加载，滚动到最后
+            await this.getNextChatHistoryList("loadMore")
+          }
+        }
       }
+    },
+    forwardMsg(item) {
+      this.forwardId = item.messageFingerprint;
+      this.doUiAction('forwardSimple')
+    },
+    multiSelect() {
+      this.isMoreSel = true;
+      this.doUiAction('moreSel')
+    },
+    multiSelectClose() {
+      this.isMoreSel = false;
+    },
+    appendMsg(msg) {
+      this.messageTextareaValue = `${this.messageTextareaValue || ''}${msg || ''}`
+    },
+    voiceCall(item, messageFingerprint) {
+      this.doUiAction('voiceCall', item)
     }
-  });
+  }
+});
 </script>
 <style>
-  .revokeMsg {
-    width: 100%;
-    line-height: 50px;
-    font-size: 13px;
-    color: #999999;
-    text-align: center;
-  }
+.revokeMsg {
+  width: 100%;
+  line-height: 50px;
+  font-size: 13px;
+  color: #999999;
+  text-align: center;
+}
 
-  .reEdit {
-    line-height: 50px;
-    font-size: 13px;
-    color: blue;
-    text-align: left;
-  }
+.reEdit {
+  line-height: 50px;
+  font-size: 13px;
+  color: blue;
+  text-align: left;
+}
 
-  .noticeMsg {
-    width: 100%;
-    line-height: 50px;
-    font-size: 13px;
-    color: #999999;
-    text-align: center;
-  }
+.noticeMsg {
+  width: 100%;
+  line-height: 50px;
+  font-size: 13px;
+  color: #999999;
+  text-align: center;
+}
 
-  .chattingPage {
-    margin-top: 0.1%;
-    background: #f5f7fa;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 99.8%;
-    position: relative;
-    -webkit-overflow-scrolling: touch;
-  }
+.chattingPage {
+  margin-top: 0.1%;
+  background: #f5f7fa;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 99.8%;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 40px !important;
+}
 
-  .chattingPage::-webkit-scrollbar {
-    width: 5px;
-  }
+.chattingPage::-webkit-scrollbar {
+  width: 5px;
+}
 
-  .chattingPage::-webkit-scrollbar-thumb {
-    width: 3px;
-    background: #e1e1e1;
-  }
+.chattingPage::-webkit-scrollbar-thumb {
+  width: 3px;
+  background: #e1e1e1;
+}
 
-  .chattingPage::-webkit-scrollbar-track {
-    width: 5px;
-    background: #f1f1f1;
-  }
+.chattingPage::-webkit-scrollbar-track {
+  width: 5px;
+  background: #f1f1f1;
+}
 
-  .chattingPage .messageItem {
-    display: flex;
-    align-items: start;
-    margin: 10px 0;
-  }
+.chattingPage .messageItem {
+  display: flex;
+  align-items: start;
+  margin: 10px 0;
+}
 
-  .chattingPage .messageItem quote {
-    padding: 4px;
-    margin-bottom: 4px;
-    font-size: 13px;
-    background: #f0f6f6;
-    display: block;
-    font-style: italic;
-  }
+.chattingPage .messageItem quote {
+  padding: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  background: #f0f6f6;
+  display: block;
+  font-style: italic;
+}
 
-  .chattingPage .messageItem.isFromMe quote {
-    padding: 4px;
-    margin-bottom: 4px;
-    font-size: 13px;
-    background: #e6f8f7;
-    display: block;
-    font-style: italic;
-  }
+.chattingPage .messageItem.isFromMe quote {
+  padding: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  background: #e6f8f7;
+  display: block;
+  font-style: italic;
+}
 
-  .chattingPage .messageItem.isFromMe {
-    flex-direction: row-reverse;
-  }
+.chattingPage .messageItem.isFromMe {
+  flex-direction: row-reverse;
+}
 
-  .chattingPage .messageItem.isFromMe .message {
-    background: #cceaff;
-    word-break: break-word;
-  }
+.chattingPage .messageItem.isFromMe .message {
+  background: #cceaff;
+  word-break: break-word;
+}
 
-  .textContent {
-    word-break: break-word;
-  }
+.textContent {
+  word-break: break-word;
+}
 
-  .chattingPage .messageItem.isFromMe .messageItemBox {
-    align-items: flex-end;
-  }
+.chattingPage .messageItem.isFromMe .messageItemBox {
+  align-items: flex-end;
+}
 
-  .messageItemBox {
-    display: flex;
-    flex-flow: column;
-    align-items: flex-start;
-  }
+.messageItemBox {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
 
-  .chattingPage .messageItem.isFromMe .username {
-    text-align: right;
-  }
+.chattingPage .messageItem.isFromMe .username {
+  text-align: right;
+}
 
-  .chattingPage .messageItem .v-icon.msgArrow {
-    padding: 0;
-    width: 4px;
-    height: 4px;
-    line-height: 4px;
-    text-align: center;
-    margin-top: 25px;
-  }
+.chattingPage .messageItem .v-icon.msgArrow {
+  padding: 0;
+  width: 4px;
+  height: 4px;
+  line-height: 4px;
+  text-align: center;
+  margin-top: 25px;
+}
 
-  .chattingPage .messageItem .v-icon.isFromMe {
-    transform: rotate(180deg);
-  }
+.chattingPage .messageItem .v-icon.isFromMe {
+  transform: rotate(180deg);
+}
 
-  .emptyChatDetail {
-    width: 100%;
-    text-align: center;
-    line-height: 100px;
-    color: #999999;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.emptyChatDetail {
+  text-align: center;
+  color: #999999;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  justify-content: center;
+  width: 100%;
+  line-height: 30px !important;
+  overflow: hidden;
+}
 
-  .emptyChatDetail img {
-    width: 20px;
-    height: 20px;
-  }
+.emptyChatDetail img {
+  width: 20px;
+  height: 20px;
+}
 
-  .username.isFromMe {
-    flex-direction: row-reverse;
-  }
+.username.isFromMe {
+  flex-direction: row-reverse;
+}
 
-  .messageLine {
-    justify-content: start;
-  }
+.messageLine {
+  justify-content: start;
+}
 
-  .messageLine.isFromMe {
-    flex-direction: row-reverse;
-  }
+.messageLine.isFromMe {
+  flex-direction: row-reverse;
+}
 
-  .username {
-    display: flex;
-    color: #666666;
-    font-size: 12px;
-  }
+.username {
+  display: flex;
+  color: #666666;
+  font-size: 12px;
+}
 
-  .newMsgCount {
-    position: fixed;
-    bottom: 289px;
-    left: 50%;
-    background-color: #cccccc;
-    transform: translateX(-50%);
-    border-radius: 20px;
-    padding: 5px 10px;
-    font-size: 12px;
-  }
-
-  .emptyChatDetail {
-    animation: loadingShown 0.3s infinite;
-    /* Safari 和 Chrome */
-    animation-iteration-count: 1;
-    overflow: hidden;
-  }
-
-  @keyframes loadingShown {
-    from {
-      height: 0px;
-    }
-
-    to {
-      height: 100px;
-    }
-  }
-
-  @-webkit-keyframes loadingShown
-
-  /*Safari and Chrome*/
-    {
-    from {
-      height: 0px;
-    }
-
-    to {
-      height: 100px;
-    }
-  }
+.newMsgCount {
+  position: fixed;
+  bottom: 289px;
+  left: 50%;
+  background-color: #cccccc;
+  transform: translateX(-50%);
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
 </style>

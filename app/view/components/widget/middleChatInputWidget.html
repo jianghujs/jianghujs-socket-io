@@ -8,18 +8,21 @@
       <v-btn
         class="emoticon-open-btn"
         icon
-        @mousedown="$emit('preventDefault')"
+        @mousedown="doUiAction('preventDefault')"
         @mouseup="emotionStatus = !emotionStatus"
       >
         <v-icon>mdi-emoticon-outline</v-icon>
       </v-btn>
-      <v-btn icon class="fileInputBox" @click="fileInputTap('filePicker')">
+      <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'filePicker' })">
         <v-icon>mdi-folder-open-outline</v-icon>
       </v-btn>
-      <v-btn icon class="fileInputBox" @click="fileInputTap('imagePicker')">
+      <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
         <v-icon>mdi-image-outline</v-icon>
       </v-btn>
-      <v-btn icon @click="startRecordMethod" :class="{ 'startRecord': startRecord }">
+      <v-btn icon @click="doUiAction('openFriendDialog')">
+        <v-icon>mdi-card-account-details-outline</v-icon>
+      </v-btn>
+      <v-btn icon @click="doUiAction('startRecordMethod')" :class="{ 'startRecord': startRecord }">
         <v-icon>mdi-microphone</v-icon>
       </v-btn>
       <v-btn v-if="recordFile" icon @click="playRecord" :color="recordPlayIng ? 'red' : '#666666'">
@@ -27,6 +30,9 @@
       </v-btn>
       <v-btn v-if="recordFile" depressed small color="success" @click="sendAudioMsg()">发送录音</v-btn>
       <v-spacer />
+       <!-- <v-btn icon @click="doUiAction('voiceCall', null)">
+        <v-icon>mdi-phone</v-icon>
+      </v-btn> -->
     </v-toolbar>
     <div
       class="flex-grow-1 d-flex ml-2"
@@ -60,7 +66,11 @@
           placeholder="输入聊天信息，按Enter发送"
           @keydown.enter.exact.prevent
           @keydown.13.exact="() => {
-            sendMsg({})
+            if (this.window.isApp) {
+              newline();
+              return;
+            }
+            doUiAction('sendMsg', {})
           }"
           @keydown.229.exact="() => { }"
           @keydown.ctrl.enter.exact="newline"
@@ -70,7 +80,7 @@
           ref="messageTextareaDom"
         />
       </v-form>
-      <div v-else class="recordBtn" @touchstart="$emit('preventDefault')">
+      <div v-else class="recordBtn" @touchstart="doUiAction('preventDefault')">
         <span class="contSelect">按住 说话</span>
         <v-bottom-sheet v-if="startRecord" v-model="startRecord" class="recordUI">
           <v-sheet class="recordSheet d-flex flex-column">
@@ -92,7 +102,7 @@
           class="ml-2 emoticon-open-btn"
           text
           icon
-          @touchstart="$emit('preventDefault')"
+          @touchstart="doUiAction('preventDefault')"
           @touchend="emotionStatus = !emotionStatus"
           color="grey darken-1"
         >
@@ -102,20 +112,20 @@
           class="other-open-btn"
           text
           icon
-          @touchstart="$emit('preventDefault')"
+          @touchstart="doUiAction('preventDefault')"
           @click="moreSheetOpen = true"
           v-if="!mobExpandChat && (messageTextareaValue || '') == ''"
           color="grey darken-1"
         >
-          <v-icon>mdi-dots-horizontal-circle-outline</v-icon>
+          <v-icon>mdi-plus-circle-outline</v-icon>
         </v-btn>
         <v-btn
           v-if="mobExpandChat || (messageTextareaValue || '') !== ''"
           depressed
           small
           color="primary"
-          @mousedown="$emit('preventDefault')"
-          @mouseup="sendMsg({})"
+          @mousedown="doUiAction('preventDefault')"
+          @mouseup="doUiAction('sendMsg', {})"
           class="sendMsgBtn mt-1"
         >发送</v-btn>
       </template>
@@ -123,25 +133,35 @@
 
     <v-bottom-sheet v-if="moreSheetOpen" v-model="moreSheetOpen">
       <v-sheet class="moreSheet d-flex flex-row-around" height="150px">
-        <div class="fileInputBox" @click="fileInputTap('imagePicker')">
+        <!-- <div class="fileInputBox d-flex flex-column" @click="doUiAction('voiceCall', null)" >
+          <v-icon size="40">mdi-phone</v-icon>
+          <span class="d-block text-center" style="font-size: 14px">语音通话</span>
+        </div> -->
+        <div class="fileInputBox d-flex flex-column" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
           <v-icon size="40">mdi-image-outline</v-icon>
-          <span class="d-block text-center">图片</span>
+          <span class="d-block text-center" style="font-size: 14px">发送图片</span>
         </div>
-        <div class="fileInputBox" @click="fileInputTap('filePicker')">
+        <div class="fileInputBox d-flex flex-column" @click="doUiAction('fileInputTap', { type: 'filePicker' })">
           <v-icon size="40">mdi-folder-open-outline</v-icon>
-          <span class="d-block text-center">文件</span>
+          <span class="d-block text-center" style="font-size: 14px">发送文件</span>
+        </div>
+        <div class="d-flex flex-column" @click="sendPersonCard">
+          <v-icon size="40">mdi-card-account-details-outline</v-icon>
+          <span class="d-block text-center" style="font-size: 14px">发送名片</span>
         </div>
       </v-sheet>
     </v-bottom-sheet>
-    <input
-      ref="filePicker"
-      type="file"
-      class="fileInput"
-      @change="onChooseFile"
-      v-show="mobExpandChat"
-    />
-    <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage" />
-    <input ref="videoPicker" type="file" class="fileInput" accept="video/*" @change="onChooseVideo" />
+    <template v-if="!isApp">
+      <input
+        ref="filePicker"
+        type="file"
+        class="fileInput"
+        @change="onChooseFile"
+        v-show="mobExpandChat"
+      />
+      <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage" />
+      <input ref="videoPicker" type="file" class="fileInput" accept="video/*" @change="onChooseVideo" />
+    </template>
     <div class="d-flex ma-2 align-center justify-end" v-if="!isMobile">
       <template v-if="mobExpandChat">
         <span class="caption" style="color: #BDBDBD">按 Ctrl+Enter 换行，按 Enter 发送</span>
@@ -150,8 +170,8 @@
       <v-btn
         depressed
         color="primary"
-        @mousedown="$emit('preventDefault')"
-        @mouseup="sendMsg({})"
+        @mousedown="doUiAction('preventDefault')"
+        @mouseup="doUiAction('sendMsg', {})"
       >发送</v-btn>
     </div>
     <Emotion
@@ -169,55 +189,20 @@
 </script>
 
 <script>
-  Vue.component('ChatInputWidget', {
-    template: '#_ChatInputWidget',
-    props: {
-      mobExpandChat: {
-        type: Boolean,
-        default: false
-      },
-      nowChatSessionId: {
-        type: String,
-        default: null
-      },
-      sendMsg: {
-        type: Function,
-        default: () => { }
-      },
-      draft: {
-        type: Object,
-        default: {}
-      },
-      msgValue: {
-        type: String,
-        default: ''
-      },
-      mobileMessageTextareaFocus: {
-        type: Boolean,
-        default: false
-      }
+  window.registerData(
+    {
+      emotionStatus: false, // 表情包开关
+      startRecord: false, // 是否开始录音
+      recordFile: null, // 录音文件
+      recordPlayIng: false, // 播放状态
+      recordPlaySource: null, // 播放状态
+      recordSendStatus: true, // 松开手指的位置，决定是否发送语音
+      recordMode: false, // 语音模式
+      moreSheetOpen: false,
+      msgInputValueLength: len => v =>
+        (v || '').length < len || `消息内容最长${len}个文字`
     },
-    data() {
-      return {
-        emotionStatus: false, // 表情包开关
-        startRecord: false, // 是否开始录音
-        recordFile: null, // 录音文件
-        recordPlayIng: false, // 播放状态
-        recordPlaySource: null, // 播放状态
-        recordSendStatus: true, // 松开手指的位置，决定是否发送语音
-        recordMode: false, // 语音模式
-        messageTextareaValue: null, // 输入的聊天内容
-        moreSheetOpen: false,
-        msgInputValueLength: len => v =>
-          (v || '').length < len || `消息内容最长${len}个文字`
-      };
-    },
-    created() {
-      this.initMob();
-      this.$emit('onChatInputInit', this.setMsgValue);
-      this.messageTextareaValue = this.msgValue;
-    },
-    computed: {
+    {
       textareaExpanded() {
         return (
           this.mobExpandChat ||
@@ -225,31 +210,38 @@
             this.messageTextareaValue.length &&
             !this.recordMode)
         );
-      },
-      isMobile() {
-        return this.$vuetify.breakpoint.xs;
-      },
+      }
+    }
+  )
+
+  Vue.component('ChatInputWidget', {
+    template: '#_ChatInputWidget',
+    mixins: [ window.jianghuUiActionMixins ],
+    data: () => window.vueData,
+    vueComponent: 'chatInput',
+    computed: window.vueComputed,
+    created() {
+      this.initMob();
     },
     watch: {
       recordMode(v) {
         // 是否开启了录音模式，先发起权限申请
         if (v) {
-          Recorder.getPermission().then(
-            () => {
-              console.log('给权限了');
-            },
-            error => {
-              console.log(`${error.name} : ${error.message}`);
-            }
-          );
+          if (isApp) {
+            appPostMessage({ action: 'requestRecordPermissions' });
+          } else {
+            Recorder.getPermission().then(
+              () => {
+                console.log('给权限了');
+              },
+              error => {
+                console.log(`${error.name} : ${error.message}`);
+              }
+            );
+          }
         }
       },
-      msgValue(value) {
-        this.messageTextareaValue = value;
-      },
       messageTextareaValue(value, old) {
-        msgValue = value;
-        this.$emit('msgValue', value);
         // 如果当前内容和草稿内容一样，就不触发 at
         if (value === this.draft[this.nowChatSessionId]) {
           return;
@@ -262,12 +254,11 @@
               'textarea'
             )[0].selectionStart;
           if (`${value.substr(selectionStart - 1, 1)}` === '@') {
-            this.$emit('atGroupUser', { target: { selectionStart } });
+            this.doUiAction('atRoomUser', { target: { selectionStart } })
           }
         }
       },
       mobileMessageTextareaFocus(value, oldValue) {
-        this.$emit('mobileMessageTextareaFocus', value)
         if (isMobile) {
           const textarea =
             this.$refs.messageTextareaDom.$el.getElementsByTagName('textarea');
@@ -286,6 +277,10 @@
       }
     },
     methods: {
+      sendPersonCard() {
+        this.moreSheetOpen = false
+        this.doUiAction('openFriendDialog')
+      },
       include() {
         return [ document.querySelector('.emoticon-open-btn') ];
       },
@@ -294,23 +289,19 @@
         if (dir === 'face01') {
           this.messageTextareaValue = `${this.messageTextareaValue || ''
           }[emoji_${dir}_${index}.${ext}]`;
-          this.setMsgValue(this.messageTextareaValue);
         } else {
           this.onClickOutside();
           const msg = { downloadPath: `/emotion/${dir}/${index}.${ext}` };
-          this.sendMsg({
+          this.doUiAction('sendMsg', {
             messageContent: JSON.stringify(msg),
-            messageContentType: 'image'
-          });
+            messageContentType: duoxingMessageContentTypeEnum.image
+          })
         }
       },
 
       // 点击表情包外
       onClickOutside(event) {
         this.emotionStatus = false;
-      },
-      setMsgValue(msgValue) {
-        this.messageTextareaValue = msgValue;
       },
       /**
        * 初始化在手机上的事件
@@ -328,7 +319,7 @@
               clearTimeout(target.resizeFlag);
             }
             target.resizeFlag = setTimeout(function () {
-              that.$emit('scrollToBottom');
+              that.doUiAction('scrollToBottom')
               target.resizeFlag = null;
             }, 200);
           };
@@ -340,7 +331,7 @@
       changeInputType() {
         this.recordMode = !this.recordMode;
         if (this.recordMode) {
-          this.$emit('mobileMessageTextareaFocus', false)
+          this.mobileMessageTextareaFocus = false
         }
       },
       /**
@@ -349,6 +340,7 @@
        */
       startTouch(event) {
         window.touchIng = true;
+        document.body.classList.add('stopUserSelect');
         if (this.recordMode) {
           const touchDoms = document.elementsFromPoint(
             event.touches[0].pageX,
@@ -357,7 +349,11 @@
           if (touchDoms.some(v => v.className === 'recordBtn')) {
             event.preventDefault();
             this.startRecord = true;
-            this.startRecordMethod();
+            if (isApp) {
+              appPostMessage({ action: 'startRecord' });
+            } else {
+              this.startRecordMethod();
+            }
           }
         }
       },
@@ -417,21 +413,30 @@
        */
       stopRecord(event) {
         window.touchIng = false;
+        document.body.classList.remove('stopUserSelect');
         if (this.startRecord) {
           this.startRecord = false;
-          if (this.recordSendStatus) {
-            if (this.recorder.duration > 1) {
-              const file = this.recorder.getWAVBlob();
-              this.recordFile = file;
-              // console.log(JSON.stringify(this.recordFile))
-              if (this.isMobile) {
-                this.sendAudioMsg();
+          if (isApp && this.recordSendStatus) {
+            const msgId = uuid();
+            appPostMessage({ action: 'stopRecord' }, false, (name, base64) => {
+              window.vtoast.loading("正在保存语音消息")
+              this.sendAudioMsg({ name, _base64: base64, messageFingerprint: msgId });
+            });
+          } else {
+            if (this.recordSendStatus) {
+              if (this.recorder.duration > 1) {
+                const file = this.recorder.getWAVBlob();
+                this.recordFile = file;
+                // console.log(JSON.stringify(this.recordFile))
+                if (this.isMobile) {
+                  this.sendAudioMsg();
+                }
               }
             }
+            this.recorder.destroy().then(() => {
+              this.recorder = null;
+            });
           }
-          this.recorder.destroy().then(() => {
-            this.recorder = null;
-          });
         }
       },
 
@@ -477,15 +482,36 @@
         return null;
       },
       /**
-       * 上传控件触发
-       * @param refName
-       */
-      fileInputTap(refName) {
+   * 上传控件触发
+   * @param obj
+   * @param obj.type
+   */
+  async fileInputTap({ type }) {
+    const refName = type
+    this.moreSheetOpen = false
+      if (isApp) {
+        appPostMessage({ action: refName }, false, async (name, base64) => {
+          const file = window.jianghuAxios.base64ToFile({
+            name,
+            base64
+          });
+          await this.doUiAction('sendMsg', {
+            messageContent: JSON.stringify({
+              filename: name, // 上传完后再 赋值
+              downloadPath: '', // 上传完后再 赋值
+              binarySize: '', // 上传完后再 赋值
+            }),
+            messageContentType: refName === 'filePicker' ? duoxingMessageContentTypeEnum.file : duoxingMessageContentTypeEnum.image,
+            file,
+          });
+        });
+      } else {
         this.$refs[refName].click();
-      },
+      }
+    },
       // 粘贴截图
       async onPaste(event) {
-        let messageContentType = 'image';
+        let messageContentType = duoxingMessageContentTypeEnum.image;
         const items = event.clipboardData && event.clipboardData.items;
         let file = null;
         if (items && items.length) {
@@ -494,7 +520,7 @@
             if (items[i].kind === 'file') {
               file = items[i].getAsFile();
               if (items[i].type.indexOf('image') === -1) {
-                messageContentType = 'file';
+                messageContentType = duoxingMessageContentTypeEnum.file;
               }
               break;
             }
@@ -503,7 +529,7 @@
         if (!file) {
           return;
         }
-        await this.sendMsg({
+        await this.doUiAction('sendMsg', {
           messageContent: JSON.stringify({
             filename: '',
             downloadPath: '',
@@ -530,7 +556,7 @@
         const messageTextareaDom = document.getElementById('messageTextareaId');
         requestAnimationFrame(() => {
           messageTextareaDom.focus();
-          this.$emit('mobileMessageTextareaFocus', true)
+          this.mobileMessageTextareaFocus = true
           if (!isMobile) {
             messageTextareaDom.selectionStart =
               messageTextareaDom.selectionEnd =
@@ -539,23 +565,36 @@
         });
       },
       /**
-       * 发送语音消息
-       * @param name
-       * @param _base64
-       * @param messageFingerprint
-       */
-      async sendAudioMsg(name, _base64, messageFingerprint) {
-        const base64 = await this.getBase64(this.recordFile);
-        await this.sendMsg({
+   * 发送语音消息
+   * @param name.name
+   * @param name
+   * @param _base64
+   * @param messageFingerprint
+   * @param name._base64
+   * @param name.messageFingerprint
+   * @param obj
+   */
+      async sendAudioMsg(obj = {}) {
+        const { name, _base64, messageFingerprint } = obj
+        const filename = `recordFile_${_.random(100000, 999999)}.mp3`
+        let file = this.recordFile;
+        if (isApp) {
+          file = window.jianghuAxios.base64ToFile({
+            name: filename,
+            base64: _base64
+          })
+        } else {
+          file.name = filename;
+        }
+        await this.doUiAction('sendMsg', {
           messageContent: JSON.stringify({
-            filename: `recordFile_${_.random(100000, 999999)}.mp3`,
-            downloadPath: base64,
+            filename,
+            downloadPath: '',
             binarySize: ''
           }),
-          messageContentType: 'audio',
-          file: null,
+          messageContentType: duoxingMessageContentTypeEnum.audio,
+          file,
           messageFingerprint,
-          isBase64File: true
         });
         this.recordFile = null;
       },
@@ -571,22 +610,26 @@
 
       // 当选择文件
       async onChooseFile(event) {
-        const messageContentType = 'file';
-        await this.sendMsg({
+        const file = event.target.files[0]
+        this.$refs.filePicker.value = null;
+        const messageContentType = duoxingMessageContentTypeEnum.file;
+        window.vtoast.loading({message: '文件上传中', timer: 300000})
+        await this.doUiAction('sendMsg', {
           messageContent: JSON.stringify({
-            filename: event.target.files[0].name,
+            filename: file.name,
             downloadPath: '',
             binarySize: ''
           }),
           messageContentType,
-          file: event.target.files[0]
+          file
         });
-        this.$refs.filePicker.value = null;
+
       },
       // 当选择图片
       async onChooseImage(event) {
-        const messageContentType = 'image';
-        await this.sendMsg({
+        const messageContentType = duoxingMessageContentTypeEnum.image;
+        window.vtoast.loading({message: '图片上传中', timer: 300000})
+        await this.doUiAction('sendMsg', {
           messageContent: JSON.stringify({
             filename: '',
             downloadPath: await this.getBase64(event.target.files[0]),
@@ -599,8 +642,8 @@
       },
       // 当选择视频
       async onChooseVideo(event) {
-        const messageContentType = 'video';
-        await this.sendMsg({
+        const messageContentType = duoxingMessageContentTypeEnum.video;
+        await this.doUiAction('sendMsg', {
           messageContent: JSON.stringify({
             filename: '',
             downloadPath: await this.getBase64(event.target.files[0]),
@@ -620,8 +663,8 @@
        */
       focusTextArea(event) {
         try {
-          // this.scrollToBottom()
-          this.$emit('mobileMessageTextareaFocus', true)
+          // this.doUiAction('scrollToBottom')
+          this.mobileMessageTextareaFocus = true
         } catch (e) {
           this.$nextTick(() => {
             this.focusTextArea();
