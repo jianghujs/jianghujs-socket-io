@@ -9,7 +9,7 @@
   >
     <div class="d-flex flex-no-wrap justify-space-between align-center">
       <v-avatar size="35px" style="background-color: #EEEEEE" class="ma-2">
-        <dx-img :src="upload + user.userAvatar" userAvatar enableViewer></dx-img>
+        <dx-img :src="upload + user.userAvatar" userAvatar></dx-img>
       </v-avatar>
 
       <div class="d-flex flex-column justify-center align-start">
@@ -35,24 +35,6 @@
         </v-card-subtitle>
       </div>
       <v-spacer></v-spacer>
-      <v-btn text dark :small="!isMobile" icon class="rounded-0" color="blue lighten-2" @click="toggleMute">
-        <v-icon :size="isMobile ? 20 : 16" v-if="isMuted" color="white">mdi-volume-off</v-icon>
-        <v-icon :size="isMobile ? 20 : 16" v-else color="white">mdi-volume-high</v-icon>
-      </v-btn>
-      <div class="userInfoCard__settings d-flex">
-        <v-menu offset-y>
-          <template #activator="{ on, attrs }">
-            <v-btn text dark :small="!isMobile"  icon class="rounded-0" color="blue lighten-2" v-bind="attrs" v-on="on">
-              <v-icon :size="isMobile ? 20 : 16" color="white">mdi-plus-box</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item v-for="(item, index) in plusMenu" :key="index" @click="doUiAction(item.uiAction)">
-                <v-list-item-title class="body-2">{{ item.name }}</v-list-item-title>
-              </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
       <div class="userInfoCard__settings d-flex mr-2">
         <v-menu offset-y>
           <template #activator="{ on, attrs }">

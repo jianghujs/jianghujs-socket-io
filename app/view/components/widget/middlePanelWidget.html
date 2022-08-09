@@ -24,18 +24,6 @@
         ref="chatInput"
         v-if="!isMoreSelectMode"
       />
-      <div
-        class="d-flex moreSelToolbar"
-        :class="{ moreSelToolbarMob: isMobile }"
-        v-if="isMoreSelectMode"
-      >
-        <button @click="forwardOneByOne">
-          <v-icon>mdi-tray-arrow-up</v-icon>逐条转发
-        </button>
-        <button @click="resetMultiSelectionStatus">
-          <v-icon>mdi-close</v-icon>关闭
-        </button>
-      </div>
     </v-footer>
   </div>
 </script>
@@ -50,7 +38,6 @@
       isMoreSelectMode: false, // 开启多选模式
       selectForwardFriend: false,
       friendListCtrlType: '',
-      moreSheetOpen: false,
       currentResendMsg: {},
       appForward: false,
       mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
@@ -75,167 +62,15 @@
     computed: window.vueComputed,
     watch: {
       nowChatSessionId(v) {
-        if (this.isMoreSelectMode) this.resetMultiSelectionStatus();
       }
     },
     created() {
-      // 注册APP转发对象调用方法
-      window.forwardToChatSession = this.appOpenForwardOneByOneFriendDialog;
-      window.forwardToChatSessionByStream = this.appForwardToChatSessionByStream;
     },
     destroyed() { },
     mounted() {
       this.methods.sendMsg = this.sendMsg;
-      this.resetMultiSelectionStatus();
     },
     methods: {
-      // app端启动选择转发对象
-      appOpenForwardOneByOneFriendDialog() {
-        console.log('app端启动选择转发对象');
-        this.appForward = true;
-        this.openForwardOneByOneFriendDialog();
-      },
-      async appForwardToChatSessionByStream(forwardUserId, filename, base64) {
-        // App端传过来的byteBuffer
-        const mime = base64.split(',')[0].match(/:(.*?);/)[1];
-        const file = base64ToFile({ base64, name: filename });
-        await this.sendMsg({
-          messageContent: '',
-          targetUserId: forwardUserId,
-          messageContentType: mime.indexOf('image/') > -1 ? duoxingMessageContentTypeEnum.image : duoxingMessageContentTypeEnum.file,
-          file
-        })
-        appPostMessage({ action: 'forwardToChatSessionDone' });
-        // var blob = new Blob([byteBuffer], { type: 'application/octet-stream' });
-      },
-      selectForwardFriendClose() {
-        this.appForward = false;
-      },
-      // 发起通话
-      voiceCall(item) {
-        // item? null 当前回话，群成员/对话好友 , !null, 要通话的会员
-        // voiceType: 'callToFriend', // 'callInRoom'
-        if (!this.nowChatItem && !item) {
-          window.vtoast.fail('当前暂无会话对象')
-          return false;
-        }
-        // 1. 排除自己, 排除小程序
-        if (item && item.fromUserId === global.user.userId) {
-          return false;
-        }
-        if (this.nowChatItem && this.nowChatItem.userType === 'xiaochengxu') {
-          window.vtoast.fail('当前对象是小程序，无法通话')
-          return false;
-        }
-        this.voiceType = item || !this.isRoom ? 'callToFriend' : 'callInRoom';
-        // 2. 通过选择好友/群发起通过
-        this.voiceTargetName = item ? item.fromUserName : this.nowChatItem.chatName || this.nowChatItem.friendUsername || this.nowChatItem.roomName;
-        this.voiceTargetId = item ? item.fromUserId : this.nowChatSessionId;
-        this.voiceCallStatus = !!this.voiceTargetId;
-        return true
-      },
-      // 选择多选
-      moreSel() {
-        this.isMoreSelectMode = true;
-      },
-      // 初始化转发
-      resetMultiSelectionStatus() {
-        this.isMoreSelectMode = false;
-        this.clearCheckList();
-        this.closeMultiSelect();
-      },
-      // 单条发送
-      forwardSimple() {
-        this.openForwardSimpleFriendDialog();
-      },
-      // 逐条发送
-      forwardOneByOne() {
-        this.openForwardOneByOneFriendDialog();
-      },
-      openForwardSimpleFriendDialog() {
-        this.friendListCtrlType = 'sendForwardSimple';
-        this.doUiAction('pushState', { path: 'sendForwardSimple' });
-        this.selectForwardFriend = !this.selectForwardFriend;
-        this.$refs.selectForwardFriend.selectedItem = [];
-        window.history.back();
-      },
-      openForwardOneByOneFriendDialog() {
-        console.log('打开转发对象选择框');
-        this.friendListCtrlType = 'sendForwardOneByOne';
-        this.doUiAction('pushState', { path: 'sendForwardOneByOne' });
-        this.selectForwardFriend = !this.selectForwardFriend;
-        this.$refs.selectForwardFriend.selectedItem = [];
-        window.history.back();
-      },
-      async onSelectForwardFriend({ friends }) {
-        // APP转发拦截
-        if (this.appForward) {
-          this.appForward = false;
-          console.log(`>>> 带转发用户信息 ${JSON.stringify(friends)}`)
-          appPostMessage({ action: 'forwardToChatSession', forwardUserId: friends[0].friendId || friends[0].roomId });
-          return;
-        }
-        // 非App转发
-        const chattingPage = this.getChattingPage();
-        if (this.friendListCtrlType === 'sendForwardSimple') {
-          await this.forwardMsg(
-            friends,
-            chattingPage.chatHistoryList.filter(
-              d => d.messageFingerprint === chattingPage.forwardId
-            )[0]
-          );
-        }
-        if (this.friendListCtrlType === 'sendForwardOneByOne') {
-          const checkList = chattingPage.checkList.sort().reverse();
-          // console.log('checkList', checkList, chattingPage.chatHistoryList)
-          for (const f of checkList) {
-            await this.forwardMsg(
-              friends,
-              chattingPage.chatHistoryList.filter(
-                d => d.messageFingerprint === f
-              )[0]
-            );
-          }
-          this.resetMultiSelectionStatus();
-        }
-      },
-      /**
-       * 发送名片
-       * @param friend
-       */
-      sendCardMsg(friend) {
-        for (const item of friend) {
-          this.sendMsg({
-            messageContent: JSON.stringify(item),
-            messageContentType: duoxingMessageContentTypeEnum.userCard
-          });
-        }
-      },
-      forwardMsg(friends, msg) {
-        for (const friend of friends) {
-          if (friend.friendId) {
-            this.sendMsg(
-              {
-                messageContent: msg.messageContent,
-                messageContentType: msg.messageContentType,
-                targetUserId: friend.friendId
-              },
-              false,
-              2
-            );
-          } else {
-            this.sendMsg(
-              {
-                messageContent: msg.messageContent,
-                messageContentType: msg.messageContentType,
-                targetUserId: friend.roomId
-              },
-              false,
-              1
-            );
-          }
-        }
-      },
       include() {
         return [ document.querySelector('.emoticon-open-btn') ];
       },

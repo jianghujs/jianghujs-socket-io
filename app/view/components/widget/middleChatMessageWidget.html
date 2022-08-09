@@ -35,7 +35,7 @@
           <div class="noticeMsg">{{ item.messageContent }}</div>
         </template>
         <template v-else>
-          <v-avatar size="40px" class="ma-2 mt-1" @click="showAccount(item.fromUserId)">
+          <v-avatar size="40px" class="ma-2 mt-1">
             <dx-img :src="upload + item.fromUserAvatar" userAvatar></dx-img>
           </v-avatar>
           <v-icon
@@ -77,12 +77,6 @@
                 v-if="item.messageContentType === 'file'"
                 :progress="item.progress"
                 :content="item.messageContent"
-                :id="item.messageFingerprint"
-              />
-              <CardMessage
-                v-if="item.messageContentType === 'userCard'"
-                :content="item.messageContent"
-                @showAccount="showAccount"
                 :id="item.messageFingerprint"
               />
               <VideoMessage
@@ -417,19 +411,8 @@ Vue.component('ChattingMessagePage', {
       copymsg.blur();
       window.vtoast.success('复制成功');
     },
-    shareMsg(item) {
-      appPostMessage({action: 'shareMsg', msg: item})
-    },
     quoteMsg(item) {
       this.doUiAction('onQuoteMsg', item)
-    },
-    saveImageToPhotosAlbum(item) {
-      appPostMessage({
-        action: 'imageSaveToAlbum',
-        name: JSON.parse(item.messageContent).filename,
-        path: `${location.origin}/${window.appInfo.appId}/upload/${JSON.parse(item.messageContent).downloadPath
-        }`
-      });
     },
     revokeMsg(item) {
       const chatHistoryListIndex = this.chatHistoryList.findIndex((v, i) => {
@@ -445,9 +428,6 @@ Vue.component('ChattingMessagePage', {
       });
       this.$emit('deleteMsg', item);
       this.$forceUpdate();
-    },
-    showAccount(item) {
-      this.doUiAction('showAccount', {userId: item})
     },
     async loadMore() {
       if (this.loadState !== 'finish' && this.loadState !== 'noMore') {

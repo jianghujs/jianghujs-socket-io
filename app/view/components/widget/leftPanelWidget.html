@@ -31,11 +31,10 @@
                     <v-subheader >聊天</v-subheader>
                   </v-list-item-content>
                   <v-list-item
-                    v-if="canRender(index)"
+                    v-else-if="canRender(index)"
                     class="pa-0 ma-0"
                     :value="getDataId(item)"
                     :class="{ 'activeItem': isActiveItem(item) }"
-                    @click="doUiAction('mobileShowChattingPage', { isRobot: isRobot(item), friendDeviceId: item.friendDeviceId })"
                   >
                     <ChatWidget
                       :isOnline="isOnline(item.chatId)"
@@ -87,45 +86,14 @@
     {
       chatSessionListAndBotList() {
         return [
-          { dataListSubTitle: 'botListStart' },
-          ...this.botList,
           { dataListSubTitle: 'chatSessionStart' },
           ...this.chatList
         ];
       },
-      friendListAndUserRoomRoleList() {
-        return [
-          { dataListSubTitle: 'friendListStart' },
-          ...this.myFriendList,
-          { dataListSubTitle: 'userRoomRoleListStart' },
-          ...this.userRoomRoleList
-        ];
-      },
       // 左侧列表数据
       leftDataList() {
-        const aiList = [];
-        return [ this.chatSessionListAndBotList, this.friendListAndUserRoomRoleList, aiList ][
-          this.menuIndex
-        ];
+        return this.chatSessionListAndBotList;
       },
-      // 左上侧数量统计
-      leftTabcount() {
-        return [
-          [ this.chatList, [ ...this.myFriendList, ...this.userRoomRoleList ], this.botList ][
-            this.menuIndex
-          ].length,
-          this.chatList.filter(item => !!item.offlineMessageCount).length
-        ];
-      },
-      // 好友申请数量
-      newFriendRequestCount() {
-        return this.requestFriendList.filter(v => {
-          if (v.friendStatus === 'waitingApprove') {
-            return true;
-          }
-          return false;
-        }).length;
-      }
     }
   )
 
@@ -168,7 +136,7 @@
         console.log(this.collapseStatus);
       },
       isHidden(item) {
-        return this.collapseStatus && this.menuIndex === 0 && this.isRobot(item);
+        return this.collapseStatus && this.menuIndex === 0;
       },
       isActiveItem(item) {
         if (item.friendDeviceId === undefined) {
@@ -404,7 +372,6 @@
             }
           }
         });
-        this.getFriendList()
       },
 
       // 左上角用户的操作菜单
@@ -425,7 +392,6 @@
             localStorage.removeItem(window.appInfo.appId + '_authToken');
             localStorage.removeItem(window.appInfo.appId + '_refreshToken');
             location.href = `/${window.appInfo.appId}/page/login`;
-            appPostMessage({ action: 'userLogout' });
             break;
           }
           case 15: {

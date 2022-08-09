@@ -20,9 +20,14 @@ module.exports = app => {
       const service = app.createAnonymousContext().service;
 
       const allUserIdList = (await jianghuKnex(tableEnum.view01_user).select('userId')).map(item => item.userId);
+      const allUserRoomRoleList = await jianghuKnex(tableEnum.view01_user_room_role).select();
 
       for (const userId of allUserIdList) {
+        const roomIdList = allUserRoomRoleList.filter(x => x.userId === userId).map(x => x.roomId);
+        const friendIdList = (await jianghuKnex(tableEnum.duoxing_user_friend).where({ userId, friendStatus: duoxingFriendStatusEnum.isFriend }).select('friendId')).map(item => item.friendId);
+
         const userHistoryIdList = await service.data.duoxingMessage.getUserTopChatIdList(userId);
+        const roomHistoryIdList = await service.data.duoxingMessage.getRoomTopChatIdList(roomIdList);
 
         const historyIdList = userHistoryIdList.concat(roomHistoryIdList).map(item => item.id);
 
@@ -34,6 +39,9 @@ module.exports = app => {
         const computeKey = (fromUserId, toUserId, toRoomId, messageType) => {
           if (messageType === 'user') {
             return fromUserId !== userId ? fromUserId : toUserId;
+          }
+          if (messageType === 'room') {
+            return toRoomId;
           }
           return null;
         };

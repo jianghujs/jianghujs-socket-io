@@ -1,16 +1,13 @@
 'use strict';
 
+const assert = require('assert');
 const path = require('path');
 
 module.exports = appInfo => {
 
+  assert(appInfo);
   return {
-    static: {
-      maxAge: 0,
-      buffer: false,
-      preload: false,
-      maxFiles: 0,
-    },
+    debug: true,
     logger: {
       outputJSON: true,
       consoleLevel: 'DEBUG',
@@ -33,7 +30,8 @@ module.exports = appInfo => {
         pool: { min: 10, max: 100 },
         acquireConnectionTimeout: 30000
       },
-      app: true
+      app: true,
+      agent: true
     }
   };
 

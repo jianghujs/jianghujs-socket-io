@@ -19,9 +19,6 @@
       <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
         <v-icon>mdi-image-outline</v-icon>
       </v-btn>
-      <v-btn icon @click="doUiAction('openFriendDialog')">
-        <v-icon>mdi-card-account-details-outline</v-icon>
-      </v-btn>
       <v-btn icon @click="doUiAction('startRecordMethod')" :class="{ 'startRecord': startRecord }">
         <v-icon>mdi-microphone</v-icon>
       </v-btn>
@@ -95,26 +92,6 @@
       </div>
     </div>
 
-    <v-bottom-sheet v-if="moreSheetOpen" v-model="moreSheetOpen">
-      <v-sheet class="moreSheet d-flex flex-row-around" height="150px">
-        <!-- <div class="fileInputBox d-flex flex-column" @click="doUiAction('voiceCall', null)" >
-          <v-icon size="40">mdi-phone</v-icon>
-          <span class="d-block text-center" style="font-size: 14px">语音通话</span>
-        </div> -->
-        <div class="fileInputBox d-flex flex-column" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
-          <v-icon size="40">mdi-image-outline</v-icon>
-          <span class="d-block text-center" style="font-size: 14px">发送图片</span>
-        </div>
-        <div class="fileInputBox d-flex flex-column" @click="doUiAction('fileInputTap', { type: 'filePicker' })">
-          <v-icon size="40">mdi-folder-open-outline</v-icon>
-          <span class="d-block text-center" style="font-size: 14px">发送文件</span>
-        </div>
-        <div class="d-flex flex-column" @click="sendPersonCard">
-          <v-icon size="40">mdi-card-account-details-outline</v-icon>
-          <span class="d-block text-center" style="font-size: 14px">发送名片</span>
-        </div>
-      </v-sheet>
-    </v-bottom-sheet>
     <template>
       <input
         ref="filePicker"
@@ -162,7 +139,6 @@
       recordPlaySource: null, // 播放状态
       recordSendStatus: true, // 松开手指的位置，决定是否发送语音
       recordMode: false, // 语音模式
-      moreSheetOpen: false,
       msgInputValueLength: len => v =>
         (v || '').length < len || `消息内容最长${len}个文字`
     },
@@ -213,9 +189,6 @@
             this.$refs.messageTextareaDom.$el.getElementsByTagName(
               'textarea'
             )[0].selectionStart;
-          if (`${value.substr(selectionStart - 1, 1)}` === '@') {
-            this.doUiAction('atRoomUser', { target: { selectionStart } })
-          }
         }
       },
       mobileMessageTextareaFocus(value, oldValue) {
@@ -237,10 +210,6 @@
       }
     },
     methods: {
-      sendPersonCard() {
-        this.moreSheetOpen = false
-        this.doUiAction('openFriendDialog')
-      },
       include() {
         return [ document.querySelector('.emoticon-open-btn') ];
       },
@@ -436,7 +405,6 @@
    */
   async fileInputTap({ type }) {
     const refName = type
-    this.moreSheetOpen = false
     this.$refs[refName].click();
   },
   // 粘贴截图

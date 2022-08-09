@@ -105,12 +105,6 @@
           );
           localStorage.setItem(`${window.appInfo.appId}_deviceId`, deviceId);
           vtoast.success("登陆成功");
-          appPostMessage({
-            action: "userLogin",
-            password,
-            userId,
-            appId: window.appInfo.appId,
-          });
           let redirectTo = `/${window.appInfo.appId}`;
           if (redirectUrl) {
             redirectTo = decodeURIComponent(redirectUrl);

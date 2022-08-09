@@ -47,28 +47,6 @@
           >{{ getTimerStr(data_.messageTimeString) }}</span>
         </div>
       </div>
-      <v-menu v-if="!data_.friendDeviceType || data_.friendDeviceType !== 'bot_xiaochengxu'" offset-y >
-        <template #activator="{ on, attrs }">
-          <v-btn text icon v-bind="attrs" v-on="on" @click.stop style="position: absolute; right: 0; top: 7px">
-            <v-icon size="18">
-              mdi-dots-vertical
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item-group>
-            <v-list-item @click="toggleMuted()">
-              <v-list-item-title>{{ isMuted() ? '取消免打扰---' : '免打扰' }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="toggleTop()">
-              <v-list-item-title>{{ isTop() ? '取消置顶---' : '置顶' }}</v-list-item-title>
-            </v-list-item>
-            <!-- <v-list-item @click="deleteChatSession">
-              <v-list-item-title>删除</v-list-item-title>
-            </v-list-item> -->
-          </v-list-item-group>
-        </v-list>
-      </v-menu>
     </div>
   </v-card>
 </script>
@@ -176,51 +154,6 @@
           }, 300);
         });
         return null;
-      },
-      async toggleTop() {
-        const top = !this.isTop();
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'chat',
-              actionId: 'toggleChatSession',
-              actionData: {
-                type: this.data.messageType,
-                chatId: this.data.chatId,
-                messageType: this.data.messageType,
-                userIdOrRoomId: this.data.chatId,
-                top
-              }
-            }
-          }
-        });
-        this.data.topChatOrder = top
-          ? window.dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ')
-          : null;
-      },
-      async toggleMuted() {
-        const muted = !this.isMuted();
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'chat',
-              actionId: 'toggleChatSession',
-              actionData: {
-                type: this.data.messageType,
-                chatId: this.data.chatId,
-                messageType: this.data.messageType,
-                userIdOrRoomId: this.data.chatId,
-                muted
-              }
-            }
-          }
-        });
-        this.data.muted = muted;
-        if (isApp) {
-          this.$emit('toggleMuted', {
-            [this.data.chatId]: muted
-          });
-        }
       },
       isTop() {
         return !!this.data.topChatOrder;

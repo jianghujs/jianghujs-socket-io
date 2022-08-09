@@ -19,7 +19,6 @@
 'components/widget/middlePanelWidget.html' %} {% include
 'components/widget/middleChatInputWidget.html' %} {% include
 'components/widget/middleChatMessageWidget.html' %} {% include
-'components/message/cardMessage.html' %} {% include
 'components/message/imageMessage.html' %} {% include
 'components/message/fileMessage.html' %} {% include
 'components/message/textMessage.html' %} {% include
@@ -294,9 +293,7 @@ new Vue({
       if (hasError) {
         this.doUiAction('setSyncStatusToSyncing')
         await this.doUiAction('getUserInfo');
-        await this.doUiAction('getFriendList');
         await this.doUiAction('getChatSessionList', { type: 'onSocketReConnect' });
-        await this.doUiAction('getUserFriendRequest');
         this.doUiAction('setSyncStatusToSuccess')
       }
     },
@@ -422,33 +419,7 @@ new Vue({
       }
       // 渲染好友变动
       if (params.hasOwnProperty('noticeType')) {
-        if (params.noticeType === 'addUserFriend') {
-          this.$refs.leftPanel.getUserFriendRequest();
-        } else if (
-          params.noticeType === 'acceptUserFriend' ||
-          params.noticeType === 'rejectUserFriend' ||
-          params.noticeType === 'delUserFriend'
-        ) {
-          // 被同意好友请求，要刷新
-          this.doUiAction('getChatSessionList', { type: '被同意好友请求，要刷新' });
-          this.$refs.leftPanel.onAcceptRequest();
-        } else if (
-          params.noticeType === 'createRoom' ||
-          params.noticeType === 'destroyRoom' ||
-          params.noticeType === 'addRoomUser' ||
-          params.noticeType === 'delRoomUser' ||
-          params.noticeType === 'setRoomUserRole' ||
-          params.noticeType === 'transferRoom' ||
-          params.noticeType === 'quitRoom'
-        ) {
-          // 群变动
-          const { toRoomId } = params;
-          this.doUiAction('getUserInfo');
-          this.doUiAction('getChatSessionList', { type: 'renderNoticeUI' });
-          if (this.nowChatSessionId === toRoomId) {
-            this.doUiAction('getRoomInfo')
-          }
-        } else if (
+        if (
           params.noticeType === 'errorNotice' &&
           params.errorCode === 'chat_not_user_friend'
         ) {
@@ -462,11 +433,6 @@ new Vue({
           this.$forceUpdate();
         }
       }
-    },
-    showAccount({ userId }) {
-      this.searchUserUid = userId;
-      this.accountDialog = true;
-      this.pushState({ path: 'showAccount' });
     },
 
     pushState({ path }) {
@@ -487,18 +453,6 @@ new Vue({
       }
       return null;
     },
-    atRoomUser(event) {
-      if (!this.isRoom) {
-        return;
-      }
-      this.$nextTick(() => {
-        this.$refs.middlePanel.messageTextareaDomBlur();
-        this.nowSelectionStart = event.target.selectionStart;
-        this.pushState({ path: 'roomDialog' });
-        this.$refs.rightPanel.openUserList('atUser');
-      });
-    },
-
     /**
      * 获取发送消息socket actionID
      * @param forwardType
