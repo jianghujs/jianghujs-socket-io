@@ -66,10 +66,6 @@
           placeholder="输入聊天信息，按Enter发送"
           @keydown.enter.exact.prevent
           @keydown.13.exact="() => {
-            if (this.window.isApp) {
-              newline();
-              return;
-            }
             doUiAction('sendMsg', {})
           }"
           @keydown.229.exact="() => { }"
@@ -97,38 +93,6 @@
           </v-sheet>
         </v-bottom-sheet>
       </div>
-      <template v-if="isMobile">
-        <v-btn
-          class="ml-2 emoticon-open-btn"
-          text
-          icon
-          @touchstart="doUiAction('preventDefault')"
-          @touchend="emotionStatus = !emotionStatus"
-          color="grey darken-1"
-        >
-          <v-icon>mdi-emoticon-excited-outline</v-icon>
-        </v-btn>
-        <v-btn
-          class="other-open-btn"
-          text
-          icon
-          @touchstart="doUiAction('preventDefault')"
-          @click="moreSheetOpen = true"
-          v-if="!mobExpandChat && (messageTextareaValue || '') == ''"
-          color="grey darken-1"
-        >
-          <v-icon>mdi-plus-circle-outline</v-icon>
-        </v-btn>
-        <v-btn
-          v-if="mobExpandChat || (messageTextareaValue || '') !== ''"
-          depressed
-          small
-          color="primary"
-          @mousedown="doUiAction('preventDefault')"
-          @mouseup="doUiAction('sendMsg', {})"
-          class="sendMsgBtn mt-1"
-        >发送</v-btn>
-      </template>
     </div>
 
     <v-bottom-sheet v-if="moreSheetOpen" v-model="moreSheetOpen">
@@ -151,7 +115,7 @@
         </div>
       </v-sheet>
     </v-bottom-sheet>
-    <template v-if="!isApp">
+    <template>
       <input
         ref="filePicker"
         type="file"
@@ -162,7 +126,7 @@
       <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage" />
       <input ref="videoPicker" type="file" class="fileInput" accept="video/*" @change="onChooseVideo" />
     </template>
-    <div class="d-flex ma-2 align-center justify-end" v-if="!isMobile">
+    <div class="d-flex ma-2 align-center justify-end">
       <template v-if="mobExpandChat">
         <span class="caption" style="color: #BDBDBD">按 Ctrl+Enter 换行，按 Enter 发送</span>
         <div class="mr-2"></div>
@@ -227,18 +191,14 @@
       recordMode(v) {
         // 是否开启了录音模式，先发起权限申请
         if (v) {
-          if (isApp) {
-            appPostMessage({ action: 'requestRecordPermissions' });
-          } else {
-            Recorder.getPermission().then(
-              () => {
-                console.log('给权限了');
-              },
-              error => {
-                console.log(`${error.name} : ${error.message}`);
-              }
-            );
-          }
+          Recorder.getPermission().then(
+            () => {
+              console.log('给权限了');
+            },
+            error => {
+              console.log(`${error.name} : ${error.message}`);
+            }
+          );
         }
       },
       messageTextareaValue(value, old) {
@@ -349,11 +309,7 @@
           if (touchDoms.some(v => v.className === 'recordBtn')) {
             event.preventDefault();
             this.startRecord = true;
-            if (isApp) {
-              appPostMessage({ action: 'startRecord' });
-            } else {
-              this.startRecordMethod();
-            }
+            this.startRecordMethod();
           }
         }
       },
@@ -416,27 +372,19 @@
         document.body.classList.remove('stopUserSelect');
         if (this.startRecord) {
           this.startRecord = false;
-          if (isApp && this.recordSendStatus) {
-            const msgId = uuid();
-            appPostMessage({ action: 'stopRecord' }, false, (name, base64) => {
-              window.vtoast.loading("正在保存语音消息")
-              this.sendAudioMsg({ name, _base64: base64, messageFingerprint: msgId });
-            });
-          } else {
-            if (this.recordSendStatus) {
-              if (this.recorder.duration > 1) {
-                const file = this.recorder.getWAVBlob();
-                this.recordFile = file;
-                // console.log(JSON.stringify(this.recordFile))
-                if (this.isMobile) {
-                  this.sendAudioMsg();
-                }
+          if (this.recordSendStatus) {
+            if (this.recorder.duration > 1) {
+              const file = this.recorder.getWAVBlob();
+              this.recordFile = file;
+              // console.log(JSON.stringify(this.recordFile))
+              if (this.isMobile) {
+                this.sendAudioMsg();
               }
             }
-            this.recorder.destroy().then(() => {
-              this.recorder = null;
-            });
           }
+          this.recorder.destroy().then(() => {
+            this.recorder = null;
+          });
         }
       },
 
@@ -489,82 +437,64 @@
   async fileInputTap({ type }) {
     const refName = type
     this.moreSheetOpen = false
-      if (isApp) {
-        appPostMessage({ action: refName }, false, async (name, base64) => {
-          const file = window.jianghuAxios.base64ToFile({
-            name,
-            base64
-          });
-          await this.doUiAction('sendMsg', {
-            messageContent: JSON.stringify({
-              filename: name, // 上传完后再 赋值
-              downloadPath: '', // 上传完后再 赋值
-              binarySize: '', // 上传完后再 赋值
-            }),
-            messageContentType: refName === 'filePicker' ? duoxingMessageContentTypeEnum.file : duoxingMessageContentTypeEnum.image,
-            file,
-          });
-        });
-      } else {
-        this.$refs[refName].click();
+    this.$refs[refName].click();
+  },
+  // 粘贴截图
+  async onPaste(event) {
+    let messageContentType = duoxingMessageContentTypeEnum.image;
+    const items = event.clipboardData && event.clipboardData.items;
+    let file = null;
+    if (items && items.length) {
+      // 检索剪切板items
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].kind === 'file') {
+          file = items[i].getAsFile();
+          if (items[i].type.indexOf('image') === -1) {
+            messageContentType = duoxingMessageContentTypeEnum.file;
+          }
+          break;
+        }
       }
-    },
-      // 粘贴截图
-      async onPaste(event) {
-        let messageContentType = duoxingMessageContentTypeEnum.image;
-        const items = event.clipboardData && event.clipboardData.items;
-        let file = null;
-        if (items && items.length) {
-          // 检索剪切板items
-          for (let i = 0; i < items.length; i++) {
-            if (items[i].kind === 'file') {
-              file = items[i].getAsFile();
-              if (items[i].type.indexOf('image') === -1) {
-                messageContentType = duoxingMessageContentTypeEnum.file;
-              }
-              break;
-            }
-          }
-        }
-        if (!file) {
-          return;
-        }
-        await this.doUiAction('sendMsg', {
-          messageContent: JSON.stringify({
-            filename: '',
-            downloadPath: '',
-            binarySize: ''
-          }),
-          messageContentType,
-          file
-        });
-      },
-      // ctrl+enter 新行
-      newline() {
-        const messageTextareaDom = document.getElementById('messageTextareaId');
-        const pos = messageTextareaDom.selectionEnd;
-        this.messageTextareaValue =
-          this.messageTextareaValue.slice(0, pos) +
-          '\n' +
-          this.messageTextareaValue.slice(pos);
+    }
+    if (!file) {
+      return;
+    }
+    await this.doUiAction('sendMsg', {
+      messageContent: JSON.stringify({
+        filename: '',
+        downloadPath: '',
+        binarySize: ''
+      }),
+      messageContentType,
+      file
+    });
+  },
+  // ctrl+enter 新行
+  newline() {
+    const messageTextareaDom = document.getElementById('messageTextareaId');
+    const pos = messageTextareaDom.selectionEnd;
+    this.messageTextareaValue =
+      this.messageTextareaValue.slice(0, pos) +
+      '\n' +
+      this.messageTextareaValue.slice(pos);
 
-        this.$nextTick(() => {
-          messageTextareaDom.selectionEnd = pos + 1;
-        });
-      },
-      makeMsgTextarearFocus() {
-        const messageTextareaDom = document.getElementById('messageTextareaId');
-        requestAnimationFrame(() => {
-          messageTextareaDom.focus();
-          this.mobileMessageTextareaFocus = true
-          if (!isMobile) {
-            messageTextareaDom.selectionStart =
-              messageTextareaDom.selectionEnd =
-              this.messageTextareaValue.length;
-          }
-        });
-      },
-      /**
+    this.$nextTick(() => {
+      messageTextareaDom.selectionEnd = pos + 1;
+    });
+  },
+  makeMsgTextarearFocus() {
+    const messageTextareaDom = document.getElementById('messageTextareaId');
+    requestAnimationFrame(() => {
+      messageTextareaDom.focus();
+      this.mobileMessageTextareaFocus = true
+      if (!isMobile) {
+        messageTextareaDom.selectionStart =
+          messageTextareaDom.selectionEnd =
+          this.messageTextareaValue.length;
+      }
+    });
+  },
+  /**
    * 发送语音消息
    * @param name.name
    * @param name
@@ -578,14 +508,7 @@
         const { name, _base64, messageFingerprint } = obj
         const filename = `recordFile_${_.random(100000, 999999)}.mp3`
         let file = this.recordFile;
-        if (isApp) {
-          file = window.jianghuAxios.base64ToFile({
-            name: filename,
-            base64: _base64
-          })
-        } else {
-          file.name = filename;
-        }
+        file.name = filename;
         await this.doUiAction('sendMsg', {
           messageContent: JSON.stringify({
             filename,

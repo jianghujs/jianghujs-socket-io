@@ -69,31 +69,6 @@ class DuoxingMessageService extends Service {
         );
       }
 
-    } else if (messageType === duoxingChatMessageTypeEnum.room) {
-      // 如果可能为第一条消息，则初始化群里所有人的会话
-      if (mayFirst) {
-        // 获取所有人
-        const roomUserList = await jianghuKnex(tableEnum.user_room_role)
-          .where({ roomId: toRoomId })
-          .select();
-        const memberIds = roomUserList.map(roomUser => roomUser.userId);
-        await this.checkAndInitSession(
-          memberIds,
-          duoxingChatMessageTypeEnum.room,
-          toRoomId,
-          messageHistoryId
-        );
-      }
-      // 所有拥有该群的会话，不包括发送方
-      await this.updateChatSessionByRoomId(toRoomId, fromUserId, messageHistoryId, true);
-      // 再给发送方更新一条
-      await this.updateSingleChatSession(
-        fromUserId,
-        duoxingChatMessageTypeEnum.room,
-        toRoomId,
-        messageHistoryId,
-        false
-      );
     }
     return messageHistoryId;
   }

@@ -80,17 +80,14 @@
       sync: window.sync,
       upload: window.appInfo.upload,
       items: [
-        { inx: 1, title: '个人信息' },
-        { inx: 2, title: '修改头像' },
         { inx: 10, title: '退出登录' },
         { inx: 15, title: '应用重载' }
       ],
       plusMenu: [
-        { name: '创建群组', uiAction: 'onCreateRoom' },
-        { name: '消息群发', uiAction: 'openMultiSendDialog' }
       ],
       // 需要一个 socketClient 放在 data 中，否则 online 状态会没有响应式
-      socketClient: null
+      socketClient: null,
+      isMobile: false,
     },
     {
       isSocketOnline() {
@@ -135,9 +132,6 @@
       this.socketClient = window.socket;
     },
     mounted() {
-      if (isApp) {
-        this.items.push({ inx: 20, title: '版本信息' });
-      }
     },
     methods: {
       show(e) {

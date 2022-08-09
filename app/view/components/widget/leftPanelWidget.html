@@ -6,21 +6,12 @@
         app
         width="285"
         class="navigation-drawer mob-app-left"
-        v-show="!isMobile || (isMobile && !mobileLeftHide)"
+        v-show="true"
         permanent
         touchless
       >
         <!--   用户信息   -->
         <LeftUserWidget @userinfo_menu_click="onUserWidgetMenuClick" />
-
-        <LeftNoticeWidget/>
-
-        <!--   聊天菜单等   -->
-        <LeftDrawerMenu
-          :menuIndex="menuIndex"
-          :count="leftTabcount"
-          @change="onLeftMenuChange"
-        />
         <v-list class="leftDataList" ref="leftDataList">
           <v-list-item-group
             :value="nowChatSessionId"
@@ -29,84 +20,28 @@
             active-class
             class="listItem"
           >
-            <div class="searchAndNewFriendBox">
-              <v-text-field
-                label="搜索"
-                clearable
-                dense
-                v-model="searchKeyword"
-                hide-details
-                prepend-inner-icon="mdi-text-search"
-                class="ma-2 pa-0"
-                outlined
-              ></v-text-field>
-              <v-btn
-                v-if="menuIndex === 1 && newFriendRequestCount"
-                outlined
-                :block="!isMobile"
-                color="red darken-3"
-                class="newFriendBtn"
-                @click="openRequestFriendDialog"
-              >新朋友（{{ newFriendRequestCount }}）</v-btn>
-            </div>
             <template v-if="leftDataList.length">
               <template v-for="(item, index) in leftDataList">
                 <div :data-index="index"
                      :hidden="isHidden(item)"
                      :key="`${index}_${item.chatId}`">
                   <v-list-item-content
-                    v-if="item.dataListSubTitle === 'botListStart'"
-                    class="pa-0 ma-0">
-                    <v-subheader>
-                      <div class="d-flex" style="width: 100%; cursor: pointer;" @click="toggleCollapseStatus">
-                        <span style="line-height: 24px">机器人</span>
-                        <v-spacer></v-spacer>
-                        <v-icon v-if="!collapseStatus">mdi-chevron-down</v-icon>
-                        <v-icon v-else>mdi-chevron-up</v-icon>
-                      </div>
-                    </v-subheader>
-                  </v-list-item-content>
-                  <v-list-item-content
-                    v-else-if="item.dataListSubTitle === 'chatSessionStart'"
+                    v-if="item.dataListSubTitle === 'chatSessionStart'"
                     class="pa-0 ma-0">
                     <v-subheader >聊天</v-subheader>
                   </v-list-item-content>
-                  <v-list-item-content
-                    v-else-if="item.dataListSubTitle === 'friendListStart'"
-                    class="pa-0 ma-0">
-                    <v-subheader >好友</v-subheader>
-                  </v-list-item-content>
-                  <v-list-item-content
-                    v-else-if="item.dataListSubTitle === 'userRoomRoleListStart' && canRender(index)"
-                    class="pa-0 ma-0">
-                    <v-subheader>群组</v-subheader>
-                  </v-list-item-content>
                   <v-list-item
-                    v-else-if="canRender(index)"
+                    v-if="canRender(index)"
                     class="pa-0 ma-0"
                     :value="getDataId(item)"
-                    :class="{ 'activeItem': isActiveItem(item), 'isTopChat': !isRobot(item) && checkIsTop(item) }"
+                    :class="{ 'activeItem': isActiveItem(item) }"
                     @click="doUiAction('mobileShowChattingPage', { isRobot: isRobot(item), friendDeviceId: item.friendDeviceId })"
                   >
-                    <LeftBotWidget
-                      v-if="menuIndex === 0 && isRobot(item)"
-                      :data="item"
-                      @delete="onDeleteData"
-                    />
                     <ChatWidget
-                      v-else-if="menuIndex === 0"
                       :isOnline="isOnline(item.chatId)"
                       @onClearUnread="delMessageOffline"
                       @toggleMuted="onChatMuted"
                       :ref="'chatWidget_' + getDataId(item)"
-                      :data="item"
-                    />
-                    <FriendWidget
-                      v-if="menuIndex === 1 && item.friendId"
-                      :data="item"
-                    />
-                    <RoomWidget
-                      v-if="menuIndex === 1 && item.roomId"
                       :data="item"
                     />
                   </v-list-item>
@@ -129,28 +64,6 @@
         </v-list>
       </v-navigation-drawer>
     </v-scroll-x-transition>
-    <RequestFriendDialog
-      v-model="requestFriendState"
-      @acceptRequest="onAcceptRequest"
-      :requestFriendList="requestFriendList"
-    />
-    <InputDialog
-      v-model="inputDialog"
-      :ctrl-type="inputDialogType"
-      @done="searchByKeyword"
-    />
-    <EditUserAvatarDialog
-      v-model="editUserAvatarDialog"
-      :user="user"
-      @refreshUserInfo="doUiAction('getUserInfo')"
-    />
-    <EditPasswordDialog v-model="editPasswordDialog" />
-     <!-- 建群选择框 -->
-    <SelectFriend v-model="leftSelectFriend" ctrl-type="createRoom" :friends="myFriendListBackUps"
-      @done="onSelectFriend" />
-    <!-- 群发选择框 -->
-    <SelectFriend ref="selectMultiSend" v-model="selectMultiSend" :show-all-room="true" :show-all-friend="true"
-      :show-input="true" :ctrl-type="friendListCtrlType" :friends="friendAndRoomMergedList" @done="onSelectMultiSend" />
   </div>
 </script>
 
@@ -161,23 +74,15 @@
       nowChatSessionId: null,
       friendListCtrlType: '',
       selectMultiSend: false,
-      leftSelectFriend: false,
-      editPasswordDialog: false, // 修改密码弹出框
-      editUserAvatarDialog: false, // 修改用户头像弹出框
       isMuted: webOptions('isMuted') || false, // 消息静音，系统
-      // 移动端适配使用
-      mobileLeftHide: false, // 移动端左侧列表显示控制
       leftListScrollTop: 0,
       leftListScrollHeight: 0,
       mutedIdList: [],
       menuIndex: 0, // 菜单
       searchKeyword: null,
-      inputDialog: false, // 输入框弹窗
-      inputDialogType: 'searchAccount',
       requestFriendList: [],
       collapseStatus: webOptions('collapseStatus') || false,
       buildTime: +new Date(),
-      requestFriendState: false // 显示好友申请列表
     },
     {
       chatSessionListAndBotList() {
@@ -251,10 +156,7 @@
     mounted() { },
     async created() {
       this.initLeftDataListScroll();
-      this.getUserFriendRequest();
       this.getChatSessionList({ type: 'created' });
-      this.getFriendList();
-      this.getUserBotList();
     },
     methods: {
       // 展开或者收起
@@ -362,88 +264,6 @@
         this.chatList = this.chatListBackUps.slice();
         this.doUiAction('reFilterList')
         this.reFilterChatSessionByRobot();
-        // APP同步免打扰列表
-        if (isApp) {
-          // 静音的IdList
-          this.mutedIdList = this.chatListBackUps
-            .filter(v => {
-              return !!v.muted;
-            })
-            .map(v => v.chatId);
-          // 推送到APP端，后台服务同样静默
-          appPostMessage({
-            action: 'syncMutedChatIdList',
-            mutedIdList: this.mutedIdList
-          });
-        }
-      },
-      // 获取好友列表
-      async getFriendList() {
-        const newMyFriendList = (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getUserFriend'
-              }
-            }
-          })
-        ).data.appData.resultData.rows;
-        sortList(newMyFriendList, 'friendUsername');
-        const newMyFriendListBackUps = newMyFriendList.slice();
-        this.myFriendList = newMyFriendList;
-        this.myFriendListBackUps = newMyFriendListBackUps;
-        if (this.isFriend && !newMyFriendList.some(item => item.friendId === this.nowChatSessionId)) {
-          this.nowChatSessionId = ''
-        }
-        this.doUiAction('getRoomInfo');
-        this.reFilterRobot();
-      },
-      // 根据好友列表过滤，只保留是自己好友的小程序
-      reFilterRobot () {
-        // 过滤，只保留是好友关系的小程序
-        if (!this.myFriendListBackUps.length) {
-          return;
-        }
-        let newBotList = this.botListBackUps.slice();
-        const friendIDObj = {}
-        this.myFriendListBackUps.forEach(item => {
-          friendIDObj[item.friendId] = true
-        })
-        // 把自己也放进去
-        const userId = localStorage.getItem(window.appInfo.appId + '_userId');
-        friendIDObj[userId] = true;
-        newBotList = newBotList.filter(item => friendIDObj[item.friendId])
-        sortList(newBotList, 'friendUsername');
-        this.botList = newBotList
-      },
-      async getUserBotList() {
-        const rows = (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getUserBotList'
-              }
-            }
-          })
-        ).data.appData.resultData.rows;
-        this.botListBackUps = rows.map(row => {
-          return {
-            friendId: row.userId,
-            friendUsername: row.username,
-            friendUserAvatar: row.userAvatar,
-            friendUserIp: row.userIp,
-            friendDeviceType: row.deviceType,
-            friendDeviceId: row.deviceId,
-            xiaochengxuIndexPage: row.xiaochengxuIndexPage,
-          }
-        })
-        if (this.isXiaochengxu && !this.botListBackUps.some(item => item.userId === this.nowChatSessionId)) {
-          this.$emit('nowChatSessionId', '')
-        }
-        this.reFilterRobot();
-        this.reFilterChatSessionByRobot(this.botListBackUps.length);
       },
       updateChatListItem(params) {
         // 更新完整数据表
@@ -470,111 +290,6 @@
         }
       },
 
-      // 搜索好友，打开好友信息弹框
-      async searchByKeyword(keyword) {
-        const account = (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getUserInfo',
-                where: {
-                  userId: keyword
-                }
-              }
-            }
-          })
-        ).data.appData.resultData.rows[0];
-        if (account) {
-          this.searchUserUid = account.userId;
-          this.accountDialog = true;
-          this.doUiAction('pushState', { path: 'searchByKeyword' })
-        } else {
-          window.vtoast.fail('未搜索到用户');
-        }
-      },
-      openMultiSendDialog() {
-        this.friendListCtrlType = 'multiSend';
-        this.doUiAction('pushState', { path: 'multiSend' })
-        this.selectMultiSend = !this.selectMultiSend;
-        this.$refs.selectMultiSend.selectedItem = [];
-        window.history.back();
-      },
-      async onSelectMultiSend(targets, message) {
-        let sendCount = 0;
-        for (const target of targets) {
-          if (target.friendId) {
-            await this.methods.sendMsg(
-              {
-                messageContent: message,
-                messageContentType: duoxingMessageContentTypeEnum.text,
-                targetUserId: target.friendId
-              },
-              false,
-              2
-            );
-          } else {
-            await this.methods.sendMsg(
-              {
-                messageContent: message,
-                messageContentType: duoxingMessageContentTypeEnum.text,
-                targetUserId: target.roomId
-              },
-              false,
-              1
-            );
-          }
-          sendCount += 1;
-          if (sendCount % 10 === 0) {
-            window.vtoast.success(
-              `群发消息中 - ${sendCount}/${targets.length} ...`
-            );
-          }
-        }
-        window.vtoast.success(`群发消息完成，共 ${targets.length} 条`);
-      },
-      // 当左侧菜单切换
-      onLeftMenuChange(index) {
-        this.doUiAction('pushState', { path: [ 'chatList', 'friendList', 'roomList', 'botList' ][index] })
-        if (this.menuIndex !== index) {
-          this.searchKeyword = null;
-          this.menuIndex = index;
-          if (index == 0) {
-            this.getChatSessionList({ type: 'onLeftMenuChange' });
-          }
-          if (index == 1) {
-            this.getFriendList();
-            this.getUserFriendRequest();
-            this.doUiAction('getUserInfo')
-          }
-          if (index == 2) {
-            this.getUserBotList();
-          }
-        }
-      },
-
-      async onSelectFriend(friends) {
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'chat',
-              actionId: 'createRoom',
-              actionData: {
-                roomUserIdList: friends.map(v => v.friendId)
-              }
-            }
-          }
-        });
-        this.doUiAction('getUserInfo')
-      },
-
-      // 当创建群聊
-      onCreateRoom() {
-        this.friendListCtrlType = 'createRoom';
-        this.leftSelectFriend = true;
-        this.doUiAction('pushState', { path: 'createRoom' })
-      },
-
       /**
        * 已读
        * @param chatId
@@ -599,19 +314,6 @@
             }
           });
         }
-      },
-      // 获取好友申请列表
-      async getUserFriendRequest() {
-        this.requestFriendList = (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getUserFriendRequest'
-              }
-            }
-          })
-        ).data.appData.resultData.rows;
       },
       /**
        * 事件回调
@@ -688,24 +390,6 @@
         } else {
           this.mutedIdList = this.mutedIdList.filter(v => v !== key);
         }
-        appPostMessage({
-          action: 'syncMutedChatIdList',
-          mutedIdList: this.mutedIdList
-        });
-        // this.mutedIdList
-      },
-      /**
-       * 互动方法
-       */
-      openRequestFriendDialog() {
-        if (this.newFriendRequestCount) {
-          this.requestFriendState = true;
-        }
-      },
-      // 当添加好友
-      onAddFriend() {
-        this.inputDialog = true;
-        this.doUiAction('pushState', { path: 'addFriend' })
       },
       // 当左侧三列数据进行删除操作
       async onDeleteData(id) {
@@ -723,41 +407,10 @@
         this.getFriendList()
       },
 
-      onAcceptRequest() {
-        this.requestFriendState = false;
-        this.getUserFriendRequest();
-        this.getFriendList()
-      },
-      closeAllDialog() {
-        this.accountDialog = false;
-        this.requestFriendState = false;
-        this.leftSelectFriend = false;
-        this.selectMultiSend = false;
-        this.inputDialog = false;
-        this.editUserAvatarDialog = false;
-        this.editPasswordDialog = false;
-      },
-
       // 左上角用户的操作菜单
       async onUserWidgetMenuClick(e) {
         // eslint-disable-next-line default-case
         switch (e) {
-          case 1: {
-            this.searchUserUid = this.user.userId;
-            this.accountDialog = true;
-            this.doUiAction('pushState', { path: 'editUserInfo' })
-            break;
-          }
-          case 2: {
-            this.editUserAvatarDialog = true;
-            this.doUiAction('pushState', { path: 'editUserAvatarDialog' })
-            break;
-          }
-          case 5: {
-            this.editPasswordDialog = true;
-            this.doUiAction('pushState', { path: 'editPasswordDialog' })
-            break;
-          }
           case 10: {
             await window.jianghuAxios({
               data: {
@@ -777,10 +430,6 @@
           }
           case 15: {
             window.location.href = location.href;
-            break;
-          }
-          case 20: {
-            appPostMessage({ action: 'showAppInfo' });
             break;
           }
         }

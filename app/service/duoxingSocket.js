@@ -286,15 +286,6 @@ class DuoxingSocketService extends Service {
     const date = new Date();
     const messageTimeString = dayjs(date).format();
 
-    // 查询群成员
-    // const roomUserList = await knex(tableEnum.view01_user_room_role).where({ roomId: toRoomId }).select();
-    const roomUserList = await jianghuKnex(tableEnum.view01_user_room_role).where({ roomId: toRoomId }).select();
-
-    // 验证当前用户是否在群; 用户是否被禁言
-    const currentRoomUser = roomUserList.find(roomUser => userId === roomUser.userId);
-    if (!currentRoomUser) {
-      throw new BizError(errorInfoEnum.chat_user_not_in_room);
-    }
 
     const messageType = duoxingChatMessageTypeEnum.room;
     // 历史消息落库
@@ -310,31 +301,6 @@ class DuoxingSocketService extends Service {
       },
       true
     );
-
-    // 发送在线消息
-    for (const roomUser of roomUserList) {
-      const { userId: roomUserId, username: roomUsername, roleId, roleName } = roomUser;
-      const appData = {
-        appId,
-        pageId: 'socket',
-        actionId: 'roomMessage',
-        actionData: {
-          fromUserId,
-          fromUsername,
-          fromUserAvatar,
-          toRoomId,
-          roomName,
-          messageContent,
-          messageType,
-          messageContentType,
-          messageFingerprint,
-          messageTimeString,
-          messageStatus: 'active'
-        }
-      };
-      const socketBody = socketForward.bodyBuild({ appData });
-      await this.socketEmit({ userId: roomUserId, socketBody, socketIO, knex });
-    }
 
     return {};
   }

@@ -35,8 +35,7 @@
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/clipboard.min.js"></script>
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/vditor.min.js"></script>
 
-  {% include 'common/utils.html' %} {% include 'common/socket.html' %} {% include
-  'common/appMessage.html' %} {% block css %} {% endblock %}
+  {% include 'common/utils.html' %} {% include 'common/socket.html' %} {% block css %} {% endblock %}
   <style>
     body {
       --cPrimaryColor: <$ ctx.app.config.primaryColor $>;
@@ -63,10 +62,6 @@
         <jh-toast></jh-toast>
         <jh-confirm-dialog></jh-confirm-dialog>
         <img-viewer></img-viewer>
-        {% if ctx.userInfo and ctx.userInfo.user and ctx.userInfo.user.userId %}
-        <!-- 版本检查 -->
-        <VersionCheck></VersionCheck>
-        {% endif %}
       </div>
     </script>
   <div id="app"></div>
@@ -79,10 +74,7 @@
   {% include 'component/jhToast.html' %}
   {% include 'component/jhConfirmDialog.html' %}
   {% include 'common/jianghuAxios.html' %}
-  {% include 'common/uiAction.html' %}
-  {% if ctx.userInfo and ctx.userInfo.user and ctx.userInfo.user.userId %}
-  <!-- 版本检查 -->
-  {% include 'common/versionCheck.html' %} {% endif %} {% block vue_body %}{%
+  {% include 'common/uiAction.html' %}{% block vue_body %}{%
   endblock %}
 </body>
 

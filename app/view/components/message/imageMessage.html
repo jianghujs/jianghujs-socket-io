@@ -1,0 +1,63 @@
+<script type="text/x-template" id="_ImageMessage">
+  <div class="message imageMsg">
+    <dx-img
+      :src="imgSrc"
+      chatImage
+      enableViewer
+      style="min-width: 160px; max-width: 160px;min-height: 160px; max-height: 160px;"
+    />
+  </div>
+</script>
+
+<script>
+  Vue.component("ImageMessage", {
+    template: "#_ImageMessage",
+    props: {
+      content: String,
+      id: String,
+      progress: {
+        type: Number,
+        default: 0,
+      },
+    },
+    data() {
+      return {
+        upload: window.appInfo.upload,
+        public: window.appInfo.public,
+        progress_: 0,
+      };
+    },
+    watch: {
+      progress(v) {
+        console.log("===== progress", v);
+        this.progress_ = v;
+      },
+    },
+    computed: {
+      imgSrc() {
+        if (this.contentJsonObj.downloadPath.startsWith("/emotion")) {
+          return this.public + this.contentJsonObj.downloadPath;
+        } else if (this.contentJsonObj.downloadPath.startsWith("/")) {
+          return this.upload + this.contentJsonObj.downloadPath;
+        }
+        return this.contentJsonObj.downloadPath;
+      },
+      contentJsonObj() {
+        try {
+          return JSON.parse(this.content);
+        } catch (err) {
+          // 什么都不用做
+        }
+        return { filename: "", downloadPath: "", binarySize: null };
+      },
+    },
+    methods: {},
+  });
+</script>
+<style>
+  .message.imageMsg {
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0;
+  }
+</style>

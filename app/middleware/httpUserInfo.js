@@ -1,7 +1,6 @@
 'use strict';
 
 const userInfoUtil = require('@jianghujs/jianghu/app/middleware/middlewareUtil/userInfoUtil');
-const roomUtil = require('./roomUtil');
 
 module.exports = (options) => {
   return async (ctx, next) => {
@@ -19,10 +18,6 @@ module.exports = (options) => {
       isGroupIdRequired,
       appType,
     });
-
-
-    // 捕获 userInfo: { userRoomRoleList } 到 ctx.userInfo
-    ctx.userInfo.userRoomRoleList = await roomUtil.getUserRoomList(ctx);
 
     await next();
   };

@@ -267,23 +267,10 @@
         }
       }
     })).data.appData.resultData
-    const { user, userRoomRoleList, allowPageList, allowUiLevelList } = data;
+    const { user, allowPageList, allowUiLevelList } = data;
 
     localStorage.setItem(window.appInfo.appId + '_userInfo', JSON.stringify(user))
     global.user = userInfo = user;
-    userRoomRoleList.forEach(userRoomRole => {
-      try {
-        if (userRoomRole.roomExtend) {
-          userRoomRole.roomExtend = JSON.parse(userRoomRole.roomExtend);
-        } else {
-          userRoomRole.roomExtend = {};
-        }
-      } catch (error) {
-        userRoomRole.roomExtend = {};
-      }
-    });
-    sortList(userRoomRoleList, 'roomName');
-    global.userRoomRoleList = userRoomRoleList && userRoomRoleList.slice();
     global.allowPageList = allowPageList && allowPageList.slice();
     // TODO: 目前还没有启用
     global.allowUiLevelList = allowUiLevelList && allowUiLevelList.slice();

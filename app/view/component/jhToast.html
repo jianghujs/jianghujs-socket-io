@@ -11,7 +11,7 @@
   :bottom="position === 'bottom'">
     <v-progress-circular v-if="showLoading" indeterminate color="green"></v-progress-circular>
     <v-icon v-else left>{{ icon }}</v-icon>
-    <span :style="{'max-width': isMobile ? (mobileMaxWidth - 150) + 'px' : '350px' }" style="transform: translateY(5px);display: inline-block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ message }}</span>
+    <span :style="{'max-width': '350px' }" style="transform: translateY(5px);display: inline-block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ message }}</span>
     <template v-slot:action="{ attrs }">
     <v-btn
         color="red"

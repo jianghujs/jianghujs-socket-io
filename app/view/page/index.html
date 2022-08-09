@@ -15,11 +15,8 @@
 {% block vue_body %}
 {% include 'components/widget/leftUserWidget.html' %} {% include
 'components/widget/leftChatSessionWidget.html' %} {% include
-'components/widget/leftDrawerMenuWidget.html' %} {% include
 'components/widget/leftPanelWidget.html' %} {% include
-'components/widget/rightPanelWidget.html' %} {% include
 'components/widget/middlePanelWidget.html' %} {% include
-'components/widget/middleNoticeWidget.html' %} {% include
 'components/widget/middleChatInputWidget.html' %} {% include
 'components/widget/middleChatMessageWidget.html' %} {% include
 'components/message/cardMessage.html' %} {% include
@@ -77,30 +74,12 @@ window.registerData(
     pageTitle() {
       return this.getDataName(this.nowChatItem);
     },
-    isApp() {
-      return isApp;
-    },
-    isMobile() {
-      return window.innerWidth < 500;
-    },
     currentUserId() {
       return this.user.userId;
     },
     isChat() {
       return this.nowChatItem && this.nowChatItem.hasOwnProperty('chatId');
     },
-    isFriend() {
-      return this.nowChatItem && this.nowChatItem.hasOwnProperty('friendId');
-    },
-    isRoom() {
-      return this.nowChatItem && (this.nowChatItem.hasOwnProperty('roomId') || this.nowChatItem.messageType === 'room');
-    },
-    isXiaochengxu() {
-      return !this.isChat && !this.isFriend && !this.isRoom;
-    },
-    friendAndRoomMergedList() {
-      return this.myFriendListBackUps.concat(this.userRoomRoleListBackUps);
-    }
   }
 )
 
@@ -120,7 +99,6 @@ new Vue({
     // 手机端，除了输入框，其他地方禁止系统菜单
     this.doUiAction('setSyncStatusToSyncing');
     this.doUiAction('disableSystemEvent');
-    this.doUiAction('registerSystemBackEvent');
     this.doUiAction('initWebSocket');
     this.doUiAction('initDefaultVariable');
     this.doUiAction('getConstantList');
@@ -193,13 +171,6 @@ new Vue({
             (event.target.localName === 'textarea' || event.target.localName === 'input'));
       };
     },
-    /** 注册移动端返回按钮的处理 */
-    registerSystemBackEvent() {
-      // app端注册返回键
-      window.onpopstate = () => {
-        this.mobChatBack();
-      };
-    },
     /** 初始化socket */
     initWebSocket() {
       window.socket.init();
@@ -249,32 +220,6 @@ new Vue({
     reFilterList(searchKeyword) {
       searchKeyword = Object.prototype.toString.call(searchKeyword) === '[object Object]' ? '' : searchKeyword
       searchKeyword = searchKeyword || this.searchKeyword;
-      // 群组好友只需要过滤
-      this.myFriendList = this.myFriendListBackUps.filter(v =>
-        (searchKeyword
-          ? v.friendUsername
-            .toUpperCase()
-            .includes(searchKeyword.toUpperCase())
-          : true)
-      );
-      this.userRoomRoleList = this.userRoomRoleListBackUps
-        .map(v => {
-          v.searchMatch = null;
-          return v;
-        })
-        .filter(v => {
-          if (!searchKeyword) {
-            return true;
-          }
-          if (v.roomName.toUpperCase().includes(searchKeyword.toUpperCase())) {
-            return true;
-          }
-          if (v.roomExtend && v.roomExtend.allRoomUsername
-            && v.roomExtend.allRoomUsername.toUpperCase().includes(searchKeyword.toUpperCase())) {
-            return true;
-          }
-          return false;
-        });
 
       // 会话需要置顶过滤+排序
       this.chatList = this.chatListBackUps
@@ -338,66 +283,6 @@ new Vue({
         historyNowPage &&
         searchList.some(search => historyNowPage.startsWith(`?${search}`))
       );
-    },
-    /** 手机端后退事件 */
-    mobChatBack() {
-      if (this.matchLocationSearchStartWith([ 'friendList', 'roomList' ])) {
-        this.menuIndex = 0;
-      }
-      if (this.matchLocationSearchStartWith([ 'createRoom', 'addFriend' ])) {
-        this.leftSelectFriend = false;
-        this.inputDialog = false;
-      }
-      if (
-        this.matchLocationSearchStartWith([
-          'showAccount',
-          'searchByKeyword',
-          'editUserInfo'
-        ])
-      ) {
-        this.accountDialog = false
-      }
-      if (this.matchLocationSearchStartWith([ 'editPasswordDialog' ])) {
-        this.editPasswordDialog = false
-      }
-      if (this.matchLocationSearchStartWith([ 'mobMain' ])) {
-        this.mobileLeftHide = false
-        this.mobileRightHide = true
-        this.mobileMessageTextareaFocus = false;
-        this.$refs.middlePanel.messageTextareaDomBlur();
-      }
-      if (this.matchLocationSearchStartWith([ 'mobAppRightOpen' ])) {
-        this.mobileRightHide = true
-      }
-      if (this.matchLocationSearchStartWith([ 'mobileMessageTextareaFocus' ])) {
-        this.mobileMessageTextareaFocus = false
-        this.$refs.middlePanel.messageTextareaDomBlur();
-      }
-      if (this.matchLocationSearchStartWith([ 'roomDialog' ])) {
-        this.doUiAction('closeRoomDialog');
-      }
-      historyNowPage = location.search;
-      this.$forceUpdate();
-      return false;
-    },
-    /**
-     * 移动端自适应：点击聊天展开聊天窗口
-     * @param root0
-     * @param root0.isRobot
-     * @param root0.friendDeviceId
-     */
-    mobileShowChattingPage({ isRobot, friendDeviceId }) {
-      if (isRobot) {
-        this.friendDeviceId = friendDeviceId;
-      } else {
-        this.friendDeviceId = null;
-      }
-      this.mobileLeftHide = true;
-      this.mobileRightHide = true;
-      this.pushState({ path: 'mobMain' });
-    },
-    onMobileRightHide(event) {
-      this.mobileRightHide = event
     },
     /**
      * 断线重连监听

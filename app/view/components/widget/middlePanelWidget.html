@@ -37,13 +37,6 @@
         </button>
       </div>
     </v-footer>
-      <!-- 好友等选择框 -->
-    <SelectFriend v-model="selectFriend" ctrl-type="sendUserCard" :friends="myFriendListBackUps"
-      @done="sendCardMsg" />
-      <!-- 转发选择框 -->
-    <SelectFriend ref="selectForwardFriend" v-model="selectForwardFriend" :ctrl-type="friendListCtrlType"
-      :friends="friendAndRoomMergedList" @close="doUiAction('selectForwardFriendClose')" @done="doUiAction('onSelectForwardFriend', {friends: $event})" />
-    <voice-call-dialog v-model="voiceCallStatus" :params="{voiceType, voiceTargetId, voiceTargetName}"></voice-call-dialog>
   </div>
 </script>
 
@@ -57,7 +50,6 @@
       isMoreSelectMode: false, // 开启多选模式
       selectForwardFriend: false,
       friendListCtrlType: '',
-      selectFriend: false,
       moreSheetOpen: false,
       currentResendMsg: {},
       appForward: false,
@@ -243,11 +235,6 @@
             );
           }
         }
-      },
-      // 打开好友列表选择框
-      openFriendDialog() {
-        this.doUiAction('pushState', { path: 'sendUserCard' });
-        this.selectFriend = !this.selectFriend;
       },
       include() {
         return [ document.querySelector('.emoticon-open-btn') ];

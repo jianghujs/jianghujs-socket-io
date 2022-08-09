@@ -310,15 +310,7 @@ Vue.component('ChattingMessagePage', {
     getChatMenu(item) {
       const menu = [
         {title: '引用', method: this.quoteMsg},
-        {title: '转发', method: this.forwardMsg}
       ];
-      if (isApp && !isIos) {
-        menu.push({title: '分享', method: this.shareMsg});
-      }
-      menu.push({title: '多选', method: this.multiSelect});
-      // if (item.fromUserId !== global.user.userId) {
-      //   menu.push({ title: '语音通话', method: this.voiceCall });
-      // }
       if (item.messageContentType === 'text') {
         menu.push({title: '复制', method: this.copyMsg});
       }
@@ -328,12 +320,6 @@ Vue.component('ChattingMessagePage', {
         new Date().getTime() - dayjs(item.messageTimeString).valueOf() <= 300000
       ) {
         menu.push({title: '撤销', method: this.revokeMsg});
-      }
-      if (item.messageContentType === 'image' && isApp) {
-        menu.push({
-          title: '保存到相册',
-          method: this.saveImageToPhotosAlbum
-        });
       }
       return menu;
     },

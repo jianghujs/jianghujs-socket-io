@@ -1,0 +1,39 @@
+<script>
+  Vue.component('TextMessage', {
+    props: [ 'content', 'id' ],
+    template:
+      '<div @touchstart="onTouchstart" @touchmove="onTouchmove" @touchend="onTouchend" @click="onTap" class="message textContent" v-html="getContent" :id="id"/>',
+    computed: {
+      getContent() {
+        return this.content ? getTextContent(this.content.replace(/</g, '&lt;'), '<br>') : "";
+      }
+    },
+    data() {
+      return {
+        onTouchMove: false
+      };
+    },
+    mounted() {},
+    methods: {
+      onTouchstart(event) {
+        this.timerStart = new Date().getTime();
+        this.onTouchMove = false;
+        setTimeout(() => {
+          if (this.timerStart && !this.onTouchMove) {
+            this.$emit('openMenu', this.id);
+          }
+        }, 500);
+      },
+      onTouchmove(event) {
+        this.onTouchMove = true;
+      },
+      onTouchend(event) {
+        this.timerStart = null;
+        this.onTouchMove = true;
+      },
+      onTap(event) {
+      }
+    }
+  });
+</script>
+<style></style>

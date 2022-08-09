@@ -255,35 +255,6 @@ class DuoxingChatService extends Service {
         await this.ctx.service.duoxingSocket.socketEmit({ userId: toUserId, socketBody });
         await this.ctx.service.duoxingSocket.socketEmit({ userId, socketBody });
         break;
-      case duoxingChatMessageTypeEnum.room:
-        const roomUserList = await jianghuKnex(tableEnum.view01_user_room_role)
-          .where({ roomId: toRoomId })
-          .select();
-        for (const roomUser of roomUserList) {
-          const { userId: targetRoomUserId } = roomUser;
-          const appData = {
-            appId,
-            pageId: "socket",
-            actionId: "roomMessage",
-            actionData: {
-              messageFingerprint,
-              fromUserId,
-              fromUsername,
-              toRoomId,
-              messageContent,
-              messageContentType,
-              messageType,
-              messageTimeString,
-              messageStatus,
-            },
-          };
-          const socketBody = socketForward.bodyBuild({ appData });
-          await this.ctx.service.duoxingSocket.socketEmit({
-            userId: targetRoomUserId,
-            socketBody,
-          });
-        }
-        break;
       default:
         break;
     }

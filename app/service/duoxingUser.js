@@ -24,22 +24,6 @@ const actionDataScheme = Object.freeze({
       email: { anyOf: [{ type: "string" }, { type: "null" }] },
     },
   },
-  getUserRoomRoleListByRoomIdList: {
-    type: "object",
-    additionalProperties: true,
-    required: ["roomIdList"],
-    properties: {
-      roomUserIdList: { type: "array" },
-    },
-  },
-  getUserSocketIdOnlineList: {
-    type: "object",
-    additionalProperties: true,
-    required: ["userId"],
-    properties: {
-      userId: { type: "string" },
-    },
-  },
 });
 
 class DuoxingUserService extends Service {
@@ -54,37 +38,6 @@ class DuoxingUserService extends Service {
     await jianghuKnex(tableEnum._user, this.ctx).where({ userId }).jhUpdate(updateParams);
     const newUserDatail = await jianghuKnex(tableEnum.view01_user).where({ userId }).first();
     return newUserDatail;
-  }
-
-  async getUserRoomRoleListByRoomIdList() {
-    const { actionData } = this.ctx.request.body.appData;
-    const { jianghuKnex, config } = this.app;
-    const { userInfo } = this.ctx;
-    const { userId } = userInfo;
-    validateUtil.validate(actionDataScheme.setUserDetail, actionData);
-
-    const { roomIdList } = actionData;
-    const result = await jianghuKnex(tableEnum.user_room_role).whereIn("roomId", roomIdList).select();
-    return result;
-  }
-
-  async checkXiaochengxuIsOnline() {
-    const { actionData } = this.ctx.request.body.appData;
-    validateUtil.validate(actionDataScheme.getUserSocketIdOnlineList, actionData);
-
-    const { userId } = actionData;
-
-    const allSockets = await this.ctx.app.socketIO.fetchSockets();
-    const userSocket = allSockets.find((socket) => socket.data.userId === userId && socket.data.deviceType.startsWith("bot"));
-    const isOnline = !!userSocket;
-    return { isOnline };
-  }
-
-  async getUserBotList() {
-    const allSockets = await this.ctx.app.socketIO.fetchSockets();
-    const botSockets = allSockets.filter((socket) => socket.data.deviceType === deviceTypeEnum.bot_xiaochengxu || socket.data.deviceType === deviceTypeEnum.bot_chatbot);
-    const botOnlineUserList = botSockets.map((socket) => socket.data);
-    return { rows: botOnlineUserList };
   }
 }
 

@@ -51,7 +51,6 @@ module.exports.tableEnum = Object.freeze({
   _role: "_role",
   _user: "_user",
   _user_group_role: "_user_group_role",
-  user_room_role: "user_room_role",
   _user_group_role_page: "_user_group_role_page",
   _user_group_role_resource: "_user_group_role_resource",
   _user_session: "_user_session",
@@ -62,7 +61,6 @@ module.exports.tableEnum = Object.freeze({
   duoxing_user_friend_request: "duoxing_user_friend_request",
   // ========================View============================
   view01_user: "view01_user",
-  view01_user_room_role: "view01_user_room_role",
   view01_user_initialPassword: "view01_user_initialPassword",
   view01_duoxing_message_history: "view01_duoxing_message_history",
   view01_duoxing_user_friend_management: "view01_duoxing_user_friend_management",
