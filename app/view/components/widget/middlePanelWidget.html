@@ -31,15 +31,9 @@
 <script>
   window.registerData(
     {
-      voiceCallStatus: false,
-      voiceTargetName: '',
-      voiceType: 'callToFriend', // 'callInRoom'
-      voiceTargetId: null, // 通话对象ID 用户ID\群聊ID
       isMoreSelectMode: false, // 开启多选模式
-      selectForwardFriend: false,
       friendListCtrlType: '',
       currentResendMsg: {},
-      appForward: false,
       mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
     },
     {
@@ -88,11 +82,6 @@
       },
       clearCheckList() {
         this.$refs.chattingPage.checkList = [];
-      },
-      closeMultiSelect() {
-        if (this.$refs.chattingPage) {
-          this.$refs.chattingPage.multiSelectClose();
-        }
       },
       /**
        * 撤销消息

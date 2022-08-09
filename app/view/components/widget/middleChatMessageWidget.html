@@ -16,14 +16,6 @@
   </div>
   <template v-if="chatHistoryList && chatHistoryList.length > 0">
     <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.id">
-      <v-checkbox
-        color="primary"
-        hide-details
-        multiple
-        v-if="isMoreSel && item.messageStatus !== 'revoke' && !item.noticeType"
-        v-model="checkList"
-        :value="item.messageFingerprint"
-      ></v-checkbox>
       <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }" style="flex:1">
         <template v-if="item.messageStatus === 'revoke'">
           <div class="revokeMsg">
@@ -441,23 +433,9 @@ Vue.component('ChattingMessagePage', {
         }
       }
     },
-    forwardMsg(item) {
-      this.forwardId = item.messageFingerprint;
-      this.doUiAction('forwardSimple')
-    },
-    multiSelect() {
-      this.isMoreSel = true;
-      this.doUiAction('moreSel')
-    },
-    multiSelectClose() {
-      this.isMoreSel = false;
-    },
     appendMsg(msg) {
       this.messageTextareaValue = `${this.messageTextareaValue || ''}${msg || ''}`
     },
-    voiceCall(item, messageFingerprint) {
-      this.doUiAction('voiceCall', item)
-    }
   }
 });
 </script>
