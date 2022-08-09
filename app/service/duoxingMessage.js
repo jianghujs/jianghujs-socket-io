@@ -288,43 +288,6 @@ class DuoxingChatService extends Service {
     return {};
   }
 
-  // 会话置顶或取消置顶，免打扰会话或取消
-  async toggleChatSession() {
-    const { jianghuKnex, knex, config } = this.app;
-    const { appId } = config;
-    const { actionData } = this.ctx.request.body.appData;
-    const { userId, username } = this.ctx.userInfo;
-    validateUtil.validate(actionDataScheme.delMessageOffline, actionData);
-
-    const { chatId, type, top, muted } = actionData;
-    if (top === true) {
-      await knex(tableEnum.duoxing_chat_session, this.ctx)
-        .where({ userId, type, chatId })
-        .update({ topChatOrder: dayjs().format() });
-    } else if (top === false) {
-      await knex(tableEnum.duoxing_chat_session, this.ctx)
-        .where({ userId, type, chatId })
-        .update({ topChatOrder: "" });
-    }
-
-    if (muted === true || muted === false) {
-      await knex(tableEnum.duoxing_chat_session, this.ctx)
-        .where({ userId, type, chatId })
-        .update({ muted });
-    }
-
-    // 通知其它端更新会话列表
-    const appData = {
-      appId,
-      pageId: "socket",
-      actionId: "toggleChatSession",
-      actionData,
-    };
-    const socketBody = socketForward.bodyBuild({ appData });
-    await this.ctx.service.duoxingSocket.socketEmit({ userId, socketBody });
-    return {};
-  }
-
   // 删除会话，只做软删除，新会话过来时会更新
   async deleteChatSession() {
     const { jianghuKnex, knex, config } = this.app;

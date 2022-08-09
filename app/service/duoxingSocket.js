@@ -351,55 +351,6 @@ class DuoxingSocketService extends Service {
 
     targetSocket.emit(resourcePath, socketBody);
   }
-
-  // 小程序数据交换
-  async botExchange() {
-    const { actionData, toSocketId } = this.ctx.request.body.appData;
-    validateUtil.validate(actionDataScheme.botExchange, actionData);
-    const { appId } = this.app.config;
-    const { userInfo, jianghuSocket } = this.ctx;
-    const { userId } = userInfo;
-
-    const fromUserId = userId;
-    const { toUserId, messageContent, messageContentType, messageFingerprint } = actionData;
-    const date = new Date();
-    const fromSocketId = jianghuSocket.id;
-    const messageType = duoxingChatMessageTypeEnum.bot;
-    const messageTimeString = dayjs(date).format();
-
-    // 消息体构建
-    const appData = {
-      appId,
-      pageId: 'socket',
-      actionId: 'botExchange',
-      fromSocketId,
-      toSocketId,
-      actionData: {
-        fromUserId,
-        toUserId,
-        messageType,
-        messageContent, // {}
-        messageContentType, // chatbotRequest, chatbotResponse, xiaochengxuRequest, xiaochengxuResponse, databotRequest, databotRespone
-        messageFingerprint,
-        messageTimeString,
-        messageStatus: 'active'
-      }
-    };
-
-    const socketBody = socketForward.bodyBuild({ appData });
-    // toSocketId 不存在 ===》 根据toUserId发消息 到一个设备上
-    if (!toSocketId) {
-      const targetDeviceType = getTargetDeviceTypeByMessageContentType(messageContentType);
-      await this.socketEmitToOneBot({ userId: toUserId, socketBody, targetDeviceType });
-    }
-
-    // toSocketId 存在 ===》 直接将消息发给 toSocketId
-    if (toSocketId) {
-      await this.socketEmitToSocketId({ socketBody, toSocketId });
-    }
-
-    return {};
-  }
 }
 
 module.exports = DuoxingSocketService;
