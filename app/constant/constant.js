@@ -61,6 +61,7 @@ module.exports.tableEnum = Object.freeze({
   duoxing_user_friend_request: "duoxing_user_friend_request",
   // ========================View============================
   view01_user: "view01_user",
+  view01_user_room_role: "view01_user_room_role",
   view01_user_initialPassword: "view01_user_initialPassword",
   view01_duoxing_message_history: "view01_duoxing_message_history",
   view01_duoxing_user_friend_management: "view01_duoxing_user_friend_management",
