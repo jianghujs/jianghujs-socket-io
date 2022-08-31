@@ -1,25 +1,7 @@
-/*
- Navicat Premium Data Transfer
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _cache
+# ------------------------------------------------------------
 
- Source Server         : 本地
- Source Server Type    : MySQL
- Source Server Version : 50736
- Source Host           : localhost:3306
- Source Schema         : jianghujs_demo_socket_io
-
- Target Server Type    : MySQL
- Target Server Version : 50736
- File Encoding         : 65001
-
- Date: 09/08/2022 22:57:55
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for _cache
--- ----------------------------
 DROP TABLE IF EXISTS `_cache`;
 CREATE TABLE `_cache` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -31,17 +13,15 @@ CREATE TABLE `_cache` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='缓存表';
+) ENGINE = InnoDB COMMENT = '缓存表';
 
--- ----------------------------
--- Records of _cache
--- ----------------------------
-BEGIN;
-COMMIT;
 
--- ----------------------------
--- Table structure for _constant
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _constant
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_constant`;
 CREATE TABLE `_constant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -54,23 +34,27 @@ CREATE TABLE `_constant` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COMMENT='常量表; 软删除未启用;';
+) ENGINE = InnoDB AUTO_INCREMENT = 66 COMMENT = '常量表;';
 
--- ----------------------------
--- Records of _constant
--- ----------------------------
-BEGIN;
-INSERT INTO `_constant` VALUES (6, 'notice', 'object', '', '{\"title\":\"4.3.7 版本发布\",\"content\":\"快来使用吧！\\n测试12123123\\n快来使用吧！\\n测试12123123\\n快来使用吧！\\n测试12123123\\n快来使用吧！\\n测试12123123\\n\",\"imageSrc\":\"/noticeImage/1647076649263_719911_noticeImage.jpeg\",\"isImageShown\":false,\"isTextShown\":true}', 'update', 'admin01', 'admin01', '2022-03-12T17:19:50+08:00');
-INSERT INTO `_constant` VALUES (59, 'userStatus', 'array', NULL, '[{\"value\": \"active\", \"text\": \"正常\"}, {\"value\": \"banned\", \"text\": \"禁用\"}]', 'insert', NULL, NULL, NULL);
-INSERT INTO `_constant` VALUES (60, 'userType', 'array', NULL, '[{\"value\": \"common\", \"text\": \"普通用户\"}]', 'insert', NULL, NULL, NULL);
-INSERT INTO `_constant` VALUES (61, 'gender', 'array', NULL, '[{\"value\": \"male\", \"text\": \"男\"}, {\"value\": \"female\", \"text\": \"女\"}]', 'insert', NULL, NULL, NULL);
-INSERT INTO `_constant` VALUES (62, 'version', 'object', NULL, '{ \"version\": \"4.3.7\", \"title\": \"4.3.7 版本发布\", \"note\": \"新版本介绍\\n 1. 聊天输入优化\", \"apkVersion\": \"4.3.2\", \"apkLink\": \"\", \"apkNote\": \"\", \"desktopVersion\": \"4.3.2\", \"desktopLink\": \"http://192.168.110.215:8082/duoxing/upload/duoxing-1.0.1.dmg.zip\", \"desktopNote\": \"测试桌面客户端升级\" }', 'insert', NULL, NULL, NULL);
-INSERT INTO `_constant` VALUES (64, 'emotion', 'array', NULL, '[\n  {\n    \"dir\":\"face01\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"png\",\n    \"cols\":5,\n    \"total\":86\n  },\n  {\n    \"dir\":\"face02\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face03\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face04\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face05\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":1,\n    \"total\":7\n  },\n  {\n    \"dir\":\"face06\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":3,\n    \"total\":24\n  },\n  {\n    \"dir\":\"face07\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face08\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":3,\n    \"total\":23\n  },\n  {\n    \"dir\":\"face09\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face10\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":3,\n    \"total\":20\n  },\n  {\n    \"dir\":\"face11\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":13\n  },\n  {\n    \"dir\":\"face12\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face13\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":15\n  },\n  {\n    \"dir\":\"face14\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  }\n]\n', 'insert', NULL, NULL, NULL);
-COMMIT;
 
--- ----------------------------
--- Table structure for _file
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _constant
+# ------------------------------------------------------------
+
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (6,'notice','object','','{\"title\":\"4.3.7 版本发布\",\"content\":\"快来使用吧！\\n测试12123123\\n快来使用吧！\\n测试12123123\\n快来使用吧！\\n测试12123123\\n快来使用吧！\\n测试12123123\\n\",\"imageSrc\":\"/noticeImage/1657367701278_746510_image.png\",\"isImageShown\":true,\"isTextShown\":true}','update','admin01','admin01','2022-04-29T22:07:07+08:00');
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (59,'userStatus','array',NULL,'[{\"value\": \"active\", \"text\": \"正常\"}, {\"value\": \"banned\", \"text\": \"禁用\"}]','insert',NULL,NULL,NULL);
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (60,'userType','array',NULL,'[{\"value\": \"common\", \"text\": \"普通用户\"},{\"value\": \"xiaochengxu\", \"text\": \"小程序机器人\"}]','insert',NULL,NULL,NULL);
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (61,'gender','array',NULL,'[{\"value\": \"male\", \"text\": \"男\"}, {\"value\": \"female\", \"text\": \"女\"}]','insert',NULL,NULL,NULL);
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (62,'version','object',NULL,'{\"testUserIdList\": \"100004Q\",\"version\": \"4.3.11\", \"title\": \"4.3.7 版本发布\", \"note\": \"新版本介绍\\n 1. 聊天输入优化\", \"apkVersion\": \"5.0.20\", \"apkLink\": \"https://duoxing.openjianghu.org/duoxing/upload/10002/1647840662817_956853_D多星MD-4.7.10.apk\", \"apkNote\": \"\", \"desktopVersion\": \"4.3.2\", \"desktopLink\": \"http://192.168.110.215:8082/duoxing/upload/duoxing-1.0.1.dmg.zip\", \"desktopNote\": \"测试桌面客户端升级\" }','insert',NULL,NULL,NULL);
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (64,'emotion','array',NULL,'[\n  {\n    \"dir\":\"face01\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"png\",\n    \"cols\":5,\n    \"total\":86\n  },\n  {\n    \"dir\":\"face02\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face03\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face04\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face05\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":1,\n    \"total\":7\n  },\n  {\n    \"dir\":\"face06\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":3,\n    \"total\":24\n  },\n  {\n    \"dir\":\"face07\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face08\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":3,\n    \"total\":23\n  },\n  {\n    \"dir\":\"face09\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face10\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":3,\n    \"total\":20\n  },\n  {\n    \"dir\":\"face11\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":13\n  },\n  {\n    \"dir\":\"face12\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  },\n  {\n    \"dir\":\"face13\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":15\n  },\n  {\n    \"dir\":\"face14\",\n    \"cover\":\"face-lbl\",\n    \"ext\":\"gif\",\n    \"cols\":2,\n    \"total\":16\n  }\n]\n','insert',NULL,NULL,NULL);
+INSERT INTO `_constant` (`id`,`constantKey`,`constantType`,`desc`,`constantValue`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (65,'appLinkActionConfig','array',NULL,'[{\"regex\":\"www.baidu.com\\/*\", \"action\": \"internal\"},{\"regex\":\".openjianghu.org\\/*\", \"action\": \"internal\"}, {\"regex\":\"http:\\/\\/192.168.\\/*\", \"action\": \"internal\"}]','insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _file
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_file`;
 CREATE TABLE `_file` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -88,17 +72,15 @@ CREATE TABLE `_file` (
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`),
   KEY `fileId_index` (`fileId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8mb4 COMMENT='文件表; 软删除未启用;';
+) ENGINE = InnoDB COMMENT = '文件表;';
 
--- ----------------------------
--- Records of _file
--- ----------------------------
-BEGIN;
-COMMIT;
 
--- ----------------------------
--- Table structure for _group
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _group
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_group`;
 CREATE TABLE `_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -107,46 +89,35 @@ CREATE TABLE `_group` (
   `groupType` varchar(255) DEFAULT NULL COMMENT '群组类型; system, cgg,course',
   `groupDesc` varchar(255) DEFAULT NULL COMMENT '群组描述',
   `groupAvatar` varchar(255) DEFAULT NULL COMMENT '群logo',
-  `groupExtend` varchar(1024) DEFAULT '{}' COMMENT '拓展字段; { groupNotice: ''xx'' }',
+  `groupExtend` text COMMENT '拓展字段; { groupNotice: ''xx'' }',
   `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
   `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId',
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`),
-  KEY `groupId_index` (`groupId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COMMENT='群组表; 软删除未启用;';
+  UNIQUE KEY `groupId_index` (`groupId`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 COMMENT = '群组表;';
 
--- ----------------------------
--- Records of _group
--- ----------------------------
-BEGIN;
-INSERT INTO `_group` VALUES (1, 'adminGroup', '权限管理组', 'system', '管理组', '/groupAvatar/default.jpg', '{}', 'insert', NULL, NULL, NULL);
-INSERT INTO `_group` VALUES (6, 'wudang', '武当', NULL, '武当', '/groupAvatar/default1.jpg', '{\"groupNotice\":\"11223322\"}', 'jhUpdate', 'W00001', '张三丰', '2022-03-14T12:59:36+08:00');
-INSERT INTO `_group` VALUES (7, 'gaibang', '丐帮--', NULL, '丐帮', '/groupAvatar/default2.jpg', '{}', 'jhUpdate', 'G00001', '洪七公', '2022-03-14T16:27:34+08:00');
-INSERT INTO `_group` VALUES (8, 'huashan', '华山派', NULL, '华山派', '/groupAvatar/default3.jpg', '{}', 'insert', NULL, NULL, NULL);
-INSERT INTO `_group` VALUES (13, 'jd-_eJWCsaD90qKXcgzlH', '天下会', NULL, NULL, '/groupAvatar/default2.jpg', '{}', 'update', NULL, NULL, '2022-03-05T17:18:15+08:00');
-INSERT INTO `_group` VALUES (15, 'C1vDvXCgb4uAsoa1K8mPC', 'admin测试群___', NULL, NULL, '/groupAvatar/default2.jpg', '{}', 'update', NULL, NULL, '2022-03-12T18:36:36+08:00');
-INSERT INTO `_group` VALUES (16, 'JcCVYjEqySIdMZxcy8O11', '1111', NULL, NULL, '/groupAvatar/default2.jpg', '{}', 'jhUpdate', 'admin01', 'admin01', '2022-03-12T22:38:25+08:00');
-INSERT INTO `_group` VALUES (17, '9U_ww9I2TtgL4Fsi4whCz', 'admin,洪七公,郭靖等4人群聊', NULL, NULL, '/groupAvatar/default5.jpg', '{}', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:38:19+08:00');
-INSERT INTO `_group` VALUES (18, 'beS8LsS2pMfHic-hNuGrD', 'admin,洪七公,郭靖等3人群聊', NULL, NULL, '/groupAvatar/default1.jpg', '{}', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:46:32+08:00');
-INSERT INTO `_group` VALUES (19, 'Iy1J3vWCnnrVaZhbeCSn_', '张三丰,洪七公,令狐冲等3人群聊', NULL, NULL, '/groupAvatar/default2.jpg', '{}', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:37:05+08:00');
-INSERT INTO `_group` VALUES (20, 'gBK5SDgE0ebEMWAgF2n9Y', '张三丰,洪七公,令狐冲等3人群聊', NULL, NULL, '/groupAvatar/default4.jpg', '{}', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:43:34+08:00');
-INSERT INTO `_group` VALUES (21, 'Q07o3miNRKsBXrbCFFpaV', '张三丰,洪七公,令狐冲等3人群聊', NULL, NULL, '/groupAvatar/default6.jpg', '{}', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:46:03+08:00');
-INSERT INTO `_group` VALUES (22, 'BJbrcnzn-MwG9KJ6taPZg', '张三丰,洪七公,令狐冲等3人群聊', NULL, NULL, '/groupAvatar/default5.jpg', '{}', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:53:52+08:00');
-INSERT INTO `_group` VALUES (23, 'NVVv8YlhskIX0QHimHMap', '张三丰,洪七公,令狐冲等3人群聊', NULL, NULL, '/groupAvatar/default6.jpg', '{}', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:54:55+08:00');
-INSERT INTO `_group` VALUES (24, 'bhF6JQXgXUqwlkC1Pdl8J', '张三丰,洪七公,令狐冲等3人群聊2', NULL, NULL, '/groupAvatar/default4.jpg', '{}', 'jhUpdate', 'W00001', '张三丰', '2022-03-14T10:30:22+08:00');
-INSERT INTO `_group` VALUES (25, 'FsTa3bUxZId4MAdowDbxw', '测试修改群名字1', NULL, NULL, '/groupAvatar/default3.jpg', '{}', 'jhUpdate', 'W00001', '张三丰', '2022-03-14T12:47:35+08:00');
-INSERT INTO `_group` VALUES (26, '8CdYgl90D-Zz0OC6eA_Dk', '张三丰,admin01,令狐冲等3人群聊', NULL, NULL, '/groupAvatar/default1.jpg', '{}', 'jhInsert', 'W00001', '张三丰', '2022-03-14T20:44:11+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for _page
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _group
+# ------------------------------------------------------------
+
+INSERT INTO `_group` (`id`,`groupId`,`groupName`,`groupType`,`groupDesc`,`groupAvatar`,`groupExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'adminGroup','权限管理组','system','管理组','/groupAvatar/default.jpg','{\"allGroupUsername\":\"\"}','insert',NULL,NULL,NULL);
+INSERT INTO `_group` (`id`,`groupId`,`groupName`,`groupType`,`groupDesc`,`groupAvatar`,`groupExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (2,'login','登录用户组','system','用户组',NULL,'{\"allGroupUsername\":\"\"}','insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _page
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_page`;
 CREATE TABLE `_page` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pageId` varchar(255) DEFAULT NULL COMMENT 'pageId',
   `pageName` varchar(255) DEFAULT NULL COMMENT 'page name',
+  `pageFile` varchar(255) DEFAULT NULL,
   `pageType` varchar(255) DEFAULT NULL COMMENT '页面类型; showInMenu, dynamicInMenu',
   `sort` varchar(255) DEFAULT NULL,
   `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
@@ -154,21 +125,32 @@ CREATE TABLE `_page` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COMMENT='页面表; 软删除未启用;';
+) ENGINE = InnoDB AUTO_INCREMENT = 53 COMMENT = '页面表;';
 
--- ----------------------------
--- Records of _page
--- ----------------------------
-BEGIN;
-INSERT INTO `_page` VALUES (2, 'help', '帮助', 'dynamicInMenu', '0', 'insert', NULL, NULL, NULL);
-INSERT INTO `_page` VALUES (3, 'login', '登陆', '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_page` VALUES (6, 'manual', '操作手册', '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_page` VALUES (31, 'index', '聊天', 'showInMenu', '0', 'insert', NULL, NULL, NULL);
-COMMIT;
 
--- ----------------------------
--- Table structure for _record_history
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _page
+# ------------------------------------------------------------
+
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'xiaochengxu','小程序',NULL,'','','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (2,'help','帮助','helpV3','dynamicInMenu','1','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (3,'login','登陆','','','','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (6,'manual','操作手册',NULL,'showInMenu','0','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (31,'index','聊天',NULL,'showInMenu','1','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (32,'userManagement','用户管理',NULL,'showInMenu','2','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (35,'noticeManagement','通知管理',NULL,'showInMenu','4','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (36,'recordHistoryManagement','数据历史',NULL,'showInMenu','5','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (37,'liveChat','语音聊天',NULL,'','','insert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (46,'friendManagement','好友管理',NULL,'showInMenu','2','update','vscode','vscode','2022-08-01T13:10:01+08:00');
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (48,'friendManagementOfOneUser','好友管理',NULL,'dynamicInMenu','2','jhInsert',NULL,NULL,NULL);
+INSERT INTO `_page` (`id`,`pageId`,`pageName`,`pageFile`,`pageType`,`sort`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (52,'roomNoticeManagement','房间通知',NULL,'showInMenu','3','insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _record_history
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_record_history`;
 CREATE TABLE `_record_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -182,51 +164,16 @@ CREATE TABLE `_record_history` (
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; recordContent.operationAt; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`),
   KEY `index_record_id` (`recordId`),
-  KEY `index_table_action` (`table`,`operation`)
-) ENGINE=InnoDB AUTO_INCREMENT=4238 DEFAULT CHARSET=utf8mb4 COMMENT='数据历史表';
+  KEY `index_table_action` (`table`, `operation`)
+) ENGINE = InnoDB AUTO_INCREMENT = 42329 COMMENT = '数据历史表';
 
--- ----------------------------
--- Records of _record_history
--- ----------------------------
-BEGIN;
-INSERT INTO `_record_history` VALUES (4205, '_user_session', 175, '{\"id\":175,\"userId\":\"admin01\",\"userIp\":null,\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome\",\"socketStatus\":\"offline\",\"authToken\":\"QxYCeR71B8pGk8OYn3_kukOZA44nVvwGcAcH\",\"operation\":\"jhInsert\",\"operationByUserId\":null,\"operationByUser\":null,\"operationAt\":\"2022-04-27T21:15:38+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"admin01\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651065338097_2854992\",\"packageType\":\"httpRequest\"}', 'jhInsert', NULL, NULL, '2022-04-27T21:15:38+08:00');
-INSERT INTO `_record_history` VALUES (4206, '_user_session', 175, '{\"id\":175,\"userId\":\"admin01\",\"userIp\":null,\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome\",\"socketStatus\":\"online\",\"authToken\":\"QxYCeR71B8pGk8OYn3_kukOZA44nVvwGcAcH\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-04-27T21:15:40+08:00\"}', '{\"packageId\":\"1651065339314_5950212\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome\",\"status\":null,\"timestamp\":\"2022-04-27T13:15:39.314Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-04-27T21:15:40+08:00');
-INSERT INTO `_record_history` VALUES (4207, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"offline\",\"authToken\":\"_tSzAJLwfuxEMXcxPlWJ-RLlI7Psc_zBtVTQ\",\"operation\":\"jhInsert\",\"operationByUserId\":null,\"operationByUser\":null,\"operationAt\":\"2022-05-04T20:57:18+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"admin01\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651669038250_5005050\",\"packageType\":\"httpRequest\"}', 'jhInsert', NULL, NULL, '2022-05-04T20:57:18+08:00');
-INSERT INTO `_record_history` VALUES (4208, '_file', 118, '{\"id\":118,\"fileId\":\"1651675944074_830752\",\"fileDirectory\":\"admin01/2022/5/4/\",\"filename\":\"11.jpeg\",\"filenameStorage\":\"1651675944074_830752_11.jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651675944074_830752_11.jpeg\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"54.19KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-05-04T22:52:24+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"4852d6e9b58d4f4588fddd3d48c340da\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"11.jpeg\",\"fileDirectory\":\"admin01/2022/5/4/\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651675943661_8829860\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-05-04T22:52:24+08:00');
-INSERT INTO `_record_history` VALUES (4209, '_file', 119, '{\"id\":119,\"fileId\":\"1651675951776_192376\",\"fileDirectory\":\"admin01/2022/5/4/\",\"filename\":\"11.jpeg\",\"filenameStorage\":\"1651675951776_192376_11.jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651675951776_192376_11.jpeg\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"54.19KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-05-04T22:52:31+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"4852d6e9b58d4f4588fddd3d48c340da\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"11.jpeg\",\"fileDirectory\":\"admin01/2022/5/4/\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651675951372_8063832\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-05-04T22:52:31+08:00');
-INSERT INTO `_record_history` VALUES (4210, '_file', 120, '{\"id\":120,\"fileId\":\"1651675959922_334893\",\"fileDirectory\":\"admin01/2022/5/4/\",\"filename\":\"11.jpeg\",\"filenameStorage\":\"1651675959922_334893_11.jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651675959922_334893_11.jpeg\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"54.19KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-05-04T22:52:39+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"4852d6e9b58d4f4588fddd3d48c340da\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"11.jpeg\",\"fileDirectory\":\"admin01/2022/5/4/\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651675959525_5394914\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-05-04T22:52:39+08:00');
-INSERT INTO `_record_history` VALUES (4211, '_file', 121, '{\"id\":121,\"fileId\":\"1651676170376_873134\",\"fileDirectory\":\"admin01/2022/5/4/\",\"filename\":\"PMBOK指南第6版-中文-new.pdf\",\"filenameStorage\":\"1651676170376_873134_PMBOK指南第6版-中文-new.pdf\",\"downloadPath\":\"/admin01/2022/5/4//1651676170376_873134_PMBOK指南第6版-中文-new.pdf\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"19.84MB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-05-04T22:56:10+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"18a9e3ebc810dd5d87cf9ff8c584820d\",\"total\":7,\"chunkSize\":3145728,\"filename\":\"PMBOK指南第6版-中文-new.pdf\",\"fileDirectory\":\"admin01/2022/5/4/\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651676169950_4828307\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-05-04T22:56:10+08:00');
-INSERT INTO `_record_history` VALUES (4212, '_file', 122, '{\"id\":122,\"fileId\":\"1651676241179_267645\",\"fileDirectory\":\"admin01/2022/5/4/\",\"filename\":\"11 (1).jpeg\",\"filenameStorage\":\"1651676241179_267645_11 (1).jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651676241179_267645_11 (1).jpeg\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"54.19KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-05-04T22:57:21+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"4852d6e9b58d4f4588fddd3d48c340da\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"11 (1).jpeg\",\"fileDirectory\":\"admin01/2022/5/4/\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651676240770_3968231\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-05-04T22:57:21+08:00');
-INSERT INTO `_record_history` VALUES (4213, '_file', 123, '{\"id\":123,\"fileId\":\"1651676403188_701889\",\"fileDirectory\":\"admin01/2022/5/4/\",\"filename\":\"recordFile_224538.mp3\",\"filenameStorage\":\"1651676403188_701889_recordFile_224538.mp3\",\"downloadPath\":\"/admin01/2022/5/4//1651676403188_701889_recordFile_224538.mp3\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"232.04KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-05-04T23:00:03+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"bd2809ba2c1aa0894f18476e8429a01b\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"recordFile_224538.mp3\",\"fileDirectory\":\"admin01/2022/5/4/\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36\"},\"packageId\":\"1651676402748_8668127\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-05-04T23:00:03+08:00');
-INSERT INTO `_record_history` VALUES (4214, '_user_session', 296, '{\"id\":296,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5071.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"offline\",\"authToken\":\"hFMCOcDDBOX4dhUh-aP2PuT4uHO0JAbPBnF8\",\"operation\":\"jhInsert\",\"operationByUserId\":null,\"operationByUser\":null,\"operationAt\":\"2022-05-23T07:56:41+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"admin01\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome\",\"deviceType\":\"web\"},\"appId\":\"socket-io-demo\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5071.0 Safari/537.36\"},\"packageId\":\"1653263798806_6649832\",\"packageType\":\"httpRequest\"}', 'jhInsert', NULL, NULL, '2022-05-23T07:56:41+08:00');
-INSERT INTO `_record_history` VALUES (4215, '_user_session', 297, '{\"id\":297,\"userId\":\"W00002\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"offline\",\"authToken\":\"IlErHTRMnT6RRAY5JyjYcr2JWFWG-JM6DaDQ\",\"operation\":\"jhInsert\",\"operationByUserId\":null,\"operationByUser\":null,\"operationAt\":\"2022-08-08T21:08:51+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"W00002\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1659964131176_4946078\",\"packageType\":\"httpRequest\"}', 'jhInsert', NULL, NULL, '2022-08-08T21:08:51+08:00');
-INSERT INTO `_record_history` VALUES (4216, '_user_session', 297, '{\"id\":297,\"userId\":\"W00002\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"IlErHTRMnT6RRAY5JyjYcr2JWFWG-JM6DaDQ\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"W00002\",\"operationByUser\":\"张无忌\",\"operationAt\":\"2022-08-08T21:08:53+08:00\"}', '{\"packageId\":\"1659964133604_9439748\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T13:08:53.604Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::W00002\"}}}', 'jhUpdate', 'W00002', '张无忌', '2022-08-08T21:08:53+08:00');
-INSERT INTO `_record_history` VALUES (4217, '_user_session', 297, '{\"id\":297,\"userId\":\"W00002\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"W00002\",\"operationByUser\":\"张无忌\",\"operationAt\":\"2022-08-08T21:09:01+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"logout\",\"actionData\":{\"needSetCookies\":true},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1659964140972_7458506\",\"packageType\":\"httpRequest\"}', 'jhUpdate', 'W00002', '张无忌', '2022-08-08T21:09:01+08:00');
-INSERT INTO `_record_history` VALUES (4218, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T21:09:08+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"admin01\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1659964148273_9226515\",\"packageType\":\"httpRequest\"}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T21:09:08+08:00');
-INSERT INTO `_record_history` VALUES (4219, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T21:09:09+08:00\"}', '{\"packageId\":\"1659964148898_9649403\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T13:09:08.898Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T21:09:09+08:00');
-INSERT INTO `_record_history` VALUES (4220, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T21:20:31+08:00\"}', '{\"packageId\":\"1659964148898_9649403\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T13:09:08.898Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T21:20:31+08:00');
-INSERT INTO `_record_history` VALUES (4221, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T21:21:54+08:00\"}', '{\"packageId\":\"1659964913384_6030545\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T13:21:53.385Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T21:21:54+08:00');
-INSERT INTO `_record_history` VALUES (4222, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T21:45:06+08:00\"}', '{\"packageId\":\"1659966306032_7918563\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T13:45:06.032Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T21:45:06+08:00');
-INSERT INTO `_record_history` VALUES (4223, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T21:52:55+08:00\"}', '{\"packageId\":\"1659966775163_5415077\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T13:52:55.163Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T21:52:55+08:00');
-INSERT INTO `_record_history` VALUES (4224, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T22:24:50+08:00\"}', '{\"packageId\":\"1659968690179_4629181\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T14:24:50.179Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T22:24:50+08:00');
-INSERT INTO `_record_history` VALUES (4225, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T22:25:45+08:00\"}', '{\"packageId\":\"1659968690179_4629181\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T14:24:50.179Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T22:25:45+08:00');
-INSERT INTO `_record_history` VALUES (4226, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T22:25:46+08:00\"}', '{\"packageId\":\"1659968746123_7681243\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T14:25:46.124Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T22:25:46+08:00');
-INSERT INTO `_record_history` VALUES (4227, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"HFtIOpiITCPyWTAfBY-m9sF4ikFkfS2Ckpqu\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-08T22:52:30+08:00\"}', '{\"packageId\":\"1659970350236_1325781\",\"packageType\":\"socketRequest\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"status\":null,\"timestamp\":\"2022-08-08T14:52:30.236Z\",\"appData\":{\"appId\":\"jianghujs_demo_socket_io\",\"pageId\":\"socket\",\"actionId\":\"connect\",\"actionData\":{\"socketId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome::admin01\"}}}', 'jhUpdate', 'admin01', 'admin01', '2022-08-08T22:52:30+08:00');
-INSERT INTO `_record_history` VALUES (4228, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T21:39:45+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"logout\",\"actionData\":{\"needSetCookies\":true},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660052385336_3482951\",\"packageType\":\"httpRequest\"}', 'jhUpdate', 'admin01', 'admin01', '2022-08-09T21:39:45+08:00');
-INSERT INTO `_record_history` VALUES (4229, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"2xYpehvxqLCkMe0lwM0jJ7iudfIKN2uBQU-u\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T21:51:18+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"admin01\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660053077866_2249594\",\"packageType\":\"httpRequest\"}', 'jhUpdate', 'admin01', 'admin01', '2022-08-09T21:51:18+08:00');
-INSERT INTO `_record_history` VALUES (4230, '_file', 124, '{\"id\":124,\"fileId\":\"1660054309353_163847\",\"fileDirectory\":\"admin01/2022/8/9/\",\"filename\":\"recordFile_904032.mp3\",\"filenameStorage\":\"1660054309353_163847_recordFile_904032.mp3\",\"downloadPath\":\"/admin01/2022/8/9//1660054309353_163847_recordFile_904032.mp3\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"184.04KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:11:49+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"b6a98cdb59ce5b7565d0a688d655f75e\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"recordFile_904032.mp3\",\"fileDirectory\":\"admin01/2022/8/9/\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660054309293_7820381\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-08-09T22:11:49+08:00');
-INSERT INTO `_record_history` VALUES (4231, '_file', 125, '{\"id\":125,\"fileId\":\"1660054317484_616526\",\"fileDirectory\":\"admin01/2022/8/9/\",\"filename\":\"recordFile_851044.mp3\",\"filenameStorage\":\"1660054317484_616526_recordFile_851044.mp3\",\"downloadPath\":\"/admin01/2022/8/9//1660054317484_616526_recordFile_851044.mp3\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"320.04KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:11:57+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"0e22fc3801ad350f1b572487491db9f6\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"recordFile_851044.mp3\",\"fileDirectory\":\"admin01/2022/8/9/\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660054317447_7933852\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-08-09T22:11:57+08:00');
-INSERT INTO `_record_history` VALUES (4232, '_file', 126, '{\"id\":126,\"fileId\":\"1660054360879_998646\",\"fileDirectory\":\"admin01/2022/8/9/\",\"filename\":\"recordFile_202319.mp3\",\"filenameStorage\":\"1660054360879_998646_recordFile_202319.mp3\",\"downloadPath\":\"/admin01/2022/8/9//1660054360879_998646_recordFile_202319.mp3\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"288.04KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:12:40+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"b1e5c3b78834bad6649f486417fb7680\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"recordFile_202319.mp3\",\"fileDirectory\":\"admin01/2022/8/9/\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660054360816_3551096\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-08-09T22:12:40+08:00');
-INSERT INTO `_record_history` VALUES (4233, '_file', 127, '{\"id\":127,\"fileId\":\"1660054473637_103978\",\"fileDirectory\":\"admin01/2022/8/9/\",\"filename\":\"WechatIMG5.jpeg\",\"filenameStorage\":\"1660054473637_103978_WechatIMG5.jpeg\",\"downloadPath\":\"/admin01/2022/8/9//1660054473637_103978_WechatIMG5.jpeg\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"279.83KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:14:33+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"1ad6768c7fccd737351cb41f9b08cd53\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"WechatIMG5.jpeg\",\"fileDirectory\":\"admin01/2022/8/9/\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660054473599_7196959\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-08-09T22:14:33+08:00');
-INSERT INTO `_record_history` VALUES (4234, '_file', 128, '{\"id\":128,\"fileId\":\"1660055539825_424581\",\"fileDirectory\":\"admin01/2022/8/9/\",\"filename\":\"xiaochengxu.zip\",\"filenameStorage\":\"1660055539825_424581_xiaochengxu.zip\",\"downloadPath\":\"/admin01/2022/8/9//1660055539825_424581_xiaochengxu.zip\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"314.93KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:32:20+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"710ddffacfd2bb47456bdb0a526034fc\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"xiaochengxu.zip\",\"fileDirectory\":\"admin01/2022/8/9/\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660055539641_4163324\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-08-09T22:32:20+08:00');
-INSERT INTO `_record_history` VALUES (4235, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:42:34+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"logout\",\"actionData\":{\"needSetCookies\":true},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660056154386_9958590\",\"packageType\":\"httpRequest\"}', 'jhUpdate', 'admin01', 'admin01', '2022-08-09T22:42:34+08:00');
-INSERT INTO `_record_history` VALUES (4236, '_user_session', 295, '{\"id\":295,\"userId\":\"admin01\",\"userIp\":\"127.0.0.1\",\"userIpRegion\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\",\"socketStatus\":\"online\",\"authToken\":\"euJzkbLE09aEQ9TjxLwC9rSV1JGPJ3WFrzzL\",\"operation\":\"jhUpdate\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:42:37+08:00\"}', '{\"appData\":{\"pageId\":\"login\",\"actionId\":\"passwordLogin\",\"actionData\":{\"userId\":\"admin01\",\"password\":\"123456\",\"deviceId\":\"127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome\",\"deviceType\":\"web\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660056157553_9032950\",\"packageType\":\"httpRequest\"}', 'jhUpdate', 'admin01', 'admin01', '2022-08-09T22:42:37+08:00');
-INSERT INTO `_record_history` VALUES (4237, '_file', 129, '{\"id\":129,\"fileId\":\"1660057003983_131840\",\"fileDirectory\":\"admin01/2022/8/9/\",\"filename\":\"WechatIMG5.jpeg\",\"filenameStorage\":\"1660057003983_131840_WechatIMG5.jpeg\",\"downloadPath\":\"/admin01/2022/8/9//1660057003983_131840_WechatIMG5.jpeg\",\"fileType\":null,\"fileDesc\":null,\"binarySize\":\"279.83KB\",\"operation\":\"jhInsert\",\"operationByUserId\":\"admin01\",\"operationByUser\":\"admin01\",\"operationAt\":\"2022-08-09T22:56:44+08:00\"}', '{\"appData\":{\"pageId\":\"allPage\",\"actionId\":\"uploadFileDone\",\"actionData\":{\"hash\":\"1ad6768c7fccd737351cb41f9b08cd53\",\"total\":1,\"chunkSize\":3145728,\"filename\":\"WechatIMG5.jpeg\",\"fileDirectory\":\"admin01/2022/8/9/\"},\"appId\":\"jianghujs_demo_socket_io\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\"},\"packageId\":\"1660057003913_2742215\",\"packageType\":\"httpRequest\"}', 'jhInsert', 'admin01', 'admin01', '2022-08-09T22:56:44+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for _resource
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _resource
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_resource`;
 CREATE TABLE `_resource` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -245,49 +192,86 @@ CREATE TABLE `_resource` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=603 DEFAULT CHARSET=utf8mb4 COMMENT='请求资源表; 软删除未启用; resourceId=`${appId}.${pageId}.${actionId}`';
+) ENGINE = InnoDB AUTO_INCREMENT = 817 COMMENT = '请求资源表; resourceId=`${appId}.${pageId}.${actionId}`';
 
--- ----------------------------
--- Records of _resource
--- ----------------------------
-BEGIN;
-INSERT INTO `_resource` VALUES (101, NULL, NULL, 'allPage', 'getChunkInfo', '✅ 文件分片下载-获取分片信息', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"getChunkInfo\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (102, NULL, NULL, 'allPage', 'uploadFileDone', '✅ 文件分片上传-所有分片上传完毕', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadFileDone\" }', '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_resource` VALUES (105, NULL, NULL, 'allPage', 'httpUploadByStream', '✅ 文件分片上传-http文件流', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByStream\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (106, NULL, NULL, 'allPage', 'httpUploadByBase64', '✅ 文件分片上传-http base64', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByBase64\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (107, NULL, NULL, 'allPage', 'socketUploadByStream', '✅ 文件分片上传-socket 文件流', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByBuffer\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (108, NULL, NULL, 'allPage', 'socketUploadByBase64', '✅ 文件分片上传-socket base64', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByBase64\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (112, NULL, NULL, 'allPage', 'httpDownloadByBase64', '✅ 文件分片下载-http base64', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"downloadFileChunkByBase64\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (113, NULL, NULL, 'allPage', 'socketDownloadByStream', '✅ 文件分片下载-socket文件流', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"downloadFileChunkByBuffer\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (114, NULL, NULL, 'allPage', 'socketDownloadByBase64', '✅ 文件分片下载-socket base64', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"downloadFileChunkByBase64\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (299, NULL, NULL, 'login', 'passwordLogin', '✅ 密码登录', 'service', '{}', '{ \"service\": \"user\", \"serviceFunction\": \"passwordLogin\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:41:08+08:00');
-INSERT INTO `_resource` VALUES (301, NULL, NULL, 'allPage', 'getConstantList', '✅ 获取全局常量', 'sql', '{}', '{ \"table\": \"_constant\", \"operation\": \"select\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:42:43+08:00');
-INSERT INTO `_resource` VALUES (302, NULL, NULL, 'allPage', 'userInfo', '✅ 用户信息', 'service', '{}', '{ \"service\": \"user\", \"serviceFunction\": \"userInfo\" }', '', '', 'update', NULL, NULL, '2022-03-05T21:44:23+08:00');
-INSERT INTO `_resource` VALUES (303, NULL, NULL, 'allPage', 'uploadByBase64', '✅ 上传base64的文件', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadByBase64\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:34:20+08:00');
-INSERT INTO `_resource` VALUES (304, NULL, NULL, 'allPage', 'uploadByStream', '✅ 上传流文件', 'service', '{}', '{ \"service\": \"file\", \"serviceFunction\": \"uploadByStream\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:27:32+08:00');
-INSERT INTO `_resource` VALUES (305, NULL, NULL, 'allPage', 'logout', '✅ 退出登录', 'service', '{}', '{ \"service\": \"user\", \"serviceFunction\": \"logout\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:41:03+08:00');
-INSERT INTO `_resource` VALUES (332, NULL, NULL, 'user', 'setUserDetail', '✅ 设置用户信息', 'service', '{}', '{ \"service\": \"duoxingUser\", \"serviceFunction\": \"setUserDetail\" }', '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_resource` VALUES (351, NULL, NULL, 'chat', 'getUserInfo', '✅ 查询用户信息', 'sql', '{}', '{ \"table\": \"view01_user\", \"operation\": \"select\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:42:14+08:00');
-INSERT INTO `_resource` VALUES (352, NULL, NULL, 'chat', 'getUserFriend', '✅ 查询好友列表', 'service', '{}', '{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"getUserFriend\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:42:13+08:00');
-INSERT INTO `_resource` VALUES (353, NULL, NULL, 'chat', 'getUserFriendRequest', '✅ 查询好友请求列表', 'service', '{}', '{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"getUserFriendRequest\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:42:13+08:00');
-INSERT INTO `_resource` VALUES (357, NULL, NULL, 'chat', 'delUserFriend', '✅ 删除好友', 'service', '{}', '{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"delUserFriend\" }', '', '', 'update', NULL, NULL, '2022-03-10T22:30:54+08:00');
-INSERT INTO `_resource` VALUES (358, NULL, '{ \"before\": [{ \"service\": \"duoxingGroup\", \"serviceFunction\": \"groupOpeartionBeforeHook\" }], \"after\": [] }', 'chat', 'getGroupInfo', '✅ 获取群信息（群成员列表）', 'service', '{}', '{ \"service\": \"duoxingGroup\", \"serviceFunction\": \"getGroupInfo\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:41:25+08:00');
-INSERT INTO `_resource` VALUES (367, NULL, NULL, 'chat', 'getChatSession', '✅ 会话列表', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"getChatSession\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:42:13+08:00');
-INSERT INTO `_resource` VALUES (368, NULL, NULL, 'chat', 'getMessageHistory', '✅ 消息列表[往历史找]', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"getMessageHistory\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:42:15+08:00');
-INSERT INTO `_resource` VALUES (369, NULL, NULL, 'chat', 'getMessageHistoryByMaxId', '✅ 消息列表[往最新找]', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"getMessageHistory\" }', '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_resource` VALUES (370, NULL, NULL, 'chat', 'revokeMessage', '✅ 撤回消息', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"revokeMessage\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:07:46+08:00');
-INSERT INTO `_resource` VALUES (371, NULL, NULL, 'chat', 'delMessageOffline', '✅ 删除离线消息', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"delMessageOffline\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:40:51+08:00');
-INSERT INTO `_resource` VALUES (374, NULL, NULL, 'chat', 'toggleChatSession', '✅ 置顶会话', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"toggleChatSession\" }', '', '', 'update', NULL, NULL, '2022-03-11T21:57:48+08:00');
-INSERT INTO `_resource` VALUES (375, NULL, NULL, 'chat', 'deleteChatSession', '✅ 删除会话', 'service', '{}', '{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"deleteChatSession\" }', '', '', 'update', NULL, NULL, '2022-03-10T20:57:28+08:00');
-INSERT INTO `_resource` VALUES (501, NULL, '', 'socket', 'connect', '✅ socket 连接', 'service', '{}', '{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"connect\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:35:05+08:00');
-INSERT INTO `_resource` VALUES (502, NULL, NULL, 'socket', 'disconnect', '✅ socket 关闭连接', 'service', '{}', '{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"disconnect\" }', '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_resource` VALUES (503, NULL, NULL, 'socket', 'userSendMessageToUser', '✅ socket 发送一对一聊天信息', 'service', '{}', '{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"userSendMessageToUser\" }', '', '', 'update', NULL, NULL, '2022-03-12T21:08:02+08:00');
-INSERT INTO `_resource` VALUES (504, NULL, NULL, 'socket', 'userSendMessageToGroup', '✅ socket 发送群聊天信息', 'service', '{}', '{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"userSendMessageToGroup\" }', '', '', 'update', NULL, NULL, '2022-03-12T20:28:15+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for _resource_request_log
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _resource
+# ------------------------------------------------------------
+
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (101,NULL,NULL,'allPage','getChunkInfo','✅ 文件分片下载-获取分片信息','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"getChunkInfo\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (102,NULL,NULL,'allPage','uploadFileDone','✅ 文件分片上传-所有分片上传完毕','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadFileDone\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (105,NULL,NULL,'allPage','httpUploadByStream','✅ 文件分片上传-http文件流','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByStream\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (106,NULL,NULL,'allPage','httpUploadByBase64','✅ 文件分片上传-http base64','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByBase64\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (107,NULL,NULL,'allPage','socketUploadByStream','✅ 文件分片上传-socket 文件流','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByBuffer\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (108,NULL,NULL,'allPage','socketUploadByBase64','✅ 文件分片上传-socket base64','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadFileChunkByBase64\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (112,NULL,NULL,'allPage','httpDownloadByBase64','✅ 文件分片下载-http base64','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"downloadFileChunkByBase64\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (113,NULL,NULL,'allPage','socketDownloadByStream','✅ 文件分片下载-socket文件流','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"downloadFileChunkByBuffer\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (114,NULL,NULL,'allPage','socketDownloadByBase64','✅ 文件分片下载-socket base64','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"downloadFileChunkByBase64\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (299,NULL,NULL,'login','passwordLogin','✅ 密码登录','service','{}','{ \"service\": \"user\", \"serviceFunction\": \"passwordLogin\" }','','','update',NULL,NULL,'2022-03-12T21:41:08+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (301,NULL,NULL,'allPage','getConstantList','✅ 获取全局常量','sql','{}','{ \"table\": \"_constant\", \"operation\": \"select\" }','','','update',NULL,NULL,'2022-03-12T21:42:43+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (302,NULL,NULL,'allPage','userInfo','✅ 用户信息','service','{}','{ \"service\": \"user\", \"serviceFunction\": \"userInfo\" }','','','update',NULL,NULL,'2022-03-05T21:44:23+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (303,NULL,NULL,'allPage','uploadByBase64','✅ 上传base64的文件','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadByBase64\" }','','','update',NULL,NULL,'2022-03-10T22:34:20+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (304,NULL,NULL,'allPage','uploadByStream','✅ 上传流文件','service','{}','{ \"service\": \"file\", \"serviceFunction\": \"uploadByStream\" }','','','update',NULL,NULL,'2022-03-10T22:27:32+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (305,NULL,NULL,'allPage','logout','✅ 退出登录','service','{}','{ \"service\": \"user\", \"serviceFunction\": \"logout\" }','','','update',NULL,NULL,'2022-03-12T21:41:03+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (332,NULL,NULL,'user','setUserDetail','✅ 设置用户信息','service','{}','{ \"service\": \"duoxingUser\", \"serviceFunction\": \"setUserDetail\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (334,NULL,NULL,'user','resetPassword','✅ 修改用户密码','service','{}','{ \"service\": \"user\", \"serviceFunction\": \"resetPassword\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (335,'','','noticeManagement','updateConstant','✅ 通知管理','sql','{}','{ \"table\": \"_constant\", \"operation\": \"update\" }','','',NULL,NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (339,NULL,NULL,'userManagement','getItemList','✅查询用户列表','sql','{}','{ \"table\": \"_user\", \"operation\": \"select\" }','','','update',NULL,NULL,'2022-03-05T21:44:23+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (340,NULL,NULL,'userManagement','addUser','✅ 插入新用户','service','{}','{ \"service\": \"userManagement\", \"serviceFunction\": \"addUser\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (341,NULL,NULL,'userManagement','setItem','✅ 更新用户','sql','{}','{ \"table\": \"_user\", \"operation\": \"jhUpdate\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (343,NULL,NULL,'userManagement','resetUserPassword','✅重新设置用户密码','service','{}','{ \"service\": \"userManagement\", \"serviceFunction\": \"resetUserPassword\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (347,NULL,NULL,'recordHistoryManagement','selectOnUseItemListByTable','✅获取指定表的使用中的数据列表','service',NULL,'{ \"service\": \"recordHistory\", \"serviceFunction\": \"selectOnUseItemListByTable\" }','','','update',NULL,NULL,'2022-02-21T19:58:23+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (348,NULL,NULL,'recordHistoryManagement','selectDeletedItemListByTable','✅获取指定表的已删除的数据列表','service',NULL,'{ \"service\": \"recordHistory\", \"serviceFunction\": \"selectDeletedItemListByTable\" }','','','update',NULL,NULL,'2022-02-21T19:58:21+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (349,NULL,NULL,'recordHistoryManagement','selectItemList','✅获取数据历史表','sql',NULL,'{ \"table\": \"_record_history\", \"operation\": \"select\" }','','','update',NULL,NULL,'2022-02-21T19:58:30+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (350,NULL,NULL,'recordHistoryManagement','restoreRecordByRecordHistory','✅还原数据','service',NULL,'{ \"service\": \"recordHistory\", \"serviceFunction\": \"restoreRecordByRecordHistory\" }','','','update',NULL,NULL,'2022-02-21T00:47:08+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (351,NULL,NULL,'chat','getUserInfo','✅ 查询用户信息','sql','{}','{ \"table\": \"view01_user\", \"operation\": \"select\" }','','','update',NULL,NULL,'2022-03-12T21:42:14+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (352,NULL,NULL,'chat','getUserFriend','✅ 查询好友列表','service','{}','{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"getUserFriend\" }','','','update',NULL,NULL,'2022-03-12T21:42:13+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (353,NULL,NULL,'chat','getUserFriendRequest','✅ 查询好友请求列表','service','{}','{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"getUserFriendRequest\" }','','','update',NULL,NULL,'2022-03-12T21:42:13+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (354,NULL,NULL,'chat','addUserFriend','✅ 添加好友','service','{}','{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"addUserFriend\" }','','','update',NULL,NULL,'2022-03-12T21:22:16+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (355,NULL,NULL,'chat','acceptUserFriend','✅ 同意好友申请','service','{}','{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"acceptUserFriend\" }','','','update',NULL,NULL,'2022-03-10T21:35:41+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (356,NULL,NULL,'chat','rejectUserFriend','✅ 拒绝好友申请','service','{}','{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"rejectUserFriend\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (357,NULL,NULL,'chat','delUserFriend','✅ 删除好友','service','{}','{ \"service\": \"duoxingFriend\", \"serviceFunction\": \"delUserFriend\" }','','','update',NULL,NULL,'2022-03-10T22:30:54+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (358,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [] }','chat','getRoomInfo','✅ 获取群信息（群成员列表）','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"getRoomInfo\" }','','','update',NULL,NULL,'2022-03-12T21:41:25+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (359,NULL,'{ \"before\": [], \"after\": [] }','chat','createRoom','✅ 创建群','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"createRoom\" }','','','update',NULL,NULL,'2022-03-09T22:51:01+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (360,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [] }','chat','destroyRoom','[需要指定roomId]✅ 删除群','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"destroyRoom\", \"isRoomIdRequired\": true }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (361,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionAfterHookForUpdateRoomExtend\" }] }','chat','addRoomUser','[需要指定roomId]✅ 邀请入群','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"addRoomUser\", \"isRoomIdRequired\": true }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (362,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionAfterHookForUpdateRoomExtend\" }] }','chat','delRoomUser','[需要指定roomId]✅ 删除群成员','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"delRoomUser\", \"isRoomIdRequired\": true}','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (363,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [] }','chat','setRoomInfo','[需要指定roomId]✅ 设置群信息','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"setRoomInfo\", \"isRoomIdRequired\": true }','','','update',NULL,NULL,'2022-03-11T20:21:19+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (364,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [] }','chat','setRoomUserRole','[需要指定roomId]✅ 设置群成员角色','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"setRoomUserRole\", \"isRoomIdRequired\": true }','','','update',NULL,NULL,'2022-03-10T22:33:59+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (365,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [] }','chat','transferRoom','[需要指定roomId]✅ 移交群','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"transferRoom\", \"isRoomIdRequired\": true }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (366,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionAfterHookForUpdateRoomExtend\" }] }','chat','quitRoom','[需要指定roomId]✅ 退出群','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"quitRoom\", \"isRoomIdRequired\": true }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (367,NULL,NULL,'chat','getChatSession','✅ 会话列表','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"getChatSession\" }','','','update',NULL,NULL,'2022-03-12T21:42:13+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (368,NULL,NULL,'chat','getMessageHistory','✅ 消息列表[往历史找]','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"getMessageHistory\" }','','','update',NULL,NULL,'2022-03-12T21:42:15+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (369,NULL,NULL,'chat','getMessageHistoryByMaxId','✅ 消息列表[往最新找]','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"getMessageHistory\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (370,NULL,NULL,'chat','revokeMessage','✅ 撤回消息','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"revokeMessage\" }','','','update',NULL,NULL,'2022-03-12T21:07:46+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (371,NULL,NULL,'chat','delMessageOffline','✅ 删除离线消息','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"delMessageOffline\" }','','','update',NULL,NULL,'2022-03-12T21:40:51+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (374,NULL,NULL,'chat','toggleChatSession','✅ 置顶会话','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"toggleChatSession\" }','','','update',NULL,NULL,'2022-03-11T21:57:48+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (375,NULL,NULL,'chat','deleteChatSession','✅ 删除会话','service','{}','{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"deleteChatSession\" }','','','update',NULL,NULL,'2022-03-10T20:57:28+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (376,NULL,NULL,'chat','getUserBotList','✅查询聊天机器人 & 小程序机器人','service','{}','{ \"service\": \"duoxingUser\", \"serviceFunction\": \"getUserBotList\" }','','','update',NULL,NULL,'2022-03-10T20:57:28+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (419,NULL,NULL,'friendManagement','selectItemList','✅用户列表查询-查询列表','sql','{}','{\"table\":\"view01_user_total_friend\",\"operation\":\"select\"}','','','update','vscode','vscode','2022-08-03T14:11:51+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (425,NULL,NULL,'friendManagementOfOneUser','addUserFriend','✅ 添加好友关系','service','{}','{ \"service\": \"userFriendManagement\", \"serviceFunction\": \"addUserFriend\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (426,NULL,NULL,'friendManagementOfOneUser','delUserFriend','✅ 删除好友关系','service','{}','{ \"service\": \"userFriendManagement\", \"serviceFunction\": \"delUserFriend\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (427,NULL,NULL,'friendManagementOfOneUser','selectFriendList','✅查询好友列表','sql','{}','{ \"table\": \"view01_duoxing_user_friend\", \"operation\": \"select\" }','','','update','vscode','vscode','2022-08-03T12:42:57+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (431,NULL,NULL,'friendManagementOfOneUser','selectAllUserList','✅用户列表查询-查询列表','sql','{}','{\"table\":\"view01_user\",\"operation\":\"select\"}','','','update','vscode','vscode','2022-08-03T12:42:57+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (432,NULL,NULL,'userManagementOfOneFriend','selectCurrentList','✅好友列表的用户列表管理-查询当前用户列表下的好友列表列表','sql','{}','{ \"table\": \"view01_duoxing_user_friend\", \"operation\": \"select\" }','','','jhInsert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (501,NULL,'','socket','connect','✅ socket 连接','service','{}','{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"connect\" }','','','update',NULL,NULL,'2022-03-12T21:35:05+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (502,NULL,NULL,'socket','disconnect','✅ socket 关闭连接','service','{}','{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"disconnect\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (503,NULL,NULL,'socket','userSendMessageToUser','✅ socket 发送一对一聊天信息','service','{}','{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"userSendMessageToUser\" }','','','update',NULL,NULL,'2022-03-12T21:08:02+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (504,NULL,NULL,'socket','userSendMessageToRoom','✅ socket 发送群聊天信息','service','{}','{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"userSendMessageToRoom\" }','','','update',NULL,NULL,'2022-03-12T20:28:15+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (506,NULL,NULL,'socket','botExchange','✅ 机器人交换消息','service','{}','{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"botExchange\" }','','','update',NULL,NULL,'2022-03-12T20:28:15+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (601,NULL,NULL,'external','getUserRoomRoleListByRoomIdList','✅ 批量获取群组的 userRoomRole 列表','service','{}','{ \"service\": \"duoxingUser\", \"serviceFunction\": \"getUserRoomRoleListByRoomIdList\" }','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (602,NULL,NULL,'external','getCggRoomList','✅ 获取 cgg 类型的 room 列表','sql','{}','{ \"table\": \"_room\", \"operation\": \"select\", \"where\":{\"roomType\": \"\'cgg\'\" }}','','','insert',NULL,NULL,NULL);
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (700,NULL,NULL,'xiaochengxu','checkXiaochengxuIsOnline','✅检查小程序是否已经在线','service','{}','{ \"service\": \"duoxingUser\", \"serviceFunction\": \"checkXiaochengxuIsOnline\" }','','','update',NULL,NULL,'2022-03-10T20:57:28+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (704,NULL,NULL,'roomNoticeManagement','selectItemList','✅用户列表查询-查询列表','sql','{}','{\"table\":\"room\",\"operation\":\"select\"}','','','update','vscode','vscode','2022-08-03T14:11:51+08:00');
+INSERT INTO `_resource` (`id`,`accessControlTable`,`resourceHook`,`pageId`,`actionId`,`desc`,`resourceType`,`appDataSchema`,`resourceData`,`requestDemo`,`responseDemo`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (816,NULL,'{ \"before\": [{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"roomOpeartionBeforeHook\" }], \"after\": [] }','chat','operationRoomExtendWhereRoomAdminSubmit','✅管理员直播间公告操作','service','{}','{ \"service\": \"duoxingRoom\", \"serviceFunction\": \"operationRoomExtendWhereRoomAdminSubmit\" }','','','insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _resource_request_log
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_resource_request_log`;
 CREATE TABLE `_resource_request_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -299,8 +283,8 @@ CREATE TABLE `_resource_request_log` (
   `deviceId` varchar(255) DEFAULT NULL COMMENT '设备id',
   `userIpRegion` varchar(255) DEFAULT NULL COMMENT '用户Ip区域',
   `executeSql` varchar(255) DEFAULT NULL COMMENT '执行的sql',
-  `requestBody` mediumtext COMMENT '请求body',
-  `responseBody` mediumtext COMMENT '响应body',
+  `requestBody` longtext COMMENT '请求body',
+  `responseBody` longtext COMMENT '响应body',
   `responseStatus` varchar(255) DEFAULT NULL COMMENT '执行的结果;  success, fail',
   `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
   `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId',
@@ -309,17 +293,15 @@ CREATE TABLE `_resource_request_log` (
   PRIMARY KEY (`id`),
   KEY `resourceId_index` (`resourceId`),
   KEY `packageId_index` (`packageId`)
-) ENGINE=InnoDB AUTO_INCREMENT=214 DEFAULT CHARSET=utf8mb4 COMMENT='文件表; 软删除未启用;';
+) ENGINE = InnoDB AUTO_INCREMENT = 4 COMMENT = '文件表;';
 
--- ----------------------------
--- Records of _resource_request_log
--- ----------------------------
-BEGIN;
-COMMIT;
 
--- ----------------------------
--- Table structure for _role
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _role
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_role`;
 CREATE TABLE `_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -330,81 +312,139 @@ CREATE TABLE `_role` (
   `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId',
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COMMENT='角色表; 软删除未启用;';
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `roleId_unique` (`roleId`)
+) ENGINE = InnoDB AUTO_INCREMENT = 9 COMMENT = '角色表;';
 
--- ----------------------------
--- Records of _role
--- ----------------------------
-BEGIN;
-INSERT INTO `_role` VALUES (6, 'groupUser', '群员', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_role` VALUES (7, 'groupAdmin', '群管理员', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_role` VALUES (8, 'groupOwner', '群主', NULL, 'insert', NULL, NULL, NULL);
-COMMIT;
 
--- ----------------------------
--- Table structure for _ui
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _role
+# ------------------------------------------------------------
+
+INSERT INTO `_role` (`id`,`roleId`,`roleName`,`roleDesc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'admin','系统管理员',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_role` (`id`,`roleId`,`roleName`,`roleDesc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (6,'roomUser','群员','','insert',NULL,NULL,NULL);
+INSERT INTO `_role` (`id`,`roleId`,`roleName`,`roleDesc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (7,'roomAdmin','群管理员','','insert',NULL,NULL,NULL);
+INSERT INTO `_role` (`id`,`roleId`,`roleName`,`roleDesc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (8,'roomOwner','群主',NULL,'insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _ui
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_ui`;
 CREATE TABLE `_ui` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `pageId` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'page id; E.g: index',
-  `uiActionType` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'ui 动作类型，如：fetchData, postData, changeUi',
-  `uiActionId` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'action id; E.g: selectXXXByXXX',
-  `desc` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '描述',
-  `uiActionHook` text COLLATE utf8mb4_bin COMMENT '[{"service": "xx", "serviceFunction": "xxx"}]',
-  `uiActionConfig` text COLLATE utf8mb4_bin COMMENT 'ui 动作数据',
-  `appDataSchema` text COLLATE utf8mb4_bin COMMENT 'ui 校验数据',
-  `operation` varchar(255) COLLATE utf8mb4_bin DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
-  `operationByUserId` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作者userId',
-  `operationByUser` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作者用户名',
-  `operationAt` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='ui 施工方案';
+  `pageId` varchar(255) DEFAULT NULL COMMENT 'page id; E.g: index',
+  `uiActionType` varchar(255) DEFAULT NULL COMMENT 'ui 动作类型，如：fetchData, postData, changeUi',
+  `uiActionId` varchar(255) DEFAULT NULL COMMENT 'action id; E.g: selectXXXByXXX',
+  `desc` varchar(255) DEFAULT NULL COMMENT '描述',
+  `uiActionHook` text COMMENT '[{"service": "xx", "serviceFunction": "xxx"}]',
+  `uiActionConfig` text COMMENT 'ui 动作数据',
+  `appDataSchema` text COMMENT 'ui 校验数据',
+  `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
+  `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId',
+  `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
+  `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 384 COMMENT = 'ui 施工方案';
 
--- ----------------------------
--- Records of _ui
--- ----------------------------
-BEGIN;
-INSERT INTO `_ui` VALUES (1, 'allPage', 'data', 'getConstantList', '✅获取常量', NULL, '{\"main\": [{\"function\": \"getConstantList\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (100, 'index', 'ui', 'disableSystemEvent', '✅禁止系统菜单和文字选中\r\n', NULL, '{\"main\": [{\"function\": \"disableSystemEvent\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (101, 'index', 'ui', 'setSyncStatusToSyncing', '✅同步中', NULL, '{\"main\": [{\"function\": \"setSyncStatusToSyncing\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (102, 'index', 'ui', 'initDefaultVariable', '✅初始化状态变量\r\n', NULL, '{\"main\": [{\"function\": \"initDefaultVariable\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (103, 'index', 'ui', 'initWebSocket', '✅初始化socket\r\n', NULL, '{\"main\": [{\"function\": \"initWebSocket\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (104, 'index', 'ui', 'getUserInfo', '✅获取登录用户信息', NULL, '{\"main\": [{\"function\": \"getUserInfo\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (105, 'index', 'ui', 'windowBack', '✅手动后退', NULL, '{\"main\": [{\"function\": \"windowBack\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (106, 'index', 'ui', 'logout', '✅登出', NULL, '{\"main\": [{\"function\": \"logout\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (108, 'index', 'ui', 'setSyncStatusToSuccess', '✅同步成功', NULL, '{\"main\": [{\"function\": \"setSyncStatusToSuccess\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (119, 'index', 'ui', 'onSocketReConnect', '✅断线重连', NULL, '{\"main\": [{\"function\": \"onSocketReConnect\", \"vueComponent\": \"root\"}, {\"function\": \"onSocketReConnect\", \"vueComponent\": \"chatSession\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (120, 'index', 'ui', 'pushState', '✅更改路径state', NULL, '{\"main\": [{\"function\": \"pushState\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (121, 'index', 'data', 'getGroupInfo', '✅获取群信息', NULL, '{\"main\": [{\"function\": \"getGroupInfo\", \"vueComponent\": \"rightPanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (124, 'index', 'ui', 'reFilterList', '✅过滤和排序列表', NULL, '{\"main\": [{\"function\": \"reFilterList\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (127, 'index', 'data', 'sendMsg', '✅socket 发送消息', NULL, '{\"main\": [{\"function\": \"sendMsg\", \"vueComponent\": \"middlePanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (128, 'index', 'ui', 'onGroupMessage', '✅接收群消息后回调', NULL, '{\"main\": [{\"function\": \"onGroupMessage\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (129, 'index', 'ui', 'onToggleChatSession', '✅收到聊天消息回调', NULL, '{\"main\": [{\"function\": \"onToggleChatSession\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (130, 'index', 'ui', 'onDelMessageOffline', '✅收到聊天消息删除的消息回调', NULL, '{\"main\": [{\"function\": \"onDelMessageOffline\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (131, 'index', 'ui', 'onDeleteChatSession', '✅收到聊天删除的消息回调', NULL, '{\"main\": [{\"function\": \"onDeleteChatSession\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (132, 'index', 'ui', 'onUserMessage', '✅接收到用户消息后回调', NULL, '{\"main\": [{\"function\": \"onUserMessage\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (133, 'index', 'ui', 'onUserNotice', '✅接收到用户通知后回调', NULL, '{\"main\": [{\"function\": \"onUserNotice\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (134, 'index', 'ui', 'onGroupNotice', '✅接收到群组通知后回调', NULL, '{\"main\": [{\"function\": \"onGroupNotice\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (135, 'index', 'ui', 'showAccount', '✅打开用户信息弹框', NULL, '{\"main\": [{\"function\": \"showAccount\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (137, 'index', 'data', 'getChatSessionList', '✅获取聊天列表', NULL, '{\"main\": [{\"function\": \"getChatSessionList\", \"vueComponent\": \"leftPanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (139, 'index', 'ui', 'windowBack', '✅返回上一页', NULL, '{\"main\": [{\"function\": \"windowBack\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (143, 'index', 'ui', 'onQuoteMsg', '✅引用消息', NULL, '{\"main\": [{\"function\": \"onQuoteMsg\", \"vueComponent\": \"middlePanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (145, 'index', 'data', 'delMessageOffline', '✅消息已读', NULL, '{\"main\": [{\"function\": \"delMessageOffline\", \"vueComponent\": \"middlePanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (146, 'index', 'data', 'sendRevokeMsg', '✅发送撤回消息', NULL, '{\"main\": [{\"function\": \"sendRevokeMsg\", \"vueComponent\": \"middlePanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (147, 'index', 'data', 'reSendMsg', '✅重新发送消息', NULL, '{\"main\": [{\"function\": \"reSendMsg\", \"vueComponent\": \"middlePanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (148, 'index', 'ui', 'moreSel', '✅打开多选', NULL, '{\"main\": [{\"function\": \"moreSel\", \"vueComponent\": \"middlePanel\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (149, 'index', 'ui', 'preventDefault', '✅现代浏览器阻止默认事件', NULL, '{\"main\": [{\"function\": \"preventDefault\", \"vueComponent\": \"root\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (151, 'index', 'ui', 'scrollToBottom', '✅消息栏划到最新消息处', NULL, '{\"main\": [{\"function\": \"scrollToBottom\", \"vueComponent\": \"chatSession\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (155, 'index', 'data', 'fileInputTap', '✅选择文件并发送', NULL, '{\"main\": [{\"function\": \"fileInputTap\", \"vueComponent\": \"chatInput\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (156, 'index', 'data', 'startRecordMethod', '✅PC开始录音', NULL, '{\"main\": [{\"function\": \"startRecordMethod\", \"vueComponent\": \"chatInput\"}]}', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_ui` VALUES (160, 'index', 'data', 'sendAudioMsg', '✅发送语音消息', NULL, '{\"main\": [{\"function\": \"sendAudioMsg\", \"vueComponent\": \"chatInput\"}]}', NULL, 'insert', NULL, NULL, NULL);
-COMMIT;
 
--- ----------------------------
--- Table structure for _user
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _ui
+# ------------------------------------------------------------
+
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'allPage','data','getConstantList','✅获取常量',NULL,'{\"main\": [{\"function\": \"getConstantList\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (3,'uiActionDemo','ui','startCreateItem','✅打开创建数据抽屉',NULL,'{\"main\": [{\"function\": \"clearItemData\"}, {\"function\": \"openCreateDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (4,'uiActionDemo','data','createItem','✅创建数据',NULL,'{\"main\": [{\"function\": \"prepareCreateItem\"}, {\"function\": \"doCreateItem\"}, {\"function\": \"refreshTableData\"}], \"after\": [{\"function\": \"closeDrawerShow\"}], \"before\": [{\"function\": \"confirmCreateItemDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (5,'uiActionDemo','ui','startUpdateItem','✅打开更新数据抽屉',NULL,'{\"main\": [{\"function\": \"prepareItemData\"}, {\"function\": \"openUpdateDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (10,'userManagement','data','refreshTableData','✅获取表格数据',NULL,'{\"main\": [{\"function\": \"refreshTableData\"}], \"after\": [{\"function\": \"stopLoadingTable\"}], \"before\": [{\"function\": \"startLoadingTable\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (11,'userManagement','ui','startCreateItem','✅打开创建数据抽屉',NULL,'{\"main\": [{\"function\": \"clearItemData\"}, {\"function\": \"openCreateItemDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (12,'userManagement','data','getConstantList','✅获取表格数据',NULL,'{\"main\": [{\"function\": \"getConstantList\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (13,'userManagement','data','createItem','✅创建数据','{, }','{\"before\": [{\"function\": \"prepareValidate\"}, {\"function\": \"confirmCreateItemDialog\"}], \"main\": [{\"function\": \"doCreateItem\"}, {\"function\": \"refreshTableData\"}], \"after\": [{\"function\": \"closeDrawerShow\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (14,'userManagement','ui','startUpdateItem','✅打开更新数据抽屉',NULL,'{\"main\": [{\"function\": \"prepareItemData\"}, {\"function\": \"openUpdateItemDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (15,'userManagement','data','updateItem','✅更新数据','{, }','{\"before\": [{\"function\": \"prepareValidate\"}, {\"function\": \"confirmUpdateItemDialog\"}], \"main\": [{\"function\": \"doUpdateItem\"}, {\"function\": \"refreshTableData\"}], \"after\": [{\"function\": \"closeDrawerShow\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (16,'userManagement','data','bannedItem','✅禁用禁用','{}','{\"before\": [{\"function\": \"confirmBannedDialog\"}], \"main\": [{\"function\": \"doBannedItem\"}, {\"function\": \"refreshTableData\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (17,'userManagement','data','activeItem','✅激活用户','{}','{\"before\": [{\"function\": \"confirmActiveDialog\"}], \"main\": [{\"function\": \"doActiveItem\"}, {\"function\": \"refreshTableData\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (18,'userManagement','ui','startClearPassword','✅打开修改密码数据抽屉',NULL,'{\"main\": [{\"function\": \"prepareItemData\"}, {\"function\": \"openClearTextPasswordDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (19,'userManagement','data','clearPassword','✅重置密码','{, }','{\"before\": [{\"function\": \"prepareValidatePassword\"}, {\"function\": \"confirmPasswordDialog\"}], \"main\": [{\"function\": \"clearTextPasswordDialogSave\"}, {\"function\": \"refreshTableData\"}], \"after\": [{\"function\": \"closeClearTextPasswordDialog\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (40,'noticeManagement','data','getNotice','✅获取表格数据',NULL,'{\"main\": [{\"function\": \"getNotice\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (42,'noticeManagement','data','imageClick','✅禁用禁用',NULL,'{\"main\": [{\"function\": \"doImageClick\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (43,'noticeManagement','data','uploadImage','✅禁用禁用',NULL,'{\"main\": [{\"function\": \"doUploadImage\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (44,'noticeManagement','data','submitNotice','✅禁用禁用','{}','{\"before\": [{\"function\": \"confirmSubmitDialog\"}], \"main\": [{\"function\": \"doSubmitNotice\"}, {\"function\": \"getNotice\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (50,'recordHistoryManagement','ui','refreshTableData','✅获取表格数据','{}','{\"main\": [{\"function\": \"refreshTableData\"}, {\"function\": \"computeHeader\"}], \"before\": [{\"function\": \"openTableLoading\"}], \"after\": [{\"function\": \"closeTableLoading\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (51,'recordHistoryManagement','ui','viewRecordHistory','✅版本历史列表',NULL,'{\"main\": [{\"function\": \"doViewRecordHistory\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (52,'recordHistoryManagement','ui','restoreRecordByRecordHistory','✅数据还原',NULL,'{\"main\": [{\"function\": \"doRestoreRecordByRecordHistory\"}, {\"function\": \"doViewRecordHistory\"}, {\"function\": \"refreshTableData\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (100,'index','ui','disableSystemEvent','✅禁止系统菜单和文字选中\r\n',NULL,'{\"main\": [{\"function\": \"disableSystemEvent\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (101,'index','ui','setSyncStatusToSyncing','✅同步中',NULL,'{\"main\": [{\"function\": \"setSyncStatusToSyncing\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (102,'index','ui','initDefaultVariable','✅初始化状态变量\r\n',NULL,'{\"main\": [{\"function\": \"initDefaultVariable\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (103,'index','ui','initWebSocket','✅初始化socket\r\n',NULL,'{\"main\": [{\"function\": \"initWebSocket\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (104,'index','ui','getUserInfo','✅获取登录用户信息',NULL,'{\"main\": [{\"function\": \"getUserInfo\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (105,'index','ui','windowBack','✅手动后退',NULL,'{\"main\": [{\"function\": \"windowBack\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (106,'index','ui','logout','✅登出',NULL,'{\"main\": [{\"function\": \"logout\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (107,'index','ui','registerSystemBackEvent','✅注册后退事件，初始化状态变量\r\n',NULL,'{\"main\": [{\"function\": \"registerSystemBackEvent\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (108,'index','ui','setSyncStatusToSuccess','✅同步成功',NULL,'{\"main\": [{\"function\": \"setSyncStatusToSuccess\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (119,'index','ui','onSocketReConnect','✅断线重连',NULL,'{\"main\": [{\"function\": \"onSocketReConnect\", \"vueComponent\": \"root\"}, {\"function\": \"onSocketReConnect\", \"vueComponent\": \"chatSession\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (120,'index','ui','pushState','✅更改路径state',NULL,'{\"main\": [{\"function\": \"pushState\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (121,'index','data','getRoomInfo','✅获取群信息',NULL,'{\"main\": [{\"function\": \"getRoomInfo\", \"vueComponent\": \"rightPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (122,'index','ui','closeRoomDialog','✅关闭右侧room弹框',NULL,'{\"main\": [{\"function\": \"close\", \"vueComponent\": \"rightPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (123,'index','ui','mobileShowChattingPage','✅移动端展开聊天窗口',NULL,'{\"main\": [{\"function\": \"mobileShowChattingPage\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (124,'index','ui','reFilterList','✅过滤和排序列表',NULL,'{\"main\": [{\"function\": \"reFilterList\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (125,'index','ui','atRoomUser','✅艾特群用户',NULL,'{\"main\": [{\"function\": \"atRoomUser\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (126,'index','ui','openFriendDialog','✅打开朋友选择框',NULL,'{\"main\": [{\"function\": \"openFriendDialog\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (127,'index','data','sendMsg','✅socket 发送消息',NULL,'{\"main\": [{\"function\": \"sendMsg\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (128,'index','ui','onRoomMessage','✅接收群消息后回调',NULL,'{\"main\": [{\"function\": \"onRoomMessage\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (129,'index','ui','onToggleChatSession','✅收到聊天消息回调',NULL,'{\"main\": [{\"function\": \"onToggleChatSession\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (130,'index','ui','onDelMessageOffline','✅收到聊天消息删除的消息回调',NULL,'{\"main\": [{\"function\": \"onDelMessageOffline\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (131,'index','ui','onDeleteChatSession','✅收到聊天删除的消息回调',NULL,'{\"main\": [{\"function\": \"onDeleteChatSession\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (132,'index','ui','onUserMessage','✅接收到用户消息后回调',NULL,'{\"main\": [{\"function\": \"onUserMessage\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (133,'index','ui','onUserNotice','✅接收到用户通知后回调',NULL,'{\"main\": [{\"function\": \"onUserNotice\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (134,'index','ui','onRoomNotice','✅接收到群组通知后回调',NULL,'{\"main\": [{\"function\": \"onRoomNotice\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (135,'index','ui','showAccount','✅打开用户信息弹框',NULL,'{\"main\": [{\"function\": \"showAccount\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (136,'index','data','getFriendList','✅获取好友列表',NULL,'{\"main\": [{\"function\": \"getFriendList\", \"vueComponent\": \"leftPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (137,'index','data','getChatSessionList','✅获取聊天列表',NULL,'{\"main\": [{\"function\": \"getChatSessionList\", \"vueComponent\": \"leftPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (138,'index','data','getUserFriendRequest','✅获取好友请求列表',NULL,'{\"main\": [{\"function\": \"getUserFriendRequest\", \"vueComponent\": \"leftPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (139,'index','ui','windowBack','✅返回上一页',NULL,'{\"main\": [{\"function\": \"windowBack\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (140,'index','ui','onCreateRoom','✅打开创建群组弹框',NULL,'{\"main\": [{\"function\": \"onCreateRoom\", \"vueComponent\": \"leftPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (141,'index','ui','onAddFriend','✅打开添加好友弹框',NULL,'{\"main\": [{\"function\": \"onAddFriend\", \"vueComponent\": \"leftPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (142,'index','ui','openMultiSendDialog','✅打开好友多选弹框',NULL,'{\"main\": [{\"function\": \"openMultiSendDialog\", \"vueComponent\": \"leftPanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (143,'index','ui','onQuoteMsg','✅引用消息',NULL,'{\"main\": [{\"function\": \"onQuoteMsg\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (144,'index','ui','forwardSimple','✅单条转发',NULL,'{\"main\": [{\"function\": \"forwardSimple\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (145,'index','data','delMessageOffline','✅消息已读',NULL,'{\"main\": [{\"function\": \"delMessageOffline\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (146,'index','data','sendRevokeMsg','✅发送撤回消息',NULL,'{\"main\": [{\"function\": \"sendRevokeMsg\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (147,'index','data','reSendMsg','✅重新发送消息',NULL,'{\"main\": [{\"function\": \"reSendMsg\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (148,'index','ui','moreSel','✅打开多选',NULL,'{\"main\": [{\"function\": \"moreSel\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (149,'index','ui','preventDefault','✅现代浏览器阻止默认事件',NULL,'{\"main\": [{\"function\": \"preventDefault\", \"vueComponent\": \"root\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (150,'index','ui','voiceCall','✅发起通话',NULL,'{\"main\": [{\"function\": \"voiceCall\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (151,'index','ui','scrollToBottom','✅消息栏划到最新消息处',NULL,'{\"main\": [{\"function\": \"scrollToBottom\", \"vueComponent\": \"chatSession\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (152,'index','ui','selectForwardFriendClose','✅消息转发好友选择框关闭回调',NULL,'{\"main\": [{\"function\": \"selectForwardFriendClose\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (153,'index','ui','onSelectForwardFriend','✅消息转发好友选择框选择完成回调',NULL,'{\"main\": [{\"function\": \"onSelectForwardFriend\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (154,'index','ui','forwardSimple','✅单条消息转发',NULL,'{\"main\": [{\"function\": \"forwardSimple\", \"vueComponent\": \"middlePanel\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (155,'index','data','fileInputTap','✅选择文件并发送',NULL,'{\"main\": [{\"function\": \"fileInputTap\", \"vueComponent\": \"chatInput\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (156,'index','data','startRecordMethod','✅PC开始录音',NULL,'{\"main\": [{\"function\": \"startRecordMethod\", \"vueComponent\": \"chatInput\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (157,'index','ui','startTouch','✅移动端开始录音',NULL,'{\"main\": [{\"function\": \"startTouch\", \"vueComponent\": \"chatInput\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (158,'index','ui','touchMove','✅移动端手指抬起时判断是否发送录音',NULL,'{\"main\": [{\"function\": \"touchMove\", \"vueComponent\": \"chatInput\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (159,'index','data','stopRecord','✅移动端停止录音并发送音频文件',NULL,'{\"main\": [{\"function\": \"stopRecord\", \"vueComponent\": \"chatInput\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (160,'index','data','sendAudioMsg','✅发送语音消息',NULL,'{\"main\": [{\"function\": \"sendAudioMsg\", \"vueComponent\": \"chatInput\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (248,'friendManagement','ui','refreshTableData','✅获取表格数据',NULL,'{\"main\": [{\"function\": \"refreshTableData\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:44:00+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (254,'friendManagement','ui','goToFriendManagementOfOneUserPage','✅进入-用户列表的好友列表管理',NULL,'{\"main\": [{\"function\": \"goToFriendManagementOfOneUserPage\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:44:00+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (262,'friendManagementOfOneUser','ui','refreshTableData','✅获取表格数据',NULL,'{\"main\": [{\"function\": \"refreshTableData\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:42:54+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (263,'friendManagementOfOneUser','ui','getDrawerTableData','✅获取内表格数据',NULL,'{\"main\": [{\"function\": \"getDrawerTableData\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:42:54+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (264,'friendManagementOfOneUser','ui','addFriendForUser','✅开始分配好友',NULL,'{\"main\": [{\"function\": \"addFriendForUser\"}, {\"function\": \"refreshTableData\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (265,'friendManagementOfOneUser','ui','startAddFriendForUser','✅分配好友',NULL,'{\"main\": [{\"function\": \"startAddFriendForUser\"}, {\"function\": \"refreshTableData\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:42:54+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (267,'friendManagementOfOneUser','ui','addFriendListForUser','✅批量分配好友',NULL,'{\"main\": [{\"function\": \"addFriendListForUser\"}, {\"function\": \"refreshTableData\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:42:54+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (268,'friendManagementOfOneUser','ui','deleteFriendForUser','✅解除好友关系',NULL,'{\"main\": [{\"function\": \"deleteFriendForUser\"}, {\"function\": \"refreshTableData\"}]}',NULL,'update','vscode','vscode','2022-08-03T12:42:54+08:00');
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (279,'index','ui','showRoomNoticeHistory','✅查看群通知历史',NULL,'{\"main\": [{\"vueComponent\": \"middleNoticeWidget\", \"function\": \"showRoomNoticeHistory\", \"functionParamObj\": {}}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (280,'roomNoticeManagement','data','refreshTableData','✅获取表格数据',NULL,'{\"main\": [{\"function\": \"refreshTableData\"}], \"after\": [{\"function\": \"stopLoadingTable\"}], \"before\": [{\"function\": \"startLoadingTable\"}]}',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (381,'index','ui','addRoomSliderShow','✅添加直播间公告信息','','{\"before\": [{\"vueComponent\": \"root\", \"function\": \"showLoading\", \"functionParamObj\": { \"message\": \"公告更新中\" }}], \"main\": [{\"vueComponent\": \"middleNoticeWidget\", \"function\": \"addRoomSliderShow\", \"functionParamObj\": {}}], \"after\": [{\"vueComponent\": \"root\", \"function\": \"showSuccess\", \"functionParamObj\": { \"message\": \"直播间公告更新\" }}]}','insert',NULL,NULL,NULL,NULL);
+INSERT INTO `_ui` (`id`,`pageId`,`uiActionType`,`uiActionId`,`desc`,`uiActionHook`,`uiActionConfig`,`appDataSchema`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (383,'index','ui','deleteRoomSliderShow','✅打开SliderShow','','{\"before\": [{\"vueComponent\": \"root\", \"function\": \"showConfirmDialog\", \"functionParamObj\": {\"title\": \"是否删除公告\"}},{\"vueComponent\": \"root\", \"function\": \"showLoading\", \"functionParamObj\": { \"message\": \"删除中\" }}], \"main\": [{\"vueComponent\": \"middleNoticeWidget\", \"function\": \"deleteRoomSliderShow\", \"functionParamObj\": {}}], \"after\": [{\"vueComponent\": \"root\", \"function\": \"showSuccess\", \"functionParamObj\": { \"message\": \"删除成功\" }}]}','insert',NULL,NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _user
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_user`;
 CREATE TABLE `_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -427,26 +467,54 @@ CREATE TABLE `_user` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `userId_unique` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COMMENT='用户表; 软删除未启用;';
+  UNIQUE KEY `userId_unique` (`userId`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 175 COMMENT = '用户表;';
 
--- ----------------------------
--- Records of _user
--- ----------------------------
-BEGIN;
-INSERT INTO `_user` VALUES (1, 'admin01', 'admin01', '/userAvatar/1647177682138_271319_函数.png', '17177777001', 'male', NULL, 'FX', NULL, '123456', '9d868aad4af212de6a26e39efbdd86ee', '4ThJGJbAPe5m', 'common', 'active', NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-13T21:21:55+08:00');
-INSERT INTO `_user` VALUES (140, 'W00001', '张三丰', '/userAvatar/default.jpg', NULL, 'male', NULL, NULL, NULL, '123456', '9d868aad4af212de6a26e39efbdd86ee', '4ThJGJbAPe5m', 'common', 'active', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_user` VALUES (141, 'W00002', '张无忌', '/userAvatar/default.jpg', NULL, 'male', NULL, NULL, NULL, '123456', '9d868aad4af212de6a26e39efbdd86ee', '4ThJGJbAPe5m', 'common', 'active', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_user` VALUES (142, 'G00001', '洪七公', '/userAvatar/1647159405350_605667_圣经.png', NULL, 'male', NULL, '-------dd', NULL, '123456', 'a3742afefe3dfccfca90d5ed0652464a', 'q1Ukk16Wh6lw', 'common', 'active', NULL, 'jhRestore', 'admin01', 'admin01', '2022-03-14T16:25:14+08:00');
-INSERT INTO `_user` VALUES (143, 'G00002', '郭靖', '/userAvatar/default.jpg', NULL, 'male', NULL, NULL, NULL, '123456', '9d868aad4af212de6a26e39efbdd86ee', '4ThJGJbAPe5m', 'common', 'active', NULL, 'insert', NULL, NULL, NULL);
-INSERT INTO `_user` VALUES (144, 'H00001', '岳不群', '/userAvatar/default.jpg', NULL, 'male', '2022-03-03T00:00:00+08:00', NULL, NULL, '123456', 'ac96a1e461f0476a12cee572e9893093', 'yByNcDMxMm8W', 'common', 'active', NULL, 'update', 'admin01', 'admin01', '2022-03-03T23:05:53+08:00');
-INSERT INTO `_user` VALUES (145, 'H00002', '令狐冲', '/userAvatar/default.jpg', NULL, 'male', NULL, NULL, NULL, '123456', 'a5cd3a36d1ef78c49694166123a67e41', 'ry3dW5EfkRsf', 'common', 'active', NULL, 'update', NULL, NULL, '2022-03-04T20:15:47+08:00');
-INSERT INTO `_user` VALUES (146, 'G00003', '汪剑通', '/userAvatar/default.jpg', NULL, 'male', NULL, NULL, NULL, '123456', 'd5447df63bb9f717c960735e25ee2367', 'VHjtoRKtOF7r', 'common', 'active', NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T21:52:02+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for _user_group_role
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _user
+# ------------------------------------------------------------
+
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'admin01','admin01','/userAvatar/2022/7/25//1658720997550_948403_1656728684269.jpg','17177777001','male',NULL,'FX1',NULL,'123456','9d868aad4af212de6a26e39efbdd86ee','4ThJGJbAPe5m','common','active',NULL,'jhUpdate','admin01','admin01','2022-07-25T11:51:56+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (140,'W00001','张三丰','/userAvatar/2022/6/27//1656334956472_274113_f1c3f8a15910632e38da00f55c3cb0c8.jpeg',NULL,'male',NULL,NULL,NULL,'123456','700635d1283f9ad169366b136dd40a44','bqsZEnr1BKa2','common','active',NULL,'jhUpdate','W00001','张三丰','2022-06-27T21:02:37+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (141,'W00002','张无忌','/userAvatar/2022/7/27//1658902715926_796666_桌面图片.jpeg',NULL,'male',NULL,'张无忌',NULL,'123456','9d868aad4af212de6a26e39efbdd86ee','4ThJGJbAPe5m','common','active',NULL,'jhUpdate','W00002','张无忌','2022-07-27T14:18:36+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (142,'G00001','洪七公','/userAvatar/2022/5/5//1651763652139_807278_函数.png',NULL,'male',NULL,'-------dd',NULL,'123456','a3742afefe3dfccfca90d5ed0652464a','q1Ukk16Wh6lw','common','active',NULL,'jhUpdate','G00001','洪七公','2022-05-05T23:14:12+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (143,'G00002','郭靖','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','9d868aad4af212de6a26e39efbdd86ee','4ThJGJbAPe5m','common','active',NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (144,'H00001','岳不群','/userAvatar/default.jpg',NULL,'male','2022-03-03T00:00:00+08:00',NULL,NULL,'123456','ac96a1e461f0476a12cee572e9893093','yByNcDMxMm8W','common','active',NULL,'update','admin01','admin01','2022-03-03T23:05:53+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (145,'H00002','令狐冲','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','a5cd3a36d1ef78c49694166123a67e41','ry3dW5EfkRsf','common','active',NULL,'update',NULL,NULL,'2022-03-04T20:15:47+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (146,'G00003','汪剑通','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','d5447df63bb9f717c960735e25ee2367','VHjtoRKtOF7r','common','active',NULL,'jhUpdate','admin01','admin01','2022-03-12T21:52:02+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (147,'xiaochengxu01','小程序机器人1','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','975d94b7eab160df2be896e083319b01','b3RICHRFMkS2','xiaochengxu','active',NULL,'jhUpdate','admin01','admin01','2022-03-14T00:22:09+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (148,'xiaochengxu02','小程序机器人2','/userAvatar/default.jpg',NULL,'female',NULL,NULL,NULL,'123456','5412110ed754c9db480324ac41c480d2','bz2BjCYLOZaM','xiaochengxu','active',NULL,'jhUpdate','admin01','admin01','2022-03-14T21:37:54+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (149,'chatbot01','聊天机器人1','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','7148012f15076c1b5838ec316fce31ce','RtWnPBmXwbiY','xiaochengxu','active',NULL,'jhUpdate','admin01','admin01','2022-03-14T21:38:04+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (150,'chatbot02','聊天机器人2','/userAvatar/default.jpg',NULL,'female',NULL,NULL,NULL,'123456','7db4e2b637255a6de41c00aebd0287fc','CYhEeVPZzRhB','xiaochengxu','active',NULL,'jhUpdate','admin01','admin01','2022-03-14T21:37:59+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (151,'G00004','乔峰','/userAvatar/default.jpg',NULL,'male',NULL,'66666',NULL,'123456','7f0401c17c370d6ee63ca16b3773f4ea','VvQnEgMCPIBe','common','active',NULL,'jhUpdate','G00004D','乔峰','2022-03-14T15:46:30+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (152,'xiaochengxu-anning','小程序机器人-安宁','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','d13b116bd7c73a4bdb8f392cc94a3042','XUgKEJhfsY39','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-23T14:56:09+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (153,'xiaochengxu-yasa','小程序机器人-雅飒','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','f40cad43760d60ffbe16965a39dc59ad','VKxDm0uF1Ms3','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-23T14:56:38+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (154,'xiaochengxu -beibei','小程序机器人-贝贝','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','f37cd21cc6d4b5fb6c9cf2c57c4f4ee9','VIr9xfRHbA8B','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-23T14:57:10+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (155,'xiaochengxu-anqi','小程序机器人-安琪','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','ef6a0bc79b1b0e7ce5934e9dbf7a0ae7','WdUvUl5-29Pn','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-23T14:57:36+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (156,'xiaochengxu-duojia','小程序机器人-多加','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','3a8878add2a9a4cfd9e78628d025b377','WYxqdESfvOw0','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-23T14:58:15+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (157,'xiaochengxu-suni','小程序机器人-suni','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','bf900085eb900e3c7ec8830f358581f1','DNPifQAEeekD','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-23T14:58:42+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (159,'databot01','数据机器人01','/userAvatar/default.jpg',NULL,'male','2022-03-25T00:00:00+08:00',NULL,NULL,'123456','fea0d699e40fa71f9a321d8ea220b65f','bg8eglFN7Izr','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-25T20:44:57+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (160,'databot02','数据机器人02','/userAvatar/default.jpg',NULL,'male','2022-03-25T00:00:00+08:00','数据机器人02',NULL,'123456','3ec6de164601b39c8bb3ca7d03032641','TGsernfLqq0B','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-03-25T20:47:36+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (161,'test01','测试账号01','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','61c01377b9bcc5b5e7a507ed63c412b8','WVLzotXMqng4','common','active',NULL,'jhUpdate','admin01','admin01','2022-04-29T21:27:24+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (163,'s00001','test123','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'12345678','6793114cd8ab760ae200e2a7f70300a7','D0Qpqax-MkNc','common','active',NULL,'jhUpdate','admin01','admin01','2022-04-29T21:32:17+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (164,'xiaochengxu-shigong','事工信息','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','bc4e84358568193331e6545a95b52917','phMFCzSgA3Tx','common','active',NULL,'jhUpdate','admin01','admin01','2022-06-18T14:26:05+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (165,'xiaochengxu-shigong01','事工信息','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','36a4006a0451a2a172832921ee0956b2','HMOPApbJ9W42','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-06-18T14:28:57+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (167,'X00001','段誉',NULL,NULL,'male',NULL,NULL,NULL,'123456','36a4006a0451a2a172832921ee0956b2','HMOPApbJ9W42','common','active',NULL,'insert','admin01','admin01','2022-06-18T14:28:57+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (168,'X00002','赵敏',NULL,NULL,'male',NULL,NULL,NULL,'123456','36a4006a0451a2a172832921ee0956b2','HMOPApbJ9W42','common','active',NULL,'insert','admin01','admin01','2022-06-18T14:28:57+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (169,'md-doc-management','管理云盘','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','16a7d6d598cca5c4499004f1db23bbeb','3UgeECKzCABS','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-07-21T14:41:06+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (170,'md-meeting-minutes','会议记录','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','960373fba53eecfea5a9c97a3b8e915d','qEXbw2idCAom','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-07-21T14:41:33+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (171,'md-shepherd-xiaochengxu','牧养小程序','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','f1496c53ae2f5cabd26c42d3a6c746dd','2qQD-p1APxAi','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-07-23T14:41:51+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (172,'md-editor-course','文字事工','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','38d48b0a290de6e4f8b6c1af04d56735','mppLvOBqykzt','xiaochengxu','active',NULL,'jhInsert','admin01','admin01','2022-07-24T15:12:51+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (173,'A00001','周伯通','/userAvatar/default.jpg',NULL,'male',NULL,NULL,NULL,'123456','868cbb0921001f1ef8284803226578a3','pFSy2S2yPgb-','common','active',NULL,'jhUpdate','admin01','admin01','2022-08-05T16:48:26+08:00');
+INSERT INTO `_user` (`id`,`userId`,`username`,`userAvatar`,`contactNumber`,`gender`,`birthday`,`signature`,`email`,`clearTextPassword`,`password`,`md5Salt`,`userType`,`userStatus`,`config`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (174,'test0001','测试账号','/userAvatar/default.jpg',NULL,'female',NULL,NULL,NULL,'123456','06a3e2df225bb4cbd0e58f72fd50bf66','Xwrn3K3QJEJX','common','active',NULL,'jhInsert','admin01','admin01','2022-08-06T23:02:26+08:00');
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _user_group_role
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_user_group_role`;
 CREATE TABLE `_user_group_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -460,59 +528,20 @@ CREATE TABLE `_user_group_role` (
   PRIMARY KEY (`id`),
   KEY `groupId_index` (`groupId`),
   KEY `userId_index` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=663 DEFAULT CHARSET=utf8mb4 COMMENT='用户群组角色关联表; 软删除未启用;';
+) ENGINE = InnoDB COMMENT = '用户群组角色关联表;';
 
--- ----------------------------
--- Records of _user_group_role
--- ----------------------------
-BEGIN;
-INSERT INTO `_user_group_role` VALUES (569, 'W00001', 'wudang', 'groupOwner', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (570, 'W00002', 'wudang', 'groupUser', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (573, 'G00001', 'gaibang', 'groupOwner', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (574, 'G00002', 'gaibang', 'groupUser', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (577, 'H00001', 'huashan', 'groupOwner', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (578, 'H00002', 'huashan', 'groupUser', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (587, 'admin01', 'wudang', 'groupAdmin', 'update', NULL, NULL, '2022-03-10T22:33:58+08:00');
-INSERT INTO `_user_group_role` VALUES (588, 'admin01', 'huashan', 'groupAdmin', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (590, 'H00001', 'gaibang', 'groupUser', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (591, 'W00001', 'gaibang', 'groupUser', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role` VALUES (615, 'admin01', 'jd-_eJWCsaD90qKXcgzlH', 'groupOwner', 'insert', NULL, NULL, '2022-03-05T17:17:46+08:00');
-INSERT INTO `_user_group_role` VALUES (616, 'H00001', 'jd-_eJWCsaD90qKXcgzlH', 'groupUser', 'insert', NULL, NULL, '2022-03-05T17:17:46+08:00');
-INSERT INTO `_user_group_role` VALUES (617, 'W00001', 'jd-_eJWCsaD90qKXcgzlH', 'groupUser', 'insert', NULL, NULL, '2022-03-05T17:17:46+08:00');
-INSERT INTO `_user_group_role` VALUES (621, 'admin01', 'C1vDvXCgb4uAsoa1K8mPC', 'groupOwner', 'insert', NULL, NULL, '2022-03-09T22:51:01+08:00');
-INSERT INTO `_user_group_role` VALUES (622, 'H00001', 'C1vDvXCgb4uAsoa1K8mPC', 'groupUser', 'insert', NULL, NULL, '2022-03-09T22:51:01+08:00');
-INSERT INTO `_user_group_role` VALUES (624, 'W00001', 'C1vDvXCgb4uAsoa1K8mPC', 'groupUser', 'insert', NULL, NULL, '2022-03-12T19:56:31+08:00');
-INSERT INTO `_user_group_role` VALUES (627, 'G00002', 'C1vDvXCgb4uAsoa1K8mPC', 'groupUser', 'insert', NULL, NULL, '2022-03-12T19:56:31+08:00');
-INSERT INTO `_user_group_role` VALUES (629, 'G00002', 'JcCVYjEqySIdMZxcy8O11', 'groupOwner', 'jhUpdate', 'admin01', 'admin01', '2022-03-12T22:44:36+08:00');
-INSERT INTO `_user_group_role` VALUES (630, 'G00001', 'JcCVYjEqySIdMZxcy8O11', 'groupUser', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:38:16+08:00');
-INSERT INTO `_user_group_role` VALUES (631, 'H00002', 'JcCVYjEqySIdMZxcy8O11', 'groupUser', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:38:16+08:00');
-INSERT INTO `_user_group_role` VALUES (633, 'G00002', '9U_ww9I2TtgL4Fsi4whCz', 'groupUser', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:38:19+08:00');
-INSERT INTO `_user_group_role` VALUES (634, 'G00001', '9U_ww9I2TtgL4Fsi4whCz', 'groupOwner', 'jhUpdate', 'admin01', 'admin01', '2022-03-12T22:41:47+08:00');
-INSERT INTO `_user_group_role` VALUES (636, 'admin01', 'beS8LsS2pMfHic-hNuGrD', 'groupOwner', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:46:32+08:00');
-INSERT INTO `_user_group_role` VALUES (637, 'G00002', 'beS8LsS2pMfHic-hNuGrD', 'groupUser', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:46:32+08:00');
-INSERT INTO `_user_group_role` VALUES (638, 'G00001', 'beS8LsS2pMfHic-hNuGrD', 'groupUser', 'jhInsert', 'admin01', 'admin01', '2022-03-12T22:46:32+08:00');
-INSERT INTO `_user_group_role` VALUES (639, 'W00001', 'Iy1J3vWCnnrVaZhbeCSn_', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:37:05+08:00');
-INSERT INTO `_user_group_role` VALUES (640, 'G00001', 'Iy1J3vWCnnrVaZhbeCSn_', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:37:05+08:00');
-INSERT INTO `_user_group_role` VALUES (642, 'W00001', 'gBK5SDgE0ebEMWAgF2n9Y', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:43:35+08:00');
-INSERT INTO `_user_group_role` VALUES (644, 'G00001', 'gBK5SDgE0ebEMWAgF2n9Y', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:43:35+08:00');
-INSERT INTO `_user_group_role` VALUES (645, 'W00001', 'Q07o3miNRKsBXrbCFFpaV', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:46:04+08:00');
-INSERT INTO `_user_group_role` VALUES (647, 'G00001', 'Q07o3miNRKsBXrbCFFpaV', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:46:04+08:00');
-INSERT INTO `_user_group_role` VALUES (648, 'W00001', 'BJbrcnzn-MwG9KJ6taPZg', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:53:53+08:00');
-INSERT INTO `_user_group_role` VALUES (650, 'G00001', 'BJbrcnzn-MwG9KJ6taPZg', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:53:53+08:00');
-INSERT INTO `_user_group_role` VALUES (651, 'W00001', 'NVVv8YlhskIX0QHimHMap', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:54:55+08:00');
-INSERT INTO `_user_group_role` VALUES (653, 'G00001', 'NVVv8YlhskIX0QHimHMap', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:54:55+08:00');
-INSERT INTO `_user_group_role` VALUES (654, 'W00001', 'bhF6JQXgXUqwlkC1Pdl8J', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:58:09+08:00');
-INSERT INTO `_user_group_role` VALUES (656, 'G00001', 'bhF6JQXgXUqwlkC1Pdl8J', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-13T21:58:09+08:00');
-INSERT INTO `_user_group_role` VALUES (657, 'W00001', 'FsTa3bUxZId4MAdowDbxw', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-14T11:20:37+08:00');
-INSERT INTO `_user_group_role` VALUES (658, 'H00002', 'FsTa3bUxZId4MAdowDbxw', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-14T11:20:37+08:00');
-INSERT INTO `_user_group_role` VALUES (660, 'W00001', '8CdYgl90D-Zz0OC6eA_Dk', 'groupOwner', 'jhInsert', 'W00001', '张三丰', '2022-03-14T20:44:11+08:00');
-INSERT INTO `_user_group_role` VALUES (661, 'admin01', '8CdYgl90D-Zz0OC6eA_Dk', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-14T20:44:11+08:00');
-INSERT INTO `_user_group_role` VALUES (662, 'H00002', '8CdYgl90D-Zz0OC6eA_Dk', 'groupUser', 'jhInsert', 'W00001', '张三丰', '2022-03-14T20:44:11+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for _user_group_role_page
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _user_group_role
+# ------------------------------------------------------------
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _user_group_role_page
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_user_group_role_page`;
 CREATE TABLE `_user_group_role_page` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -527,23 +556,26 @@ CREATE TABLE `_user_group_role_page` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COMMENT='用户群组角色 - 页面 映射表; 软删除未启用;';
+) ENGINE = InnoDB AUTO_INCREMENT = 34 COMMENT = '用户群组角色 - 页面 映射表;';
 
--- ----------------------------
--- Records of _user_group_role_page
--- ----------------------------
-BEGIN;
-INSERT INTO `_user_group_role_page` VALUES (17, '*', 'public', '*', 'login', 'allow', '登陆页; 开放给所有用户;', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_page` VALUES (18, '*', 'login', '*', 'manual', 'allow', '操作手册页; 开放给登陆用户;', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_page` VALUES (19, '*', 'login', '*', 'help', 'allow', '帮助页; 开放给登陆用户;', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_page` VALUES (31, '*', 'login', '*', 'index', 'allow', '聊天', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_page` VALUES (32, '*', 'login', '*', 'xiaochengxu', 'allow', '小程序页面; 开放给登陆用户;', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_page` VALUES (33, 'admin01', '*', '*', '*', 'allow', '所有页面权限; 只开放给admin01', 'insert', NULL, NULL, NULL);
-COMMIT;
 
--- ----------------------------
--- Table structure for _user_group_role_resource
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _user_group_role_page
+# ------------------------------------------------------------
+
+INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (17,'*','public','*','login','allow','登陆页; 开放给所有用户;','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (18,'*','login','*','manual','allow','操作手册页; 开放给登陆用户;','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (19,'*','login','*','help','allow','帮助页; 开放给登陆用户;','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (31,'*','login','*','index','allow','聊天','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (32,'*','login','*','xiaochengxu','allow','小程序页面; 开放给登陆用户;','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (33,'admin01','*','*','*','allow','所有页面权限; 只开放给admin01','insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _user_group_role_resource
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_user_group_role_resource`;
 CREATE TABLE `_user_group_role_resource` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -558,35 +590,40 @@ CREATE TABLE `_user_group_role_resource` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8mb4 COMMENT='用户群组角色 - 请求资源 映射表; 软删除未启用;';
+) ENGINE = InnoDB AUTO_INCREMENT = 143 COMMENT = '用户群组角色 - 请求资源 映射表;';
 
--- ----------------------------
--- Records of _user_group_role_resource
--- ----------------------------
-BEGIN;
-INSERT INTO `_user_group_role_resource` VALUES (1, 'admin01', '*', '*', '*', 'allow', '所有resource 权限, 开放给 admin01用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (2, '*', 'public', '*', 'login.passwordLogin', 'allow', '登陆resource, 开放给所有用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (11, '*', 'public', '*', 'allPage.getConstantList', 'allow', '查询常量resource, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (31, '*', 'login', '*', 'allPage.logout', 'allow', '登出resource, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (33, '*', 'login', '*', 'allPage.userInfo', 'allow', '用户个人信息resource, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (34, '*', 'login', '*', 'allPage.uploadByBase64', 'allow', '上传文件resource, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (35, '*', 'login', '*', 'allPage.uploadByStream', 'allow', '上传文件resource, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (36, '*', 'login', '*', 'allPage.*', 'allow', 'allPage相关resource; 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (37, '*', 'login', '*', 'user.*', 'allow', '用户个人信息相关resource; 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (38, '*', 'login', '*', 'chat.*', 'allow', '聊天相关resource; 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (39, '*', 'login', '*', 'socket.*', 'allow', 'socket相关resource; 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (136, '*', '*', 'groupOwner', 'chat.destroyGroup', 'allow', '销毁群, 开放给 当前群主', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (137, '*', '*', 'groupOwner,groupAdmin,groupUser', 'chat.addGroupUser', 'allow', '添加群用户, 开放给当前群管理员 & 群主 & 群用户', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (138, '*', '*', 'groupOwner,groupAdmin', 'chat.delGroupUser', 'allow', '删除群用户, 开放给 当前群管理员 & 群主', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (139, '*', '*', 'groupOwner,groupAdmin', 'chat.setGroupInfo', 'allow', '设置群信息, 开放给 当前群管理员 & 群主', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (140, '*', '*', 'groupOwner,groupAdmin', 'chat.setGroupUserRole', 'allow', '设置群用户角色, 开放给当前群主', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (141, '*', '*', 'groupOwner', 'chat.transferGroup', 'allow', '移交群, 开放给 当前群主', 'insert', NULL, NULL, NULL);
-INSERT INTO `_user_group_role_resource` VALUES (142, '*', '*', 'groupOwner,groupAdmin,groupUser', 'chat.quitGroup', 'allow', '退出群, 开放给所有用户', 'insert', NULL, NULL, NULL);
-COMMIT;
 
--- ----------------------------
--- Table structure for _user_session
--- ----------------------------
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: _user_group_role_resource
+# ------------------------------------------------------------
+
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'admin01','*','*','*','allow','所有resource 权限, 开放给 admin01用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (2,'*','public','*','login.passwordLogin','allow','登陆resource, 开放给所有用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (3,'*','public','*','xiaochengxu.checkXiaochengxuIsOnline','allow','检查小程序是否已经在线, 开放给所有人','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (4,'*','public','*','socket.disconnect','allow','断开socket连接, 开放给所有人','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (11,'*','public','*','allPage.getConstantList','allow','查询常量resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (31,'*','login','*','allPage.logout','allow','登出resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (33,'*','login','*','allPage.userInfo','allow','用户个人信息resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (34,'*','login','*','allPage.uploadByBase64','allow','上传文件resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (35,'*','login','*','allPage.uploadByStream','allow','上传文件resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (36,'*','login','*','allPage.*','allow','allPage相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (37,'*','login','*','user.*','allow','用户个人信息相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (38,'*','login','*','chat.*','allow','聊天相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (39,'*','login','*','socket.*','allow','socket相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (136,'*','*','roomOwner','chat.destroyRoom','allow','销毁群, 开放给 当前群主','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (137,'*','*','roomOwner,roomAdmin,roomUser','chat.addRoomUser','allow','添加群用户, 开放给当前群管理员 & 群主 & 群用户','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (138,'*','*','roomOwner,roomAdmin','chat.delRoomUser','allow','删除群用户, 开放给 当前群管理员 & 群主','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (139,'*','*','roomOwner,roomAdmin','chat.setRoomInfo','allow','设置群信息, 开放给 当前群管理员 & 群主','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (140,'*','*','roomOwner,roomAdmin','chat.setRoomUserRole','allow','设置群用户角色, 开放给当前群主','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (141,'*','*','roomOwner','chat.transferRoom','allow','移交群, 开放给 当前群主','insert',NULL,NULL,NULL);
+INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (142,'*','*','roomOwner,roomAdmin,roomUser','chat.quitRoom','allow','退出群, 开放给所有用户','insert',NULL,NULL,NULL);
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _user_session
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `_user_session`;
 CREATE TABLE `_user_session` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -603,23 +640,18 @@ CREATE TABLE `_user_session` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `userId_deviceId_index` (`userId`,`deviceId`) USING BTREE,
+  UNIQUE KEY `userId_deviceId_index` (`userId`, `deviceId`) USING BTREE,
   KEY `userId_index` (`userId`),
   KEY `authToken_index` (`authToken`)
-) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=utf8mb4 COMMENT='用户session表; deviceId 维度;';
+) ENGINE = InnoDB AUTO_INCREMENT = 432 COMMENT = '用户session表; deviceId 维度;';
 
--- ----------------------------
--- Records of _user_session
--- ----------------------------
-BEGIN;
-INSERT INTO `_user_session` VALUES (295, 'admin01', '127.0.0.1', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36', '127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome', 'web', 'online', 'euJzkbLE09aEQ9TjxLwC9rSV1JGPJ3WFrzzL', 'update', 'admin01', 'admin01', '2022-08-09T22:56:32+08:00');
-INSERT INTO `_user_session` VALUES (296, 'admin01', '127.0.0.1', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5071.0 Safari/537.36', '127.0.0.1:7001_Mac.10.15.7_c0e979ad_chrome', 'web', 'online', 'hFMCOcDDBOX4dhUh-aP2PuT4uHO0JAbPBnF8', 'update', 'admin01', 'admin01', '2022-05-23T07:57:11+08:00');
-INSERT INTO `_user_session` VALUES (297, 'W00002', '127.0.0.1', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36', '127.0.0.1:7001_Mac.10.15.7_e2c9e008_chrome', 'web', 'online', '', 'jhUpdate', 'W00002', '张无忌', '2022-08-08T21:09:01+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for duoxing_chat_session
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: duoxing_chat_session
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `duoxing_chat_session`;
 CREATE TABLE `duoxing_chat_session` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -635,34 +667,24 @@ CREATE TABLE `duoxing_chat_session` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `_chat_session_chatId_type_userId_index` (`chatId`,`type`,`userId`),
-  KEY `_userId_topChatOrder_lastMessageHistoryId_index` (`userId`,`topChatOrder`,`lastMessageHistoryId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7566 DEFAULT CHARSET=utf8mb4 COMMENT='聊天会话';
+  UNIQUE KEY `_chat_session_chatId_type_userId_index` (`chatId`, `type`, `userId`),
+  KEY `_userId_topChatOrder_lastMessageHistoryId_index` (`userId`, `topChatOrder`, `lastMessageHistoryId`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7879 COMMENT = '聊天会话';
 
--- ----------------------------
--- Records of duoxing_chat_session
--- ----------------------------
-BEGIN;
-INSERT INTO `duoxing_chat_session` VALUES (7559, 'W00001', 'user', 'admin01', 12788, '', 0, 33, 'update', 'admin01', 'admin01', '2022-08-09T22:56:44+08:00');
-INSERT INTO `duoxing_chat_session` VALUES (7560, 'admin01', 'user', 'W00001', 12788, '2022-03-17T13:29:40+08:00', 0, 0, 'update', 'admin01', 'admin01', '2022-08-09T22:56:44+08:00');
-INSERT INTO `duoxing_chat_session` VALUES (7561, 'W00002', 'user', 'admin01', 12785, '', 0, 16, 'update', 'admin01', 'admin01', '2022-08-09T22:47:11+08:00');
-INSERT INTO `duoxing_chat_session` VALUES (7562, 'admin01', 'user', 'W00002', 12785, '', 1, 0, 'update', 'admin01', 'admin01', '2022-08-09T22:47:11+08:00');
-INSERT INTO `duoxing_chat_session` VALUES (7563, 'G00002', 'group', 'JcCVYjEqySIdMZxcy8O11', 12750, '', 0, 4, 'update', 'G00001', '洪七公', '2022-03-17T13:59:54+08:00');
-INSERT INTO `duoxing_chat_session` VALUES (7564, 'G00001', 'group', 'JcCVYjEqySIdMZxcy8O11', 12750, '', 0, 0, 'update', 'G00001', '洪七公', '2022-03-17T13:59:54+08:00');
-INSERT INTO `duoxing_chat_session` VALUES (7565, 'H00002', 'group', 'JcCVYjEqySIdMZxcy8O11', 12750, '', 0, 4, 'update', 'G00001', '洪七公', '2022-03-17T13:59:54+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for duoxing_message_history
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: duoxing_message_history
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `duoxing_message_history`;
 CREATE TABLE `duoxing_message_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `historyId` varchar(255) DEFAULT NULL COMMENT '历史消息id;',
   `messageFingerprint` varchar(255) DEFAULT NULL COMMENT '消息指纹, 多个消息id对应一个指纹',
   `fromUserId` varchar(255) DEFAULT NULL COMMENT '消息发送方userId',
   `toUserId` varchar(255) DEFAULT NULL COMMENT '接收方userId',
-  `toGroupId` varchar(255) DEFAULT NULL COMMENT '接收方groupId',
+  `toRoomId` varchar(255) DEFAULT NULL COMMENT '接收方groupId',
   `messageType` varchar(255) DEFAULT NULL COMMENT '消息类型; user: 用户聊天, group:群组聊天',
   `noticeType` varchar(255) DEFAULT NULL COMMENT '通知类型; E.g delGroupUser,addGroupUser ',
   `messageContent` text COMMENT '消息内容',
@@ -678,73 +700,16 @@ CREATE TABLE `duoxing_message_history` (
   KEY `messageType_index` (`messageType`) USING BTREE,
   KEY `fromUser_index` (`fromUserId`) USING BTREE,
   KEY `toUserId_index` (`toUserId`) USING BTREE,
-  KEY `toGroupId_index` (`toGroupId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12789 DEFAULT CHARSET=utf8mb4 COMMENT='消息历史表; 软删除未启用;';
+  KEY `toGroupId_index` (`toRoomId`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 21276 COMMENT = '消息历史表;';
 
--- ----------------------------
--- Records of duoxing_message_history
--- ----------------------------
-BEGIN;
-INSERT INTO `duoxing_message_history` VALUES (12730, NULL, '0prX1Nl60ywzGvWN7q9ou', 'admin01', 'W00001', NULL, 'user', NULL, '1', 'text', '2022-03-17T11:55:45+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T11:55:45+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12731, NULL, 'mdRXGA7lUaopyXtgdhY9A', 'admin01', 'W00002', NULL, 'user', NULL, '1', 'text', '2022-03-17T11:55:49+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T11:55:49+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12732, NULL, 'HDB642IDZYI_9nbjY_QKt', 'admin01', 'W00002', NULL, 'user', NULL, '2', 'text', '2022-03-17T11:55:59+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T11:55:59+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12733, NULL, 'XeeXxiXggxeJZn48T0aDT', 'admin01', 'W00001', NULL, 'user', NULL, '123', 'text', '2022-03-17T12:02:08+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T12:02:08+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12734, NULL, 'uq9oywQF0-dIKdu4df2cR', 'admin01', 'W00002', NULL, 'user', NULL, '123', 'text', '2022-03-17T12:02:17+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T12:02:17+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12735, NULL, 'gxNhR_8P09ZaE1dgTHJfZ', 'admin01', 'W00002', NULL, 'user', NULL, '123', 'text', '2022-03-17T12:10:55+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T12:10:55+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12736, NULL, 'N-B6GrijWGMLLOjudOy8H', 'admin01', 'W00002', NULL, 'user', NULL, '2222', 'text', '2022-03-17T12:10:58+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T12:10:58+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12737, NULL, 'Aei6tgnRCJLfbld8mlPWC', 'admin01', 'W00002', NULL, 'user', NULL, '1234', 'text', '2022-03-17T12:12:50+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T12:12:50+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12738, NULL, 'zG4hVgfn_0YBbwgvs3WT3', 'admin01', 'W00002', NULL, 'user', NULL, '22222', 'text', '2022-03-17T12:13:54+08:00', 'revoke', 'update', 'admin01', 'admin01', '2022-03-17T12:19:30+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12739, NULL, 'dZRgsgllmYi5cbTCkMNzk', 'admin01', 'W00002', NULL, 'user', NULL, '123123111', 'text', '2022-03-17T12:16:47+08:00', 'revoke', 'update', 'admin01', 'admin01', '2022-03-17T12:19:39+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12740, NULL, '5F4yxW84FmGycVTrIEZT2', 'admin01', 'W00002', NULL, 'user', NULL, 'vvvvvvv', 'text', '2022-03-17T12:17:45+08:00', 'revoke', 'update', 'admin01', 'admin01', '2022-03-17T12:17:54+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12741, NULL, '2lWYiUcJWdDmjXAhjTjgI', 'admin01', 'W00002', NULL, 'user', NULL, '安师大发生的发', 'text', '2022-03-17T12:18:33+08:00', 'revoke', 'update', 'admin01', 'admin01', '2022-03-17T12:19:21+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12742, NULL, '6JGe0SO-cGN9RETv5atuC', 'admin01', 'W00002', NULL, 'user', NULL, '阿斯顿发生的发生的发烧', 'text', '2022-03-17T12:19:35+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T12:19:35+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12743, NULL, 'kxQVFyYLsAjxOrjf8tB2d', 'admin01', 'W00002', NULL, 'user', NULL, '123333', 'text', '2022-03-17T13:27:22+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T13:27:22+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12744, NULL, 'Z9to7f-mPWzgQTFmjJQmg', 'admin01', 'W00002', NULL, 'user', NULL, '123123123', 'text', '2022-03-17T13:28:08+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T13:28:08+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12745, NULL, 't2vNEEaWaZhxy81KcCUhz', 'admin01', 'W00002', NULL, 'user', NULL, '123123123123', 'text', '2022-03-17T13:28:32+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T13:28:33+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12746, NULL, 'HCglPwJnrho778CPE8TTw', 'G00001', NULL, 'JcCVYjEqySIdMZxcy8O11', 'group', NULL, '111', 'text', '2022-03-17T13:55:10+08:00', 'active', 'insert', 'G00001', '洪七公', '2022-03-17T13:55:10+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12747, NULL, 'QPl4YqgJGuj2uUCVrShx_', 'G00001', NULL, 'JcCVYjEqySIdMZxcy8O11', 'group', NULL, '111', 'text', '2022-03-17T13:59:20+08:00', 'active', 'insert', 'G00001', '洪七公', '2022-03-17T13:59:20+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12748, NULL, 'T7gvO8qJDXvTYdjatOkv0', 'G00001', NULL, 'JcCVYjEqySIdMZxcy8O11', 'group', NULL, '33', 'text', '2022-03-17T13:59:23+08:00', 'active', 'insert', 'G00001', '洪七公', '2022-03-17T13:59:23+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12753, NULL, 'wcND1_VB2m25h6xlRwveh', 'admin01', NULL, 'C1vDvXCgb4uAsoa1K8mPC', 'group', NULL, '1', 'text', '2022-03-17T21:39:20+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-03-17T21:39:21+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12754, 'UFIA0TusGslRRJJWLRvOF', 'EHZnkMGMMTioKXzySAdAz', 'admin01', 'W00001', NULL, 'user', NULL, '1111', 'text', '2022-04-27T21:15:43+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-04-27T21:15:43+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12755, 'dpsP3dVo2jgVLIajGTLX0', 'eQwA7_zKu-rvAon4Pg_2r', 'admin01', 'W00001', NULL, 'user', NULL, '333', 'text', '2022-04-27T21:15:44+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-04-27T21:15:44+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12756, NULL, '_GmwT5Zta4ivwEQ2L18xz', 'admin01', 'W00002', NULL, 'user', NULL, '安师大发生的发', 'text', '2022-05-04T20:57:28+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T20:57:28+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12757, NULL, 'dQMafXhW-JQi1a6wazLdG', 'admin01', 'W00001', NULL, 'user', NULL, '12341234', 'text', '2022-05-04T22:29:31+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:29:31+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12758, NULL, 'KsYaI7xO3jZJIYh0g2hxX', 'admin01', 'W00001', NULL, 'user', NULL, '@1234', 'text', '2022-05-04T22:32:59+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:32:59+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12759, NULL, 'KHu31ADZYh91p4_gdr_L4', 'admin01', 'W00001', NULL, 'user', NULL, 'test', 'text', '2022-05-04T22:33:29+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:33:29+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12760, NULL, 'QyVVNupndJxY_Woe5aTxR', 'admin01', 'W00001', NULL, 'user', NULL, '12341234', 'text', '2022-05-04T22:33:33+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:33:33+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12761, NULL, '6DFliOV02O0lTMOU0dTbj', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-05-04T22:38:25+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:38:26+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12762, NULL, 'a7MLxMYnBkEJ5InaWKMqP', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-05-04T22:38:31+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:38:31+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12763, NULL, 'rlJsE5nAHXnZ86GJ1dOZp', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-05-04T22:40:08+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:40:08+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12764, NULL, 'AUa8_xY_9Uh_dFq9J770I', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-05-04T22:44:01+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:44:01+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12765, NULL, 'WLot1JM9qEPj1UCauN4SP', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-05-04T22:48:10+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:48:10+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12766, NULL, 'UzzOVhlmUKlh5s9iOdQEL', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"11.jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651675951776_192376_11.jpeg\",\"binarySize\":\"54.19KB\"}', 'image', '2022-05-04T22:52:32+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:52:32+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12767, NULL, 'tEsvIAGnS688tW-rfOhnz', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"11.jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651675959922_334893_11.jpeg\",\"binarySize\":\"54.19KB\"}', 'file', '2022-05-04T22:52:40+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:52:40+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12768, NULL, 'Q16bIHkrwmLQPdEKyB9X5', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"PMBOK指南第6版-中文-new.pdf\",\"downloadPath\":\"/admin01/2022/5/4//1651676170376_873134_PMBOK指南第6版-中文-new.pdf\",\"binarySize\":\"19.84MB\"}', 'file', '2022-05-04T22:56:11+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:56:11+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12769, NULL, 'lOcdrWZVIb9fDgacJoy1z', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"11 (1).jpeg\",\"downloadPath\":\"/admin01/2022/5/4//1651676241179_267645_11 (1).jpeg\",\"binarySize\":\"54.19KB\"}', 'image', '2022-05-04T22:57:21+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:57:21+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12770, NULL, 'xYY3UPYxofzHacGxRJTnD', 'admin01', 'W00001', NULL, 'user', NULL, '[emoji_face01_25.png]', 'text', '2022-05-04T22:57:33+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T22:57:33+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12771, NULL, 'CiTr0V3YRj5K_cZmh4e60', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"recordFile_224538.mp3\",\"downloadPath\":\"/admin01/2022/5/4//1651676403188_701889_recordFile_224538.mp3\",\"binarySize\":\"232.04KB\"}', 'audio', '2022-05-04T23:00:03+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-05-04T23:00:03+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12772, 'H3QQaBBGMei4EHskmWKYS', 'cMM19o6vF11XcZgr4vGT9', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-08-08T21:09:14+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-08T21:09:14+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12773, '9zucMTouUCWteqeEaiek6', 'fhUqhBCDZca0yXaDF9p2E', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-08-08T21:09:20+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-08T21:09:20+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12774, 'l3y5MG0qWuPlcvmWoWzQB', 'QrDkONXugufYAbzZFU5BE', 'admin01', 'W00001', NULL, 'user', NULL, '{\"downloadPath\":\"/emotion/face04/6.gif\"}', 'image', '2022-08-08T21:09:27+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-08T21:09:27+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12775, 'dYjFQ-Qf-7u4DcwdecHm7', 'mwZ-D4nC6o4FnkXf5Nj7_', 'admin01', 'W00001', NULL, 'user', NULL, '{\"downloadPath\":\"/emotion/face07/6.gif\"}', 'image', '2022-08-08T21:09:36+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-08T21:09:36+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12776, NULL, 'RNN-ZicybusAzcBSpyvXK', 'admin01', 'W00001', NULL, 'user', NULL, '[/emotion/face04/6.gif,,,image] \n------------------------\n Re @admin01: ', 'text', '2022-08-09T22:00:47+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:00:47+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12777, NULL, 'UupSH6qasa1pgi99nelKv', 'admin01', 'W00001', NULL, 'user', NULL, '@!', 'text', '2022-08-09T22:03:56+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:03:56+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12778, NULL, '5larS-vi7Bq8-m0FQjmp-', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"recordFile_904032.mp3\",\"downloadPath\":\"/admin01/2022/8/9//1660054309353_163847_recordFile_904032.mp3\",\"binarySize\":\"184.04KB\"}', 'audio', '2022-08-09T22:11:49+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:11:49+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12779, NULL, 'esPkwVqQOid7DEaZxXJ1N', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"recordFile_851044.mp3\",\"downloadPath\":\"/admin01/2022/8/9//1660054317484_616526_recordFile_851044.mp3\",\"binarySize\":\"320.04KB\"}', 'audio', '2022-08-09T22:11:57+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:11:57+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12780, NULL, 'aGluEvrn3lMpTfP_g-9Xc', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"recordFile_202319.mp3\",\"downloadPath\":\"/admin01/2022/8/9//1660054360879_998646_recordFile_202319.mp3\",\"binarySize\":\"288.04KB\"}', 'audio', '2022-08-09T22:12:41+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:12:41+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12781, NULL, 'aqCQV6syeTcOSCh2080dj', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"WechatIMG5.jpeg\",\"downloadPath\":\"/admin01/2022/8/9//1660054473637_103978_WechatIMG5.jpeg\",\"binarySize\":\"279.83KB\"}', 'image', '2022-08-09T22:14:33+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:14:33+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12782, NULL, '61SI-CRlSijd6VjbSw2iJ', 'admin01', 'W00001', NULL, 'user', NULL, '[emoji_face01_26.png]', 'text', '2022-08-09T22:14:41+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:14:41+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12783, NULL, 'BOQlSZ_3RtchNUqzTcgrZ', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"xiaochengxu.zip\",\"downloadPath\":\"/admin01/2022/8/9//1660055539825_424581_xiaochengxu.zip\",\"binarySize\":\"314.93KB\"}', 'file', '2022-08-09T22:32:20+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:32:20+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12784, NULL, '3t5YYSFesjmxN3oPnMiaa', 'admin01', 'W00001', NULL, 'user', NULL, '123', 'text', '2022-08-09T22:39:11+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:39:11+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12785, NULL, '51ok1KKgJxd5m6DngrlC1', 'admin01', 'W00002', NULL, 'user', NULL, '345', 'text', '2022-08-09T22:47:11+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:47:11+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12786, NULL, 'RPIfBA6k5OLROvugw1N_Q', 'admin01', 'W00001', NULL, 'user', NULL, '1234', 'text', '2022-08-09T22:53:02+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:53:02+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12787, NULL, 'dnCL6lDbnQ9Wb5o204xM8', 'admin01', 'W00001', NULL, 'user', NULL, 'aaa', 'text', '2022-08-09T22:56:37+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:56:37+08:00');
-INSERT INTO `duoxing_message_history` VALUES (12788, NULL, 'rCDj_9JS4idxivSu6zEHo', 'admin01', 'W00001', NULL, 'user', NULL, '{\"filename\":\"WechatIMG5.jpeg\",\"downloadPath\":\"/admin01/2022/8/9//1660057003983_131840_WechatIMG5.jpeg\",\"binarySize\":\"279.83KB\"}', 'image', '2022-08-09T22:56:44+08:00', 'active', 'insert', 'admin01', 'admin01', '2022-08-09T22:56:44+08:00');
-COMMIT;
 
--- ----------------------------
--- Table structure for duoxing_user_friend
--- ----------------------------
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: duoxing_user_friend
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `duoxing_user_friend`;
 CREATE TABLE `duoxing_user_friend` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -760,122 +725,804 @@ CREATE TABLE `duoxing_user_friend` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `userId_friendId_unique` (`userId`, `friendId`),
   KEY `userId_index` (`userId`) USING BTREE,
   KEY `friend_index` (`friendId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=471 DEFAULT CHARSET=utf8mb4 COMMENT='好友表; 软删除未启用;';
+) ENGINE = InnoDB AUTO_INCREMENT = 687 COMMENT = '好友表;';
 
--- ----------------------------
--- Records of duoxing_user_friend
--- ----------------------------
-BEGIN;
-INSERT INTO `duoxing_user_friend` VALUES (365, 'H00001', 'H00002', NULL, NULL, NULL, NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-03T22:29:14+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (366, 'H00002', 'H00001', NULL, NULL, NULL, NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-03T22:29:14+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (379, 'H00002', 'W00001', 'isFriend', '2022-03-14T14:17:03+08:00', '', '2022-03-13T21:42:46+08:00', NULL, 'jhUpdate', 'H00002', '令狐冲', '2022-03-14T14:17:32+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (380, 'W00001', 'H00002', 'isFriend', '2022-03-12T23:50:09+08:00', '', '2022-03-08T21:59:13+08:00', NULL, 'jhUpdate', 'H00002', '令狐冲', '2022-03-14T14:17:32+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (381, 'W00001', 'H00001', 'notFriend', NULL, NULL, NULL, NULL, 'jhUpdate', 'W00001', '张三丰', '2022-03-12T22:25:40+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (382, 'H00001', 'W00001', 'notFriend', '2022-03-10T22:01:15+08:00', '', NULL, NULL, 'jhUpdate', 'W00001', '张三丰', '2022-03-12T22:25:40+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (391, 'G00003', 'G00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T15:35:48+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (392, 'G00001', 'G00003', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T15:35:48+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (393, 'G00003', 'G00002', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T15:35:55+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (394, 'G00002', 'G00003', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T15:35:55+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (395, 'G00003', 'H00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T15:36:15+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (396, 'H00001', 'G00003', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T15:36:15+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (399, 'W00001', 'G00002', 'notFriend', NULL, NULL, NULL, NULL, 'insert', NULL, NULL, '2022-03-12T21:22:15+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (400, 'G00002', 'W00001', 'waitingApprove', '2022-03-12T21:22:16+08:00', '', NULL, NULL, 'update', NULL, NULL, '2022-03-12T21:22:16+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (417, 'admin01', 'G00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:21:17+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (418, 'G00001', 'admin01', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:21:17+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (419, 'admin01', 'G00002', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:37:59+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (420, 'G00002', 'admin01', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:37:59+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (421, 'admin01', 'G00003', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:43:28+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (422, 'G00003', 'admin01', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:43:28+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (423, 'admin01', 'H00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:44:10+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (424, 'H00001', 'admin01', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:44:10+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (425, 'admin01', 'H00002', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:40:01+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (426, 'H00002', 'admin01', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-12T23:40:01+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (427, 'admin01', 'W00001', 'isFriend', '2022-03-14T16:15:06+08:00', '', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-14T16:15:13+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (428, 'W00001', 'admin01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'admin01', 'admin01', '2022-03-14T16:15:13+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (429, 'admin01', 'W00002', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T23:47:14+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (430, 'W00002', 'admin01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-12T23:47:14+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (431, 'G00001', 'G00002', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'G00001', '洪七公', '2022-03-12T23:50:58+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (432, 'G00002', 'G00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'G00001', '洪七公', '2022-03-12T23:50:58+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (433, 'G00001', 'H00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'G00001', '洪七公', '2022-03-12T23:51:22+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (434, 'H00001', 'G00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'G00001', '洪七公', '2022-03-12T23:51:22+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (435, 'G00001', 'H00002', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'G00001', '洪七公', '2022-03-12T23:52:37+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (436, 'H00002', 'G00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'G00001', '洪七公', '2022-03-12T23:52:37+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (437, 'W00001', 'G00001', 'notFriend', NULL, '后台添加好友', NULL, NULL, 'jhUpdate', 'W00001', '张三丰', '2022-03-14T13:34:09+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (438, 'G00001', 'W00001', 'notFriend', '2022-03-14T13:33:27+08:00', '', NULL, NULL, 'jhUpdate', 'W00001', '张三丰', '2022-03-14T13:34:09+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (443, 'admin01', 'chatbot02', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T19:53:13+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (444, 'chatbot02', 'admin01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T19:53:13+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (445, 'admin01', 'xiaochengxu02', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T19:53:22+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (446, 'xiaochengxu02', 'admin01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T19:53:22+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (447, 'admin01', 'chatbot01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T19:53:26+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (448, 'chatbot01', 'admin01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T19:53:26+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (449, 'W00001', 'chatbot01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:00:25+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (450, 'chatbot01', 'W00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:00:25+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (451, 'W00001', 'chatbot02', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:00:30+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (452, 'chatbot02', 'W00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:00:30+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (455, 'W00001', 'xiaochengxu02', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:00:40+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (456, 'xiaochengxu02', 'W00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:00:40+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (457, 'W00002', 'chatbot01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:39+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (458, 'chatbot01', 'W00002', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:39+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (459, 'G00001', 'chatbot01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:44+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (460, 'chatbot01', 'G00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:44+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (461, 'G00002', 'chatbot01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:47+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (462, 'chatbot01', 'G00002', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:47+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (463, 'G00003', 'chatbot01', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:53+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (464, 'chatbot01', 'G00003', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-13T21:01:53+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (467, 'G00001', 'xiaochengxu02', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-14T14:43:08+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (468, 'xiaochengxu02', 'G00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-14T14:43:08+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (469, 'G00001', 'chatbot02', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-14T14:43:12+08:00');
-INSERT INTO `duoxing_user_friend` VALUES (470, 'chatbot02', 'G00001', 'isFriend', NULL, '后台添加好友', NULL, NULL, 'jhInsert', 'admin01', 'admin01', '2022-03-14T14:43:12+08:00');
-COMMIT;
 
--- ----------------------------
--- View structure for view01_duoxing_chat_session
--- ----------------------------
-DROP VIEW IF EXISTS `view01_duoxing_chat_session`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_duoxing_chat_session` AS select `duoxing_chat_session`.`id` AS `id`,`duoxing_chat_session`.`userId` AS `userId`,`duoxing_chat_session`.`type` AS `type`,`duoxing_chat_session`.`chatId` AS `chatId`,`duoxing_chat_session`.`lastMessageHistoryId` AS `lastMessageHistoryId`,`duoxing_chat_session`.`topChatOrder` AS `topChatOrder`,`duoxing_chat_session`.`muted` AS `muted`,`duoxing_chat_session`.`unreadCount` AS `unreadCount`,`_user`.`username` AS `chatUsername`,`_user`.`userAvatar` AS `chatUserAvatar`,`_group`.`groupName` AS `chatGroupName`,`_group`.`groupAvatar` AS `chatGroupAvatar` from ((`duoxing_chat_session` left join `_user` on(((`duoxing_chat_session`.`chatId` = `_user`.`userId`) and (`duoxing_chat_session`.`type` = 'user')))) left join `_group` on(((`duoxing_chat_session`.`chatId` = `_group`.`groupId`) and (`duoxing_chat_session`.`type` = 'group'))));
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: duoxing_user_friend
+# ------------------------------------------------------------
 
--- ----------------------------
--- View structure for view01_duoxing_message_history
--- ----------------------------
-DROP VIEW IF EXISTS `view01_duoxing_message_history`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_duoxing_message_history` AS select `dmh`.`id` AS `id`,`dmh`.`messageType` AS `messageType`,`dmh`.`fromUserId` AS `fromUserId`,`fromUser`.`username` AS `fromUsername`,`fromUser`.`userAvatar` AS `fromUserAvatar`,`dmh`.`toUserId` AS `toUserId`,`toUser`.`username` AS `toUsername`,`toUser`.`userAvatar` AS `toUserAvatar`,`dmh`.`toGroupId` AS `toGroupId`,`dmh`.`messageContent` AS `messageContent`,`dmh`.`historyId` AS `historyId`,`dmh`.`messageFingerprint` AS `messageFingerprint`,`dmh`.`messageTimeString` AS `messageTimeString`,`dmh`.`messageContentType` AS `messageContentType`,`dmh`.`noticeType` AS `noticeType`,`dmh`.`messageStatus` AS `messageStatus` from ((`duoxing_message_history` `dmh` left join `_user` `fromUser` on((`fromUser`.`userId` = `dmh`.`fromUserId`))) left join `_user` `toUser` on((`toUser`.`userId` = `dmh`.`toUserId`)));
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (366,'H00002','H00001','isFriend',NULL,NULL,NULL,NULL,'jhInsert','admin01','admin01','2022-03-03T22:29:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (379,'H00002','W00001','isFriend','2022-03-14T14:17:03+08:00','','2022-03-13T21:42:46+08:00',NULL,'jhUpdate','H00002','令狐冲','2022-03-14T14:17:32+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (380,'W00001','H00002','isFriend','2022-03-12T23:50:09+08:00','','2022-03-08T21:59:13+08:00',NULL,'jhUpdate','H00002','令狐冲','2022-03-14T14:17:32+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (391,'G00003','G00001','isFriend','2022-03-15T14:02:27+08:00','',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-20T15:26:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (392,'G00001','G00003','isFriend','2022-03-20T15:26:09+08:00','',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-20T15:26:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (393,'G00003','G00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-03-12T15:35:55+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (394,'G00002','G00003','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-03-12T15:35:55+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (395,'G00003','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-03-12T15:36:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (396,'H00001','G00003','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (399,'W00001','G00002','isFriend',NULL,NULL,NULL,NULL,'jhUpdate','G00002','郭靖','2022-03-31T15:23:27+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (400,'G00002','W00001','isFriend','2022-03-12T21:22:16+08:00','',NULL,NULL,'jhUpdate','G00002','郭靖','2022-03-31T15:23:27+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (433,'G00001','H00001','notFriend',NULL,'后台添加好友',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-12T23:51:22+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (434,'H00001','G00001','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (435,'G00001','H00002','notFriend',NULL,'后台添加好友',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-12T23:52:37+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (436,'H00002','G00001','notFriend',NULL,'后台添加好友',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-12T23:52:37+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (437,'W00001','G00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-20T20:40:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (438,'G00001','W00001','isFriend','2022-03-20T20:39:26+08:00','',NULL,NULL,'jhUpdate','G00001','洪七公','2022-03-20T20:40:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (471,'G00001','xiaochengxu01','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:16:18+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (472,'xiaochengxu01','G00001','notfriend','2022-03-16T23:13:37+08:00','后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T22:01:26+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (477,'xiaochengxu-anning','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-03-26T13:11:56+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (478,'H00001','xiaochengxu-anning','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (483,'G00001','G00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-04-29T21:54:56+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (484,'G00002','G00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-04-29T21:54:56+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (485,'W00002','W00001','isFriend',NULL,NULL,NULL,NULL,'jhUpdate','W00001','张三丰','2022-06-11T23:20:03+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (486,'W00001','W00002','isFriend','2022-06-11T23:19:46+08:00','',NULL,NULL,'jhUpdate','W00001','张三丰','2022-06-11T23:20:03+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (487,'G00003','G00004','isFriend',NULL,NULL,NULL,NULL,'jhUpdate','G00004','乔峰','2022-06-16T16:30:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (488,'G00004','G00003','isFriend','2022-06-16T16:29:57+08:00','',NULL,NULL,'jhUpdate','G00004','乔峰','2022-06-16T16:30:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (493,'W00001','xiaochengxu-shigong01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T14:29:39+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (494,'xiaochengxu-shigong01','W00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T14:29:39+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (495,'W00002','xiaochengxu-shigong01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T14:29:50+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (496,'xiaochengxu-shigong01','W00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T14:29:50+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (497,'H00002','xiaochengxu-shigong01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T15:44:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (498,'xiaochengxu-shigong01','H00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T15:44:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (499,'W00001','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-18T15:48:09+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (500,'H00001','W00001','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (501,'X00001','X00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01',NULL);
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (502,'X00002','X00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01',NULL);
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (503,'admin01','G00004','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T16:47:27+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (504,'G00004','admin01','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T16:47:25+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (507,'admin01','xiaochengxu-shigong01','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T16:47:27+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (508,'xiaochengxu-shigong01','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-06-22T14:20:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (509,'md-meeting-minutes','W00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:44:42+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (510,'W00001','md-meeting-minutes','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:44:42+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (511,'md-meeting-minutes','W00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:09+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (512,'W00002','md-meeting-minutes','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:09+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (513,'md-meeting-minutes','G00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:24+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (514,'G00001','md-meeting-minutes','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:24+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (515,'md-meeting-minutes','G00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:33+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (516,'G00002','md-meeting-minutes','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:33+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (517,'md-meeting-minutes','G00003','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (518,'G00003','md-meeting-minutes','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (519,'md-meeting-minutes','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:45:55+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (520,'H00001','md-meeting-minutes','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (521,'md-meeting-minutes','H00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:46:05+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (522,'H00002','md-meeting-minutes','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:46:05+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (523,'md-doc-management','W00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:46:54+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (524,'W00001','md-doc-management','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:46:54+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (525,'md-doc-management','W00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:05+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (526,'W00002','md-doc-management','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:05+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (527,'md-doc-management','G00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (528,'G00001','md-doc-management','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (529,'md-doc-management','G00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:22+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (530,'G00002','md-doc-management','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:22+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (531,'md-doc-management','G00003','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:32+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (532,'G00003','md-doc-management','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:32+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (533,'md-doc-management','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:41+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (534,'H00001','md-doc-management','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (535,'md-doc-management','H00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:50+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (536,'H00002','md-doc-management','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-21T14:47:50+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (537,'md-shepherd-xiaochengxu','W00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-23T14:42:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (538,'W00001','md-shepherd-xiaochengxu','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-23T14:42:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (539,'md-shepherd-xiaochengxu','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-23T15:09:07+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (540,'admin01','md-shepherd-xiaochengxu','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T16:47:27+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (541,'md-shepherd-xiaochengxu','W00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T14:19:25+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (542,'W00002','md-shepherd-xiaochengxu','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T14:19:25+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (543,'md-editor-course','W00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:14:33+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (544,'W00001','md-editor-course','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:14:33+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (545,'md-editor-course','W00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:14:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (546,'W00002','md-editor-course','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:14:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (547,'md-editor-course','G00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:09+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (548,'G00001','md-editor-course','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:09+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (549,'md-editor-course','G00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (550,'G00002','md-editor-course','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (551,'md-editor-course','G00003','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:31+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (552,'G00003','md-editor-course','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:31+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (553,'md-editor-course','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:46+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (554,'H00001','md-editor-course','notfriend',NULL,'后台删除好友',NULL,NULL,'jhUpdate','admin01','admin01','2022-08-03T17:21:49+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (555,'md-editor-course','H00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:57+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (556,'H00002','md-editor-course','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-07-24T15:15:57+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (557,'md-editor-course','X00001','isFriend',NULL,NULL,NULL,NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (558,'X00001','md-editor-course','isFriend',NULL,NULL,NULL,NULL,'insert',NULL,NULL,NULL);
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (599,'G00004','W00002','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T16:45:59+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (600,'W00002','G00004','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T16:46:02+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (601,'G00004','G00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T16:46:04+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (602,'G00001','G00004','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T16:46:06+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (603,'G00004','G00002','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T16:47:45+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (604,'G00002','G00004','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T16:47:47+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (605,'A00001','W00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:14:37+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (606,'W00001','A00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:14:44+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (607,'A00001','W00002','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:14:52+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (608,'W00002','A00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:14:57+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (609,'A00001','G00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:15:01+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (610,'G00001','A00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:15:08+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (611,'A00001','G00002','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:15:12+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (612,'G00002','A00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:15:16+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (621,'H00001','H00002','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:24:27+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (623,'A00001','G00004','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:32:40+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (624,'G00004','A00001','isfriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-03T17:32:41+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (631,'admin01','G00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:15:11+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (632,'G00002','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:15:11+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (633,'admin01','G00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:15:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (634,'G00001','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:15:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (635,'admin01','W00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:15:17+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (636,'W00002','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:15:17+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (637,'admin01','xiaochengxu01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:16:28+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (638,'xiaochengxu01','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:16:28+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (639,'admin01','xiaochengxu02','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:16:30+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (640,'xiaochengxu02','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:16:30+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (641,'admin01','W00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:23:44+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (642,'W00001','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:23:44+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (643,'admin01','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:23:56+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (644,'H00001','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:23:56+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (645,'admin01','H00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:23:59+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (646,'H00002','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:23:59+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (647,'admin01','G00003','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:24:01+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (648,'G00003','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T14:24:01+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (653,'admin01','s00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T15:07:39+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (654,'s00001','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T15:07:39+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (655,'admin01','X00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T15:07:47+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (656,'X00001','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T15:07:47+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (657,'admin01','X00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T15:07:47+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (658,'X00002','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-04T15:07:47+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (661,'A00001','H00002','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:51:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (662,'H00002','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:51:15+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (663,'A00001','G00003','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:51:17+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (664,'G00003','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:51:17+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (665,'A00001','xiaochengxu02','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:57:40+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (666,'xiaochengxu02','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:57:40+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (667,'A00001','admin01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:58:11+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (668,'admin01','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:58:11+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (669,'A00001','xiaochengxu01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:58:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (670,'xiaochengxu01','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T15:58:14+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (671,'A00001','chatbot02','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T16:11:12+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (672,'chatbot02','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T16:11:12+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (673,'A00001','xiaochengxu-suni','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T16:11:17+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (674,'xiaochengxu-suni','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T16:11:17+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (675,'A00001','H00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T16:47:57+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (676,'H00001','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T16:47:57+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (677,'A00001','chatbot01','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T18:24:00+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (678,'chatbot01','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-05T18:24:00+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (681,'A00001','xiaochengxu-yasa','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-06T21:19:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (682,'xiaochengxu-yasa','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-06T21:19:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (683,'A00001','xiaochengxu -beibei','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-06T21:19:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (684,'xiaochengxu -beibei','A00001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-06T21:19:20+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (685,'xiaochengxu -beibei','test0001','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-06T23:06:44+08:00');
+INSERT INTO `duoxing_user_friend` (`id`,`userId`,`friendId`,`friendStatus`,`requestTime`,`requestRemark`,`responseTime`,`rejectTimes`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (686,'test0001','xiaochengxu -beibei','isFriend',NULL,'后台添加好友',NULL,NULL,'jhInsert','admin01','admin01','2022-08-06T23:06:44+08:00');
 
--- ----------------------------
--- View structure for view01_duoxing_user_friend
--- ----------------------------
-DROP VIEW IF EXISTS `view01_duoxing_user_friend`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_duoxing_user_friend` AS select `duoxing_user_friend`.`id` AS `id`,`duoxing_user_friend`.`userId` AS `userId`,`user`.`username` AS `username`,`user`.`userAvatar` AS `userAvatar`,`duoxing_user_friend`.`friendId` AS `friendId`,`friend`.`username` AS `friendUsername`,`friend`.`userAvatar` AS `friendUserAvatar`,`duoxing_user_friend`.`friendStatus` AS `friendStatus`,`duoxing_user_friend`.`requestTime` AS `requestTime`,`duoxing_user_friend`.`requestRemark` AS `requestRemark`,`duoxing_user_friend`.`responseTime` AS `responseTime`,`duoxing_user_friend`.`rejectTimes` AS `rejectTimes`,count((`_user_session`.`socketStatus` = 'online')) AS `socketOnlineCount` from (((`duoxing_user_friend` left join `_user` `friend` on((`friend`.`userId` = `duoxing_user_friend`.`friendId`))) left join `_user` `user` on((`duoxing_user_friend`.`userId` = `user`.`userId`))) left join `_user_session` on((`duoxing_user_friend`.`friendId` = `_user_session`.`userId`))) group by `duoxing_user_friend`.`userId`,`duoxing_user_friend`.`friendId`;
 
--- ----------------------------
--- View structure for view01_duoxing_user_friend_management
--- ----------------------------
-DROP VIEW IF EXISTS `view01_duoxing_user_friend_management`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_duoxing_user_friend_management` AS select `duoxing_user_friend`.`id` AS `id`,`duoxing_user_friend`.`userId` AS `userId`,`user`.`username` AS `username`,`user`.`userAvatar` AS `userAvatar`,`duoxing_user_friend`.`friendId` AS `friendId`,`friend`.`username` AS `friendUsername`,`friend`.`userAvatar` AS `friendUserAvatar`,`duoxing_user_friend`.`operation` AS `operation`,`duoxing_user_friend`.`operationByUserId` AS `operationByUserId`,`duoxing_user_friend`.`operationByUser` AS `operationByUser`,`duoxing_user_friend`.`operationAt` AS `operationAt` from ((`duoxing_user_friend` join `_user` `user` on((`duoxing_user_friend`.`userId` = `user`.`userId`))) join `_user` `friend` on((`duoxing_user_friend`.`friendId` = `friend`.`userId`)));
 
--- ----------------------------
--- View structure for view01_group_info
--- ----------------------------
-DROP VIEW IF EXISTS `view01_group_info`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_group_info` AS select `g`.`groupId` AS `groupId`,`g`.`groupName` AS `groupName`,`g`.`groupAvatar` AS `groupAvatar`,`g`.`groupDesc` AS `groupDesc`,`g`.`groupExtend` AS `groupExtend`,count(`ugr`.`userId`) AS `groupUserCount` from (`_group` `g` left join `_user_group_role` `ugr` on((`g`.`groupId` = `ugr`.`groupId`))) group by `g`.`groupId`;
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: room
+# ------------------------------------------------------------
 
--- ----------------------------
--- View structure for view01_user
--- ----------------------------
-DROP VIEW IF EXISTS `view01_user`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_user` AS select `_user`.`id` AS `id`,`_user`.`userId` AS `userId`,`_user`.`username` AS `username`,`_user`.`userAvatar` AS `userAvatar`,`_user`.`contactNumber` AS `contactNumber`,`_user`.`gender` AS `gender`,`_user`.`birthday` AS `birthday`,`_user`.`signature` AS `signature`,`_user`.`email` AS `email`,`_user`.`userType` AS `userType`,`_user`.`userStatus` AS `userStatus`,`_user`.`config` AS `config` from `_user`;
+DROP TABLE IF EXISTS `room`;
+CREATE TABLE `room` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `roomId` varchar(255) NOT NULL COMMENT 'groupId',
+  `roomName` varchar(255) DEFAULT NULL COMMENT '群组名',
+  `roomType` varchar(255) DEFAULT NULL COMMENT '群组类型; system, cgg,course',
+  `roomDesc` varchar(255) DEFAULT NULL COMMENT '群组描述',
+  `roomAvatar` varchar(255) DEFAULT NULL COMMENT '群logo',
+  `roomExtend` text COMMENT '拓展字段; { groupNotice: ''xx'' }',
+  `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
+  `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId',
+  `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
+  `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `groupId_index` (`roomId`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 59 COMMENT = '群组表;';
 
--- ----------------------------
--- View structure for view01_user_group_role
--- ----------------------------
-DROP VIEW IF EXISTS `view01_user_group_role`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_user_group_role` AS select `_user_group_role`.`id` AS `id`,`_user_group_role`.`userId` AS `userId`,`_user_group_role`.`groupId` AS `groupId`,`_user_group_role`.`roleId` AS `roleId`,`_user`.`username` AS `username`,`_user`.`userAvatar` AS `userAvatar`,`_role`.`roleName` AS `roleName`,`_group`.`groupName` AS `groupName`,`_group`.`groupAvatar` AS `groupAvatar`,`_user_group_role`.`operation` AS `operation`,`_user_group_role`.`operationByUserId` AS `operationByUserId`,`_user_group_role`.`operationByUser` AS `operationByUser`,`_user_group_role`.`operationAt` AS `operationAt` from (((`_user_group_role` join `_user` on((`_user_group_role`.`userId` = `_user`.`userId`))) join `_group` on((`_user_group_role`.`groupId` = `_group`.`groupId`))) join `_role` on((`_user_group_role`.`roleId` = `_role`.`roleId`)));
 
--- ----------------------------
--- View structure for _view01_user
--- ----------------------------
-DROP VIEW IF EXISTS `_view01_user`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `_view01_user` AS select `_user`.`id` AS `id`,`_user`.`userId` AS `userId`,`_user`.`username` AS `username`,`_user`.`userAvatar` AS `userAvatar`,`_user`.`contactNumber` AS `contactNumber`,`_user`.`gender` AS `gender`,`_user`.`birthday` AS `birthday`,`_user`.`signature` AS `signature`,`_user`.`email` AS `email`,`_user`.`clearTextPassword` AS `clearTextPassword`,`_user`.`password` AS `password`,`_user`.`md5Salt` AS `md5Salt`,`_user`.`userType` AS `userType`,`_user`.`userStatus` AS `userStatus`,`_user`.`config` AS `config` from `_user`;
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: room
+# ------------------------------------------------------------
 
-SET FOREIGN_KEY_CHECKS = 1;
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'adminRoom','权限管理组','system','管理组','/roomAvatar/default.jpg','{\"allRoomUsername\":\"\"}','insert',NULL,NULL,NULL);
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (6,'wudang','武当',NULL,'武当','/roomAvatar/default1.jpg','{\"allRoomUsername\":\"张无忌,郭靖,令狐冲,乔峰,事工信息,汪剑通,测试账号01,admin01,张三丰\",\"roomSliderShow\":[{\"content\":\"<h1>测试下</h1>\\n<p>我是测试</p>\\n<p>我要测试</p>\\n\",\"markdown\":\"# 测试下\\n\\n我是测试\\n\\n我要测试\\n\",\"type\":\"text\",\"id\":\"C9ULyPH5ZlPTQJ7RNb5k6\",\"createTime\":\"2022-08-08T16:02:26+08:00\",\"operation\":\"admin01[admin01]\"},{\"content\":\"<h1>测试下</h1>\\n<p>我是测试</p>\\n<p>我要测试</p>\\n<p>123123123123123</p>\\n\",\"markdown\":\"# 测试下\\n\\n我是测试\\n\\n我要测试\\n\\n123123123123123\\n\",\"type\":\"text\",\"id\":\"kydIJEZYoPUdIeZ1sbRIe\",\"createTime\":\"2022-08-08T16:02:32+08:00\",\"operation\":\"admin01[admin01]\"},{\"content\":\"<p>我测试下<strong>招待费</strong></p>\\n\",\"markdown\":\"我测试下**招待费**\\n\",\"type\":\"text\",\"id\":\"fvYrfm819Jnkma9zWhVAK\",\"createTime\":\"2022-08-08T16:03:33+08:00\",\"operation\":\"admin01[admin01]\"},{\"content\":\"<p>我测试下<strong>招待费</strong></p>\\n<h1>地对地导弹</h1>\\n\",\"markdown\":\"我测试下**招待费**\\n\\n# 地对地导弹\\n\",\"type\":\"text\",\"id\":\"EGt5KAz2sy36kDG-ofSYU\",\"createTime\":\"2022-08-08T16:03:44+08:00\",\"operation\":\"admin01[admin01]\"},{\"content\":\"<p>我测试下<strong>招待费</strong></p>\\n<h1>地对地导弹</h1>\\n<p>asdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf a</p>\\n\",\"markdown\":\"我测试下**招待费**\\n\\n# 地对地导弹\\n\\nasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf aasdfasdf a\\n\",\"type\":\"text\",\"id\":\"0hRJGwrWiAXgr4fOL326J\",\"createTime\":\"2022-08-08T21:28:09+08:00\",\"operation\":\"admin01[admin01]\"}]}','jhRestore','admin01','admin01','2022-08-08T21:33:31+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (7,'gaibang','丐帮--',NULL,'丐帮','/roomAvatar/default2.jpg','{\"allRoomUsername\":\"郭靖,岳不群,张三丰,小程序机器人1,汪剑通,洪七公\"}','jhUpdate','G00001','洪七公','2022-03-20T15:28:59+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (8,'huashan','华山派',NULL,'华山派','/roomAvatar/default3.jpg','{\"allRoomUsername\":\"令狐冲,admin01,岳不群\"}','insert',NULL,NULL,NULL);
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (13,'jd-_eJWCsaD90qKXcgzlH','天下会',NULL,NULL,'/roomAvatar/default2.jpg','{\"allRoomUsername\":\"岳不群,张三丰,admin01\"}','jhUpdate','admin01','admin01','2022-07-25T11:47:26+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (15,'C1vDvXCgb4uAsoa1K8mPC','admin测试群___',NULL,NULL,'/roomAvatar/default2.jpg','{\"allRoomUsername\":\"岳不群,张三丰,郭靖,洪七公,admin01\"}','jhUpdate','W00001','张三丰','2022-07-20T14:03:53+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (16,'JcCVYjEqySIdMZxcy8O11','1111',NULL,NULL,'/roomAvatar/default2.jpg','{\"allRoomUsername\":\"洪七公,令狐冲,郭靖\"}','jhUpdate','admin01','admin01','2022-03-12T22:38:25+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (17,'9U_ww9I2TtgL4Fsi4whCz','admin,洪七公,郭靖等4人群聊',NULL,NULL,'/roomAvatar/default5.jpg','{\"allRoomUsername\":\"郭靖,洪七公\"}','jhInsert','admin01','admin01','2022-03-12T22:38:19+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (18,'beS8LsS2pMfHic-hNuGrD','admin,洪七公,郭靖等3人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"洪七公,测试账号01,admin01\"}','jhUpdate','admin01','admin01','2022-07-15T09:35:21+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (20,'gBK5SDgE0ebEMWAgF2n9Y','张三丰,洪七公,令狐冲等3人群聊',NULL,NULL,'/roomAvatar/default4.jpg','{\"allRoomUsername\":\"张三丰,洪七公\"}','jhInsert','W00001','张三丰','2022-03-13T21:43:34+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (21,'Q07o3miNRKsBXrbCFFpaV','张三丰,洪七公,令狐冲等3人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"张三丰,洪七公\"}','jhInsert','W00001','张三丰','2022-03-13T21:46:03+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (22,'BJbrcnzn-MwG9KJ6taPZg','张三丰,洪七公,令狐冲等3人群聊',NULL,NULL,'/roomAvatar/default5.jpg','{\"allRoomUsername\":\"张三丰,洪七公\"}','jhInsert','W00001','张三丰','2022-03-13T21:53:52+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (23,'NVVv8YlhskIX0QHimHMap','张三丰2',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"张三丰,洪七公\"}','jhUpdate','W00001','张三丰','2022-07-01T21:53:40+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (24,'bhF6JQXgXUqwlkC1Pdl8J','张三丰,洪七公,令狐冲等3人群聊2',NULL,NULL,'/roomAvatar/default4.jpg','{\"allRoomUsername\":\"张三丰,洪七公\"}','jhUpdate','W00001','张三丰','2022-03-14T10:30:22+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (25,'FsTa3bUxZId4MAdowDbxw','测试修改群名字1',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"张三丰,令狐冲\"}','jhUpdate','W00001','张三丰','2022-03-14T12:47:35+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (26,'8CdYgl90D-Zz0OC6eA_Dk','张三丰,admin01,令狐冲等3人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"admin01,令狐冲,张三丰\"}','jhInsert','W00001','张三丰','2022-03-14T20:44:11+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (28,'DnY2orBMDexRFGqUFH2ty','张三丰,admin01,令狐冲等5人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"聊天机器人1,admin01,聊天机器人2,令狐冲,张三丰\"}','jhInsert','W00001','张三丰','2022-03-14T22:14:07+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (29,'Mz6t4hwgai_KmEd43OAHt','张三丰,admin01,令狐冲等3人群聊',NULL,NULL,'/roomAvatar/default5.jpg','{\"allRoomUsername\":\"admin01,令狐冲,张三丰\"}','jhInsert','W00001','张三丰','2022-03-14T22:15:03+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (30,'3Kf5iP-hhWcMO0aqFVAkc','张三丰,聊天机器人1,聊天机器人2等3人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"聊天机器人1,聊天机器人2\"}','jhInsert','W00001','张三丰','2022-03-14T22:16:09+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (31,'Ox8_A0FHhRAte_hVSMnBM','张三丰,admin01,聊天机器人1等3人群聊',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"admin01,聊天机器人1,洪七公,郭靖,段誉,张三丰\"}','jhRestore','admin01','admin01','2022-08-05T18:28:20+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (32,'gtb-z1CGqQCgddt6o2urB','张三丰,admin01,令狐冲等3人群聊',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"admin01,令狐冲\"}','jhInsert','W00001','张三丰','2022-03-14T22:21:23+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (33,'osoZAVR8wfazAL39C8E7n','洪七公,汪剑通等2人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"洪七公,汪剑通\"}','jhInsert','G00001','洪七公','2022-03-15T14:03:01+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (34,'EKhZoPqdaBGwWWqoPu40q','洪七公,汪剑通等2人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"洪七公,汪剑通\"}','jhInsert','G00001','洪七公','2022-03-15T14:03:24+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (35,'vsUf6nL19V_LombZlLdLW','洪七公,汪剑通等2人群聊',NULL,NULL,'/roomAvatar/default5.jpg','{\"allRoomUsername\":\"洪七公,汪剑通\"}','jhInsert','G00001','洪七公','2022-03-15T14:03:27+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (37,'A10EYIM6NKvCxsD4DU76O','汪剑通创建的群',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"郭靖,洪七公,岳不群,乔峰,汪剑通\"}','jhUpdate','G00003','汪剑通','2022-06-16T17:38:17+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (39,'zGCb1BOH0-b9S_UE9XYzl','张三丰,admin01,郭靖等3人群聊',NULL,NULL,'/roomAvatar/default5.jpg','{\"allRoomUsername\":\"admin01,郭靖,洪七公,令狐冲,张三丰\"}','jhUpdate','W00001','张三丰','2022-04-30T22:27:45+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (40,'Fgh0utkF8OQ3aEBC0upJL','张三丰,admin01,洪七公等3人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"admin01,洪七公,张三丰\"}','jhUpdate','W00001','张三丰','2022-04-30T22:04:32+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (41,'EHxAWffWvQtt2F6bvlURT','张三丰,admin01,郭靖等3人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"郭靖,admin01,张三丰\"}','jhUpdate','W00001','张三丰','2022-05-02T23:25:49+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (42,'T9keFDCT5br7sIrjHC5GB','admin01,测试账号01等2人群聊',NULL,NULL,'/roomAvatar/default2.jpg','{\"allRoomUsername\":\"admin01,测试账号01\"}','jhUpdate','admin01','admin01','2022-05-28T21:05:55+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (43,'R6JWlpYnDPdj1Q-ZoTFIw','汪剑通,洪七公,郭靖等5人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"郭靖,洪七公,乔峰,岳不群,汪剑通\"}','jhUpdate','G00003','汪剑通','2022-06-16T17:37:59+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (44,'fTjJngxqfH2hm03Dr-E9i','张三丰,admin01,洪七公等4人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"admin01,郭靖,洪七公,张三丰\"}','jhUpdate','W00001','张三丰','2022-07-10T14:57:45+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (45,'3BCvVYkJbf-JVCMdTyfiX','张三丰,洪七公,郭靖等5人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"郭靖,洪七公,令狐冲,事工信息,张三丰\"}','jhUpdate','W00001','张三丰','2022-07-01T21:21:37+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (46,'ox9Xdq9D-q8jPqSiwRyib','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default5.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T13:50:13+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (47,'Xa47N0-CslZamRtfqgDjr','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T13:58:14+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (48,'4AMRPHHvsPSq4iLDXr-5o','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T13:59:41+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (49,'Zh0Ipik1MUGmL9Isr37gO','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T14:00:13+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (50,'ngDxHZTMWhXkIB6_NpOOJ','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T14:00:55+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (51,'T3qv73PM83EGf_4Y2Darp','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default2.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T14:01:32+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (52,'xPa_ZbyNO3QOzM0NOJdHK','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default1.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhInsert','admin01','admin01','2022-07-15T14:01:59+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (53,'ucruTVNJB1xu_A59wGQRq','admin01,令狐冲,测试账号01等3人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"测试账号01,令狐冲,admin01\"}','jhUpdate','admin01','admin01','2022-07-15T14:03:15+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (54,'SbqjwbcjtB1et65D-NWlT','张三丰,admin01,郭靖等3人群聊',NULL,NULL,'/roomAvatar/default2.jpg','{\"allRoomUsername\":\"admin01,郭靖,张三丰\"}','jhUpdate','W00001','张三丰','2022-07-15T14:05:48+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (55,'OXf9kp6glLthbhoGpQ6Iy','张三丰,admin01,洪七公等5人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"admin01,郭靖,洪七公,令狐冲,张三丰\"}','jhUpdate','W00001','张三丰','2022-07-15T14:08:52+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (56,'g7mx205cIyVTMMF5BmFHt','5人群聊',NULL,NULL,'/roomAvatar/default3.jpg','{\"allRoomUsername\":\"乔峰,汪剑通,张三丰,事工信息,张无忌,牧养小程序,admin01\",\"roomNotice\":\"123123123123\"}','jhUpdate','W00002','张无忌','2022-07-27T14:14:51+08:00');
+INSERT INTO `room` (`id`,`roomId`,`roomName`,`roomType`,`roomDesc`,`roomAvatar`,`roomExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (58,'JTsVo7ONh_2X21d3OTpFD','张三丰,令狐冲,张无忌等3人群聊',NULL,NULL,'/roomAvatar/default6.jpg','{\"allRoomUsername\":\"令狐冲,张三丰,张无忌\"}','jhUpdate','W00001','张三丰','2022-07-27T14:34:03+08:00');
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: user_room_role
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_room_role`;
+CREATE TABLE `user_room_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(255) NOT NULL COMMENT '用户id',
+  `roomId` varchar(255) NOT NULL COMMENT '群组Id',
+  `roleId` varchar(255) DEFAULT NULL COMMENT '角色Id',
+  `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
+  `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId',
+  `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
+  `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
+  PRIMARY KEY (`id`),
+  KEY `groupId_index` (`roomId`),
+  KEY `userId_index` (`userId`)
+) ENGINE = InnoDB AUTO_INCREMENT = 804 COMMENT = '用户群组角色关联表;';
+
+
+# ------------------------------------------------------------
+# DATA DUMP FOR TABLE: user_room_role
+# ------------------------------------------------------------
+
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (569,'W00001','wudang','roomOwner','insert',NULL,NULL,NULL);
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (570,'W00002','wudang','roomUser','insert',NULL,NULL,NULL);
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (573,'G00001','gaibang','roomOwner','jhUpdate','G00003','汪剑通','2022-03-19T16:41:51+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (574,'G00002','gaibang','roomUser','jhUpdate','G00003','汪剑通','2022-03-19T16:41:38+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (577,'H00001','huashan','roomOwner','insert',NULL,NULL,NULL);
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (578,'H00002','huashan','roomUser','insert',NULL,NULL,NULL);
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (587,'admin01','wudang','roomAdmin','update',NULL,NULL,'2022-03-10T22:33:58+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (588,'admin01','huashan','roomAdmin','insert',NULL,NULL,NULL);
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (590,'H00001','gaibang','roomUser','jhUpdate','G00003','汪剑通','2022-03-19T16:41:39+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (591,'W00001','gaibang','roomUser','insert',NULL,NULL,NULL);
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (615,'admin01','jd-_eJWCsaD90qKXcgzlH','roomOwner','insert',NULL,NULL,'2022-03-05T17:17:46+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (616,'H00001','jd-_eJWCsaD90qKXcgzlH','roomUser','insert',NULL,NULL,'2022-03-05T17:17:46+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (617,'W00001','jd-_eJWCsaD90qKXcgzlH','roomUser','insert',NULL,NULL,'2022-03-05T17:17:46+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (621,'admin01','C1vDvXCgb4uAsoa1K8mPC','roomOwner','insert',NULL,NULL,'2022-03-09T22:51:01+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (622,'H00001','C1vDvXCgb4uAsoa1K8mPC','roomUser','insert',NULL,NULL,'2022-03-09T22:51:01+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (624,'W00001','C1vDvXCgb4uAsoa1K8mPC','roomUser','insert',NULL,NULL,'2022-03-12T19:56:31+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (627,'G00002','C1vDvXCgb4uAsoa1K8mPC','roomUser','insert',NULL,NULL,'2022-03-12T19:56:31+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (629,'G00002','JcCVYjEqySIdMZxcy8O11','roomOwner','jhUpdate','admin01','admin01','2022-03-12T22:44:36+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (630,'G00001','JcCVYjEqySIdMZxcy8O11','roomUser','jhInsert','admin01','admin01','2022-03-12T22:38:16+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (631,'H00002','JcCVYjEqySIdMZxcy8O11','roomUser','jhInsert','admin01','admin01','2022-03-12T22:38:16+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (633,'G00002','9U_ww9I2TtgL4Fsi4whCz','roomUser','jhInsert','admin01','admin01','2022-03-12T22:38:19+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (634,'G00001','9U_ww9I2TtgL4Fsi4whCz','roomOwner','jhUpdate','admin01','admin01','2022-03-12T22:41:47+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (636,'admin01','beS8LsS2pMfHic-hNuGrD','roomOwner','jhInsert','admin01','admin01','2022-03-12T22:46:32+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (638,'G00001','beS8LsS2pMfHic-hNuGrD','roomUser','jhInsert','admin01','admin01','2022-03-12T22:46:32+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (642,'W00001','gBK5SDgE0ebEMWAgF2n9Y','roomOwner','jhInsert','W00001','张三丰','2022-03-13T21:43:35+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (644,'G00001','gBK5SDgE0ebEMWAgF2n9Y','roomUser','jhInsert','W00001','张三丰','2022-03-13T21:43:35+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (645,'W00001','Q07o3miNRKsBXrbCFFpaV','roomOwner','jhInsert','W00001','张三丰','2022-03-13T21:46:04+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (647,'G00001','Q07o3miNRKsBXrbCFFpaV','roomUser','jhInsert','W00001','张三丰','2022-03-13T21:46:04+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (648,'W00001','BJbrcnzn-MwG9KJ6taPZg','roomOwner','jhInsert','W00001','张三丰','2022-03-13T21:53:53+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (650,'G00001','BJbrcnzn-MwG9KJ6taPZg','roomUser','jhInsert','W00001','张三丰','2022-03-13T21:53:53+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (651,'W00001','NVVv8YlhskIX0QHimHMap','roomOwner','jhInsert','W00001','张三丰','2022-03-13T21:54:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (653,'G00001','NVVv8YlhskIX0QHimHMap','roomUser','jhInsert','W00001','张三丰','2022-03-13T21:54:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (654,'W00001','bhF6JQXgXUqwlkC1Pdl8J','roomOwner','jhInsert','W00001','张三丰','2022-03-13T21:58:09+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (656,'G00001','bhF6JQXgXUqwlkC1Pdl8J','roomUser','jhInsert','W00001','张三丰','2022-03-13T21:58:09+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (657,'W00001','FsTa3bUxZId4MAdowDbxw','roomOwner','jhInsert','W00001','张三丰','2022-03-14T11:20:37+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (658,'H00002','FsTa3bUxZId4MAdowDbxw','roomUser','jhInsert','W00001','张三丰','2022-03-14T11:20:37+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (660,'W00001','8CdYgl90D-Zz0OC6eA_Dk','roomOwner','jhInsert','W00001','张三丰','2022-03-14T20:44:11+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (661,'admin01','8CdYgl90D-Zz0OC6eA_Dk','roomUser','jhInsert','W00001','张三丰','2022-03-14T20:44:11+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (662,'H00002','8CdYgl90D-Zz0OC6eA_Dk','roomUser','jhInsert','W00001','张三丰','2022-03-14T20:44:11+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (666,'W00001','DnY2orBMDexRFGqUFH2ty','roomOwner','jhInsert','W00001','张三丰','2022-03-14T22:14:07+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (667,'chatbot01','DnY2orBMDexRFGqUFH2ty','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:14:07+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (668,'admin01','DnY2orBMDexRFGqUFH2ty','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:14:07+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (669,'chatbot02','DnY2orBMDexRFGqUFH2ty','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:14:07+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (670,'H00002','DnY2orBMDexRFGqUFH2ty','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:14:07+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (671,'W00001','Mz6t4hwgai_KmEd43OAHt','roomOwner','jhInsert','W00001','张三丰','2022-03-14T22:15:03+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (672,'admin01','Mz6t4hwgai_KmEd43OAHt','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:15:03+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (673,'H00002','Mz6t4hwgai_KmEd43OAHt','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:15:03+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (675,'chatbot01','3Kf5iP-hhWcMO0aqFVAkc','roomOwner','jhUpdate','W00001','张三丰','2022-03-15T20:54:35+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (676,'chatbot02','3Kf5iP-hhWcMO0aqFVAkc','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:16:09+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (677,'W00001','Ox8_A0FHhRAte_hVSMnBM','roomOwner','jhInsert','W00001','张三丰','2022-03-14T22:21:05+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (678,'admin01','Ox8_A0FHhRAte_hVSMnBM','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:21:05+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (679,'chatbot01','Ox8_A0FHhRAte_hVSMnBM','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:21:05+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (681,'admin01','gtb-z1CGqQCgddt6o2urB','roomOwner','jhUpdate','W00001','张三丰','2022-03-15T20:55:01+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (682,'H00002','gtb-z1CGqQCgddt6o2urB','roomUser','jhInsert','W00001','张三丰','2022-03-14T22:21:23+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (684,'G00001','osoZAVR8wfazAL39C8E7n','roomOwner','jhInsert','G00001','洪七公','2022-03-15T14:03:01+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (685,'G00003','osoZAVR8wfazAL39C8E7n','roomUser','jhInsert','G00001','洪七公','2022-03-15T14:03:01+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (686,'G00001','EKhZoPqdaBGwWWqoPu40q','roomOwner','jhInsert','G00001','洪七公','2022-03-15T14:03:24+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (687,'G00003','EKhZoPqdaBGwWWqoPu40q','roomUser','jhInsert','G00001','洪七公','2022-03-15T14:03:24+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (688,'G00001','vsUf6nL19V_LombZlLdLW','roomOwner','jhInsert','G00001','洪七公','2022-03-15T14:03:28+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (689,'G00003','vsUf6nL19V_LombZlLdLW','roomUser','jhInsert','G00001','洪七公','2022-03-15T14:03:28+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (704,'G00003','A10EYIM6NKvCxsD4DU76O','roomOwner','jhInsert','G00003','汪剑通','2022-03-18T22:07:23+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (705,'G00002','A10EYIM6NKvCxsD4DU76O','roomUser','jhInsert','G00003','汪剑通','2022-03-18T22:07:23+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (706,'G00001','A10EYIM6NKvCxsD4DU76O','roomUser','jhInsert','G00003','汪剑通','2022-03-18T22:07:23+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (707,'H00001','A10EYIM6NKvCxsD4DU76O','roomUser','jhInsert','G00003','汪剑通','2022-03-18T22:07:23+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (712,'G00003','gaibang','roomAdmin','jhUpdate','G00003','汪剑通','2022-03-19T16:41:50+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (713,'xiaochengxu01','gaibang','roomUser','jhInsert','G00001','洪七公','2022-03-20T15:28:58+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (716,'W00001','zGCb1BOH0-b9S_UE9XYzl','roomOwner','jhInsert','W00001','张三丰','2022-04-30T21:57:56+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (717,'admin01','zGCb1BOH0-b9S_UE9XYzl','roomUser','jhInsert','W00001','张三丰','2022-04-30T21:57:56+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (718,'G00002','zGCb1BOH0-b9S_UE9XYzl','roomUser','jhInsert','W00001','张三丰','2022-04-30T21:57:56+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (719,'W00001','Fgh0utkF8OQ3aEBC0upJL','roomOwner','jhInsert','W00001','张三丰','2022-04-30T22:04:31+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (720,'admin01','Fgh0utkF8OQ3aEBC0upJL','roomUser','jhInsert','W00001','张三丰','2022-04-30T22:04:31+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (721,'G00001','Fgh0utkF8OQ3aEBC0upJL','roomUser','jhInsert','W00001','张三丰','2022-04-30T22:04:31+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (723,'G00001','zGCb1BOH0-b9S_UE9XYzl','roomUser','jhInsert','W00001','张三丰','2022-04-30T22:27:45+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (724,'H00002','zGCb1BOH0-b9S_UE9XYzl','roomUser','jhInsert','W00001','张三丰','2022-04-30T22:27:45+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (725,'W00001','EHxAWffWvQtt2F6bvlURT','roomOwner','jhInsert','W00001','张三丰','2022-05-02T23:25:48+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (726,'G00002','EHxAWffWvQtt2F6bvlURT','roomUser','jhInsert','W00001','张三丰','2022-05-02T23:25:48+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (727,'admin01','EHxAWffWvQtt2F6bvlURT','roomUser','jhInsert','W00001','张三丰','2022-05-02T23:25:48+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (728,'admin01','T9keFDCT5br7sIrjHC5GB','roomOwner','jhInsert','admin01','admin01','2022-05-28T21:05:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (729,'test01','T9keFDCT5br7sIrjHC5GB','roomUser','jhInsert','admin01','admin01','2022-05-28T21:05:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (730,'G00003','R6JWlpYnDPdj1Q-ZoTFIw','roomOwner','jhInsert','G00003','汪剑通','2022-06-16T17:37:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (731,'G00002','R6JWlpYnDPdj1Q-ZoTFIw','roomUser','jhInsert','G00003','汪剑通','2022-06-16T17:37:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (732,'G00001','R6JWlpYnDPdj1Q-ZoTFIw','roomUser','jhInsert','G00003','汪剑通','2022-06-16T17:37:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (733,'G00004','R6JWlpYnDPdj1Q-ZoTFIw','roomUser','jhInsert','G00003','汪剑通','2022-06-16T17:37:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (734,'H00001','R6JWlpYnDPdj1Q-ZoTFIw','roomUser','jhInsert','G00003','汪剑通','2022-06-16T17:37:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (735,'G00004','A10EYIM6NKvCxsD4DU76O','roomUser','jhInsert','G00003','汪剑通','2022-06-16T17:38:17+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (736,'W00001','fTjJngxqfH2hm03Dr-E9i','roomOwner','jhInsert','W00001','张三丰','2022-07-01T21:20:49+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (737,'admin01','fTjJngxqfH2hm03Dr-E9i','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:20:49+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (738,'G00002','fTjJngxqfH2hm03Dr-E9i','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:20:49+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (739,'G00001','fTjJngxqfH2hm03Dr-E9i','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:20:49+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (740,'W00001','3BCvVYkJbf-JVCMdTyfiX','roomOwner','jhInsert','W00001','张三丰','2022-07-01T21:21:33+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (741,'G00002','3BCvVYkJbf-JVCMdTyfiX','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:21:33+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (742,'G00001','3BCvVYkJbf-JVCMdTyfiX','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:21:33+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (743,'H00002','3BCvVYkJbf-JVCMdTyfiX','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:21:33+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (744,'xiaochengxu-shigong01','3BCvVYkJbf-JVCMdTyfiX','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:21:33+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (745,'G00002','wudang','roomUser','jhInsert','W00001','张三丰','2022-07-01T21:26:27+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (746,'H00002','wudang','roomUser','jhInsert','admin01','admin01','2022-07-15T09:19:35+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (748,'G00004','wudang','roomUser','jhInsert','admin01','admin01','2022-07-15T09:22:15+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (749,'xiaochengxu-shigong01','wudang','roomUser','jhInsert','admin01','admin01','2022-07-15T09:22:15+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (750,'G00003','wudang','roomUser','jhInsert','admin01','admin01','2022-07-15T09:32:53+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (751,'test01','beS8LsS2pMfHic-hNuGrD','roomUser','jhInsert','admin01','admin01','2022-07-15T09:33:19+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (752,'admin01','ox9Xdq9D-q8jPqSiwRyib','roomOwner','jhInsert','admin01','admin01','2022-07-15T13:50:14+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (753,'test01','ox9Xdq9D-q8jPqSiwRyib','roomUser','jhInsert','admin01','admin01','2022-07-15T13:50:14+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (754,'H00002','ox9Xdq9D-q8jPqSiwRyib','roomUser','jhInsert','admin01','admin01','2022-07-15T13:50:14+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (755,'admin01','Xa47N0-CslZamRtfqgDjr','roomOwner','jhInsert','admin01','admin01','2022-07-15T13:58:14+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (756,'test01','Xa47N0-CslZamRtfqgDjr','roomUser','jhInsert','admin01','admin01','2022-07-15T13:58:14+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (757,'H00002','Xa47N0-CslZamRtfqgDjr','roomUser','jhInsert','admin01','admin01','2022-07-15T13:58:14+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (758,'admin01','4AMRPHHvsPSq4iLDXr-5o','roomOwner','jhInsert','admin01','admin01','2022-07-15T13:59:41+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (759,'test01','4AMRPHHvsPSq4iLDXr-5o','roomUser','jhInsert','admin01','admin01','2022-07-15T13:59:41+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (760,'H00002','4AMRPHHvsPSq4iLDXr-5o','roomUser','jhInsert','admin01','admin01','2022-07-15T13:59:41+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (761,'admin01','Zh0Ipik1MUGmL9Isr37gO','roomOwner','jhInsert','admin01','admin01','2022-07-15T14:00:13+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (762,'test01','Zh0Ipik1MUGmL9Isr37gO','roomUser','jhInsert','admin01','admin01','2022-07-15T14:00:13+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (763,'H00002','Zh0Ipik1MUGmL9Isr37gO','roomUser','jhInsert','admin01','admin01','2022-07-15T14:00:13+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (764,'admin01','ngDxHZTMWhXkIB6_NpOOJ','roomOwner','jhInsert','admin01','admin01','2022-07-15T14:00:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (765,'test01','ngDxHZTMWhXkIB6_NpOOJ','roomUser','jhInsert','admin01','admin01','2022-07-15T14:00:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (766,'H00002','ngDxHZTMWhXkIB6_NpOOJ','roomUser','jhInsert','admin01','admin01','2022-07-15T14:00:55+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (767,'admin01','T3qv73PM83EGf_4Y2Darp','roomOwner','jhInsert','admin01','admin01','2022-07-15T14:01:32+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (768,'test01','T3qv73PM83EGf_4Y2Darp','roomUser','jhInsert','admin01','admin01','2022-07-15T14:01:32+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (769,'H00002','T3qv73PM83EGf_4Y2Darp','roomUser','jhInsert','admin01','admin01','2022-07-15T14:01:32+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (770,'admin01','xPa_ZbyNO3QOzM0NOJdHK','roomOwner','jhInsert','admin01','admin01','2022-07-15T14:01:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (771,'test01','xPa_ZbyNO3QOzM0NOJdHK','roomUser','jhInsert','admin01','admin01','2022-07-15T14:01:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (772,'H00002','xPa_ZbyNO3QOzM0NOJdHK','roomUser','jhInsert','admin01','admin01','2022-07-15T14:01:59+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (773,'admin01','ucruTVNJB1xu_A59wGQRq','roomOwner','jhInsert','admin01','admin01','2022-07-15T14:03:13+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (774,'test01','ucruTVNJB1xu_A59wGQRq','roomUser','jhInsert','admin01','admin01','2022-07-15T14:03:13+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (775,'H00002','ucruTVNJB1xu_A59wGQRq','roomUser','jhInsert','admin01','admin01','2022-07-15T14:03:13+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (776,'W00001','SbqjwbcjtB1et65D-NWlT','roomOwner','jhInsert','W00001','张三丰','2022-07-15T14:05:48+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (777,'admin01','SbqjwbcjtB1et65D-NWlT','roomUser','jhInsert','W00001','张三丰','2022-07-15T14:05:48+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (778,'G00002','SbqjwbcjtB1et65D-NWlT','roomUser','jhInsert','W00001','张三丰','2022-07-15T14:05:48+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (779,'W00001','OXf9kp6glLthbhoGpQ6Iy','roomOwner','jhInsert','W00001','张三丰','2022-07-15T14:08:52+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (780,'admin01','OXf9kp6glLthbhoGpQ6Iy','roomUser','jhInsert','W00001','张三丰','2022-07-15T14:08:52+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (781,'G00002','OXf9kp6glLthbhoGpQ6Iy','roomUser','jhInsert','W00001','张三丰','2022-07-15T14:08:52+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (782,'G00001','OXf9kp6glLthbhoGpQ6Iy','roomUser','jhInsert','W00001','张三丰','2022-07-15T14:08:52+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (783,'H00002','OXf9kp6glLthbhoGpQ6Iy','roomUser','jhInsert','W00001','张三丰','2022-07-15T14:08:52+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (784,'G00001','C1vDvXCgb4uAsoa1K8mPC','roomUser','jhInsert','W00001','张三丰','2022-07-20T14:03:50+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (786,'test01','wudang','roomUser','jhInsert','admin01','admin01','2022-07-25T11:49:01+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (787,'admin01','g7mx205cIyVTMMF5BmFHt','roomOwner','jhInsert','admin01','admin01','2022-07-25T11:49:21+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (788,'G00004','g7mx205cIyVTMMF5BmFHt','roomUser','jhUpdate','admin01','admin01','2022-07-25T11:52:42+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (789,'G00003','g7mx205cIyVTMMF5BmFHt','roomUser','jhInsert','admin01','admin01','2022-07-25T11:49:21+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (790,'W00001','g7mx205cIyVTMMF5BmFHt','roomUser','jhInsert','admin01','admin01','2022-07-25T11:49:21+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (792,'xiaochengxu-shigong01','g7mx205cIyVTMMF5BmFHt','roomUser','jhInsert','admin01','admin01','2022-07-25T11:52:46+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (793,'W00002','g7mx205cIyVTMMF5BmFHt','roomUser','jhInsert','W00001','张三丰','2022-07-27T14:14:32+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (794,'md-shepherd-xiaochengxu','g7mx205cIyVTMMF5BmFHt','roomUser','jhInsert','W00002','张无忌','2022-07-27T14:14:51+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (798,'W00001','JTsVo7ONh_2X21d3OTpFD','roomAdmin','jhUpdate','W00001','张三丰','2022-07-27T14:34:03+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (799,'W00002','JTsVo7ONh_2X21d3OTpFD','roomOwner','jhUpdate','W00001','张三丰','2022-07-27T14:34:03+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (800,'H00002','JTsVo7ONh_2X21d3OTpFD','roomUser','jhInsert','W00001','张三丰','2022-07-27T14:23:51+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (801,'G00001','Ox8_A0FHhRAte_hVSMnBM','roomUser','jhInsert','admin01','admin01','2022-08-04T23:29:50+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (802,'G00002','Ox8_A0FHhRAte_hVSMnBM','roomUser','jhInsert','admin01','admin01','2022-08-04T23:29:50+08:00');
+INSERT INTO `user_room_role` (`id`,`userId`,`roomId`,`roleId`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (803,'X00001','Ox8_A0FHhRAte_hVSMnBM','roomUser','jhInsert','admin01','admin01','2022-08-04T23:29:50+08:00');
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: _view01_user
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `_view01_user` AS
+select
+  `_user`.`id` AS `id`,
+  `_user`.`userId` AS `userId`,
+  `_user`.`username` AS `username`,
+  `_user`.`userAvatar` AS `userAvatar`,
+  `_user`.`contactNumber` AS `contactNumber`,
+  `_user`.`gender` AS `gender`,
+  `_user`.`birthday` AS `birthday`,
+  `_user`.`signature` AS `signature`,
+  `_user`.`email` AS `email`,
+  `_user`.`clearTextPassword` AS `clearTextPassword`,
+  `_user`.`password` AS `password`,
+  `_user`.`md5Salt` AS `md5Salt`,
+  `_user`.`userType` AS `userType`,
+  `_user`.`userStatus` AS `userStatus`,
+  `_user`.`config` AS `config`
+from
+  `_user`;
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_duoxing_chat_session
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_duoxing_chat_session` AS
+select
+  `duoxing_chat_session`.`id` AS `id`,
+  `duoxing_chat_session`.`userId` AS `userId`,
+  `duoxing_chat_session`.`type` AS `type`,
+  `duoxing_chat_session`.`chatId` AS `chatId`,
+  `duoxing_chat_session`.`lastMessageHistoryId` AS `lastMessageHistoryId`,
+  `duoxing_chat_session`.`topChatOrder` AS `topChatOrder`,
+  `duoxing_chat_session`.`muted` AS `muted`,
+  `duoxing_chat_session`.`unreadCount` AS `unreadCount`,
+  `_user`.`username` AS `chatUsername`,
+  `_user`.`userAvatar` AS `chatUserAvatar`,
+  `room`.`roomName` AS `chatRoomName`,
+  `room`.`roomAvatar` AS `chatRoomAvatar`,
+  `room`.`roomExtend` AS `chatRoomExtend`
+from
+  (
+  (
+    `duoxing_chat_session`
+    left join `_user` on(
+    (
+      (
+      `duoxing_chat_session`.`chatId` = `_user`.`userId`
+      )
+      and (`duoxing_chat_session`.`type` = 'user')
+    )
+    )
+  )
+  left join `room` on(
+    (
+    (
+      `duoxing_chat_session`.`chatId` = `room`.`roomId`
+    )
+    and (`duoxing_chat_session`.`type` = 'room')
+    )
+  )
+  );
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_duoxing_message_history
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_duoxing_message_history` AS
+select
+  `dmh`.`id` AS `id`,
+  `dmh`.`messageType` AS `messageType`,
+  `dmh`.`fromUserId` AS `fromUserId`,
+  `fromUser`.`username` AS `fromUsername`,
+  `fromUser`.`userAvatar` AS `fromUserAvatar`,
+  `dmh`.`toUserId` AS `toUserId`,
+  `toUser`.`username` AS `toUsername`,
+  `toUser`.`userAvatar` AS `toUserAvatar`,
+  `dmh`.`toRoomId` AS `toRoomId`,
+  `dmh`.`messageContent` AS `messageContent`,
+  `dmh`.`messageFingerprint` AS `messageFingerprint`,
+  `dmh`.`messageTimeString` AS `messageTimeString`,
+  `dmh`.`messageContentType` AS `messageContentType`,
+  `dmh`.`noticeType` AS `noticeType`,
+  `dmh`.`messageStatus` AS `messageStatus`
+from
+  (
+  (
+    `duoxing_message_history` `dmh`
+    left join `_user` `fromUser` on((`fromUser`.`userId` = `dmh`.`fromUserId`))
+  )
+  left join `_user` `toUser` on((`toUser`.`userId` = `dmh`.`toUserId`))
+  );
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_duoxing_user_friend
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_duoxing_user_friend` AS
+select
+  `duoxing_user_friend`.`id` AS `id`,
+  `duoxing_user_friend`.`userId` AS `userId`,
+  `user`.`username` AS `username`,
+  `user`.`userAvatar` AS `userAvatar`,
+  `duoxing_user_friend`.`friendId` AS `friendId`,
+  `friend`.`username` AS `friendUsername`,
+  `friend`.`userAvatar` AS `friendUserAvatar`,
+  `duoxing_user_friend`.`friendStatus` AS `friendStatus`,
+  `duoxing_user_friend`.`requestTime` AS `requestTime`,
+  `duoxing_user_friend`.`requestRemark` AS `requestRemark`,
+  `duoxing_user_friend`.`responseTime` AS `responseTime`,
+  `duoxing_user_friend`.`rejectTimes` AS `rejectTimes`,
+  count((`_user_session`.`socketStatus` = 'online')) AS `socketOnlineCount`,
+  `friend`.`userStatus` AS `friendUserStatus`,
+  `duoxing_user_friend`.`operation` AS `operation`,
+  `duoxing_user_friend`.`operationByUserId` AS `operationByUserId`,
+  `duoxing_user_friend`.`operationByUser` AS `operationByUser`,
+  `duoxing_user_friend`.`operationAt` AS `operationAt`
+from
+  (
+  (
+    (
+    `duoxing_user_friend`
+    left join `_user` `friend` on(
+      (
+      `duoxing_user_friend`.`friendId` = `friend`.`userId`
+      )
+    )
+    )
+    left join `_user` `user` on(
+    (`duoxing_user_friend`.`userId` = `user`.`userId`)
+    )
+  )
+  left join `_user_session` on(
+    (
+    `duoxing_user_friend`.`friendId` = `_user_session`.`userId`
+    )
+  )
+  )
+group by
+  `duoxing_user_friend`.`userId`,
+  `duoxing_user_friend`.`friendId`;
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_duoxing_user_friend_management
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_duoxing_user_friend_management` AS
+select
+  `duoxing_user_friend`.`id` AS `id`,
+  `duoxing_user_friend`.`userId` AS `userId`,
+  `user`.`username` AS `username`,
+  `user`.`userAvatar` AS `userAvatar`,
+  `duoxing_user_friend`.`friendId` AS `friendId`,
+  `friend`.`username` AS `friendUsername`,
+  `friend`.`userAvatar` AS `friendUserAvatar`,
+  `duoxing_user_friend`.`operation` AS `operation`,
+  `duoxing_user_friend`.`operationByUserId` AS `operationByUserId`,
+  `duoxing_user_friend`.`operationByUser` AS `operationByUser`,
+  `duoxing_user_friend`.`operationAt` AS `operationAt`
+from
+  (
+  (
+    `duoxing_user_friend`
+    join `_user` `user` on(
+    (`duoxing_user_friend`.`userId` = `user`.`userId`)
+    )
+  )
+  join `_user` `friend` on(
+    (
+    `duoxing_user_friend`.`friendId` = `friend`.`userId`
+    )
+  )
+  );
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_group_info
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_group_info` AS
+select
+  `g`.`groupId` AS `groupId`,
+  `g`.`groupName` AS `groupName`,
+  `g`.`groupAvatar` AS `groupAvatar`,
+  `g`.`groupDesc` AS `groupDesc`,
+  `g`.`groupExtend` AS `groupExtend`,
+  count(`ugr`.`userId`) AS `groupUserCount`
+from
+  (
+  `_group` `g`
+  left join `_user_group_role` `ugr` on((`g`.`groupId` = `ugr`.`groupId`))
+  )
+group by
+  `g`.`groupId`;
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_room_info
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_room_info` AS
+select
+  `r`.`roomId` AS `roomId`,
+  `r`.`roomName` AS `roomName`,
+  `r`.`roomAvatar` AS `roomAvatar`,
+  `r`.`roomDesc` AS `roomDesc`,
+  `r`.`roomExtend` AS `roomExtend`,
+  count(`urr`.`userId`) AS `roomUserCount`
+from
+  (
+  `room` `r`
+  left join `user_room_role` `urr` on((`r`.`roomId` = `urr`.`roomId`))
+  )
+group by
+  `r`.`roomId`;
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_user
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_user` AS
+select
+  `_user`.`id` AS `id`,
+  `_user`.`userId` AS `userId`,
+  `_user`.`username` AS `username`,
+  `_user`.`userAvatar` AS `userAvatar`,
+  `_user`.`contactNumber` AS `contactNumber`,
+  `_user`.`gender` AS `gender`,
+  `_user`.`birthday` AS `birthday`,
+  `_user`.`signature` AS `signature`,
+  `_user`.`email` AS `email`,
+  `_user`.`userType` AS `userType`,
+  `_user`.`userStatus` AS `userStatus`,
+  `_user`.`config` AS `config`
+from
+  `_user`;
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_user_group_role
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_user_group_role` AS
+select
+  `_user_group_role`.`id` AS `id`,
+  `_user_group_role`.`userId` AS `userId`,
+  `_user_group_role`.`groupId` AS `groupId`,
+  `_user_group_role`.`roleId` AS `roleId`,
+  `_user`.`username` AS `username`,
+  `_user`.`userAvatar` AS `userAvatar`,
+  `_role`.`roleName` AS `roleName`,
+  `_group`.`groupName` AS `groupName`,
+  `_group`.`groupAvatar` AS `groupAvatar`,
+  `_user_group_role`.`operation` AS `operation`,
+  `_user_group_role`.`operationByUserId` AS `operationByUserId`,
+  `_user_group_role`.`operationByUser` AS `operationByUser`,
+  `_user_group_role`.`operationAt` AS `operationAt`
+from
+  (
+  (
+    (
+    `_user_group_role`
+    join `_user` on((`_user_group_role`.`userId` = `_user`.`userId`))
+    )
+    join `_group` on(
+    (
+      `_user_group_role`.`groupId` = `_group`.`groupId`
+    )
+    )
+  )
+  join `_role` on((`_user_group_role`.`roleId` = `_role`.`roleId`))
+  );
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_user_room_role
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_user_room_role` AS
+select
+  `user_room_role`.`id` AS `id`,
+  `user_room_role`.`userId` AS `userId`,
+  `user_room_role`.`roomId` AS `roomId`,
+  `user_room_role`.`roleId` AS `roleId`,
+  `_user`.`username` AS `username`,
+  `_user`.`userAvatar` AS `userAvatar`,
+  `_role`.`roleName` AS `roleName`,
+  `room`.`roomName` AS `roomName`,
+  `room`.`roomAvatar` AS `roomAvatar`,
+  `user_room_role`.`operation` AS `operation`,
+  `user_room_role`.`operationByUserId` AS `operationByUserId`,
+  `user_room_role`.`operationByUser` AS `operationByUser`,
+  `user_room_role`.`operationAt` AS `operationAt`,
+  `room`.`roomExtend` AS `roomExtend`
+from
+  (
+  (
+    (
+    `user_room_role`
+    join `_user` on((`user_room_role`.`userId` = `_user`.`userId`))
+    )
+    join `room` on((`user_room_role`.`roomId` = `room`.`roomId`))
+  )
+  join `_role` on((`user_room_role`.`roleId` = `_role`.`roleId`))
+  );
+
+
+
+
+
+# ------------------------------------------------------------
+# SCHEMA DUMP FOR TABLE: view01_user_total_friend
+# ------------------------------------------------------------
+
+CREATE OR REPLACE VIEW `view01_user_total_friend` AS
+select
+  `_user`.`id` AS `id`,
+  `_user`.`userId` AS `userId`,
+  `_user`.`username` AS `username`,
+  count(1) AS `friendCount`,
+  `_user`.`userAvatar` AS `userAvatar`,
+  `_user`.`contactNumber` AS `contactNumber`,
+  `_user`.`gender` AS `gender`,
+  `_user`.`birthday` AS `birthday`,
+  `_user`.`signature` AS `signature`,
+  `_user`.`email` AS `email`,
+  `_user`.`userType` AS `userType`,
+  `_user`.`userStatus` AS `userStatus`,
+  `_user`.`config` AS `config`
+from
+  (
+  `_user`
+  left join `duoxing_user_friend` on(
+    (
+    (
+      `_user`.`userId` = `duoxing_user_friend`.`userId`
+    )
+    and (
+      `duoxing_user_friend`.`friendStatus` = 'isFriend'
+    )
+    )
+  )
+  )
+group by
+  `_user`.`userId`;
+
+
+
+
+
