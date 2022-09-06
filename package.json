@@ -8,7 +8,7 @@
     "framework": "@jianghujs/jianghu"
   },
   "dependencies": {
-    "@jianghujs/jianghu": "^3.0.26",
+    "@jianghujs/jianghu": "^3.0.59",
     "@socket.io/redis-adapter": "^7.1.0",
     "ajv": "^8.7.1",
     "ajv-formats": "^2.1.1",
@@ -47,6 +47,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
+    "jianghuConfigImportData": "jianghu jianghuConfigImportData",
+    "jianghuConfigDumpData": "jianghu jianghuConfigDumpData",
     "start": "egg-scripts start --node-options--max-http-header-size=102400 --port=7001 --daemon --title=jianghujs_demo_socket_io",
     "startd": "DEBUG=knex:* egg-scripts start --port=7001 --node-options--max-http-header-size=102400 --daemon --title=jianghujs_demo_socket_io --ignore-stderr",
     "stop": "egg-scripts stop --title=jianghujs_demo_socket_io",

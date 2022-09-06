@@ -1,0 +1,23 @@
+<script>
+class MessageHandler {
+  // 获取消息历史请求
+  async getMessageHistoryRequest(lastId, userIdOrRoomId) {
+    return (
+      await window.jianghuAxios({
+        data: {
+          appData: {
+            pageId: 'chat',
+            actionId: 'getMessageHistory',
+            actionData: {
+              lastId,
+              pageSize: 15,
+              messageType: 'room',
+              userIdOrRoomId: userIdOrRoomId
+            }
+          }
+        }
+      })
+    ).data.appData.resultData;
+  }
+}
+</script>

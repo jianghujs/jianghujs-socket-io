@@ -107,11 +107,6 @@
     props: {
     },
     watch: {
-      searchKeyword(value) {
-        this.doUiAction('reFilterList', value)
-      },
-      nowChatSessionId(value) {
-      },
       isMuted(value) {
         console.log('静音', value);
       },
@@ -161,16 +156,6 @@
       // 通过robot列表，过滤掉已经是机器人的回话，避免出现两次
       reFilterChatSessionByRobot() {
         // 从聊天列表中过滤掉机器人
-        this.chatList = this.chatList.filter(item => {
-          const botIncludeChat = this.botList.some(bot => {
-            if (bot.friendId === item.chatId) {
-              Object.assign(bot, item);
-              return true;
-            }
-            return false;
-          });
-          return !botIncludeChat;
-        });
         this.updateNowChatItemInfo();
       },
       // 从新加载玩chatSessionList后，更新当前激活中的chatItem 和 id
@@ -229,7 +214,6 @@
             item.chatRoomExtend = {};
           }
         });
-        this.chatList = this.chatListBackUps.slice();
         this.doUiAction('reFilterList')
         this.reFilterChatSessionByRobot();
       },

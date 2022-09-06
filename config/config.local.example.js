@@ -17,6 +17,13 @@ module.exports = appInfo => {
         return `[${meta.date}] [${meta.level}] [${meta.ctx.method} ${meta.ctx.url}] ${meta.message}`;
       }
     },
+    jiangHuConfig: {
+      jianghuConfigDataIgnoreIdList: {
+        _page: [],
+        _resource: [],
+        _ui: [],
+      }
+    },
     knex: {
       client: {
         dialect: 'mysql',

@@ -1,21 +1,13 @@
 <!--聊天对话界面-->
 <script type="text/x-template" id="_ChattingMessagePage">
-<div ref="chattingPage" class="chattingPage py-sm-3 px-sm-7 pa-2" @scroll="onPageScroll" @click="mobileMessageTextareaFocus = false">
+<load_more ref="chattingPage" :sessionId="sessionId"
+           :handler="getNextChatHistoryList"
+           class="chattingPage py-sm-3 px-sm-7 pa-2"
+           @onScrollToBottom="newMsgCount = 0"
+           @click="$emit('click', $event)">
 <template v-if="sessionId">
-  <div class="emptyChatDetail">
-    <template v-if="loadState === 'loading'">
-      <span>加载中</span>
-      <img src="../public/img/login_loading.gif" alt/>
-    </template>
-    <template v-if="loadState === 'noMore'">
-      暂无聊天详情
-    </template>
-    <template v-if="loadState === 'finish'">
-      加载完了~
-    </template>
-  </div>
   <template v-if="chatHistoryList && chatHistoryList.length > 0">
-    <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.id">
+    <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.messageFingerprint">
       <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }" style="flex:1">
         <template v-if="item.messageStatus === 'revoke'">
           <div class="revokeMsg">
@@ -125,9 +117,9 @@
   </template>
 </template>
 <div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
-</div>
+</load_more>
 </script>
-
+{% include 'components/widget/loadMore.html' %}
 <script>
 window.registerData(
   {
@@ -142,10 +134,8 @@ window.registerData(
     ],
     chatHistoryList: null,
     newMsgCount: 0,
-    userInfo: JSON.parse(localStorage.getItem(window.appInfo.appId + '_userInfo')),
     upload: window.appInfo.upload,
     public: window.appInfo.public,
-    lastId: 0,
     completed: false,
     isMoreSel: false,
     checkList: [],
@@ -160,7 +150,13 @@ window.registerData(
       return this.chatHistoryList
         ? this.chatHistoryList.slice().reverse()
         : [];
-    }
+    },
+    lastId() {
+      if (_.isEmpty(this.chatHistoryList)) {
+        return 0;
+      }
+      return this.chatHistoryList.slice(-1)[0].id;
+    },
   }
 )
 
@@ -175,20 +171,11 @@ Vue.component('ChattingMessagePage', {
   watch: {
     sessionId(value) {
       this.chatPageScrollHeightBeforeLoad = 0;
-      this.loadState = 'loading';
-      if (this.$state) {
-        this.$state.reset();
-      }
       this.chatHistoryList = [];
-      this.lastId = 0;
-      this.getNextChatHistoryList("watch:sessionId");
     }
   },
   created() {
     this.delMessageOffline();
-    this.lastId = 0;
-    // loadMore在此时会自动触发，不需要手动请求
-    // this.getNextChatHistoryList();
   },
 
   mounted() {
@@ -198,7 +185,6 @@ Vue.component('ChattingMessagePage', {
         that.newMsgCount = 0;
       };
     }, 300);
-    // window.socket.addListeners('reConnect', this.onSocketReConnect);
   },
   methods: {
     onPageScroll(event) {
@@ -221,7 +207,6 @@ Vue.component('ChattingMessagePage', {
     async onSocketReConnect({hasError}) {
       console.log("断线重连监听:middleChatMessageWidget", hasError)
       if (hasError) {
-        this.lastId = 0;
         this.getNextChatHistoryList("onSocketReConnect");
         this.delMessageOffline();
       }
@@ -310,42 +295,35 @@ Vue.component('ChattingMessagePage', {
       return menu;
     },
     async getNextChatHistoryList(type) {
-      if (this.lastId) {
-        // 不是当前群聊的第一次加载
-        this.isChatFirstLoad = false;
-      }
-      if (this.loading) return;
-      this.loading = true;
-      const result = (
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'chat',
-              actionId: 'getMessageHistory',
-              actionData: {
-                lastId: this.lastId,
-                pageSize: 15,
-                messageType: this.isRoom ? 'room' : 'user',
-                userIdOrRoomId: `${this.nowChatSessionId}`
-              }
-            }
+      const result = await this.messageHandler.getMessageHistoryRequest(this.lastId, this.sessionId);
+      return new Promise(resolve => {
+        setTimeout(() => {
+          if (this.lastId !== 0) {
+            this.chatHistoryList.push(...result.rows);
+          } else {
+            // 第一次加载，滚动到最后
+            this.chatHistoryList = result.rows;
+            this.doUiAction('scrollToBottom', {mustToBottom: true});
           }
+          let loadState = this.setLoadState(result);
+          resolve(loadState);
         })
-      ).data.appData.resultData;
-      if (this.lastId !== 0) {
-        this.chatHistoryList.push(...result.rows);
-        this.loadState = result.rows.length ? null : 'noMore';
-      } else {
-        // 第一次加载，滚动到最后
-        this.chatHistoryList = result.rows;
-        this.scrollToBottom({mustToBottom: true});
-        this.loadState = result.rows.length ? null : 'finish';
+      })
+    },
+    setLoadState(result) {
+      if (result.rows.length === 0) {
+        return 'empty';
       }
-      if (this.chatHistoryList.length) {
-        this.lastId = this.chatHistoryList.slice(-1)[0].id;
+      if (result.rows.length > 0 && result.rows.length < 15) {
+        return 'finish';
       }
-      this.loading = false;
-      this.resetScrollTop(0)
+      if (result.rows.length === 15) {
+        return 'complete';
+      }
+    },
+
+    scrollToBottom({mustToBottom}) {
+      this.$refs.chattingPage.scrollToBottom({mustToBottom});
     },
     resetScrollTop(count) {
       const _chatPageScrollHeightBeforeLoad = this.$refs.chattingPage.scrollHeight;
@@ -358,42 +336,6 @@ Vue.component('ChattingMessagePage', {
           })
         }
       }
-    },
-    mustSetScrollTop() {
-      if (window.touchIng) return false;
-      requestAnimationFrame(() => {
-        try {
-          const scrollHeight = this.$refs.chattingPage.scrollHeight;
-          if (
-            this.$refs.chattingPage.offsetHeight +
-            this.$refs.chattingPage.scrollTop <
-            scrollHeight - 10
-          ) {
-            this.$refs.chattingPage.scrollTop = scrollHeight;
-            this.mustSetScrollTop();
-          }
-        } catch (e) {
-          this.mustSetScrollTop();
-        }
-      });
-      return false;
-    },
-    scrollToBottom(obj = {}) {
-      const mustToBottom = obj.mustToBottom
-      this.newMsgCount = 0;
-      this.$nextTick(() => {
-        try {
-          if (mustToBottom) {
-            this.mustSetScrollTop();
-          } else {
-            this.$refs.chattingPage.scrollTop =
-              this.$refs.chattingPage &&
-              this.$refs.chattingPage.scrollHeight;
-          }
-          this.$forceUpdate();
-        } catch (err) {
-        }
-      });
     },
     async copyMsg(item, id) {
       const copymsg = window.document.querySelector('#copymsg');
@@ -421,18 +363,7 @@ Vue.component('ChattingMessagePage', {
       this.$emit('deleteMsg', item);
       this.$forceUpdate();
     },
-    async loadMore() {
-      if (this.loadState !== 'finish' && this.loadState !== 'noMore') {
-        this.loadState = 'loading';
-        this.chatPageScrollHeightBeforeLoad = Math.max(this.$refs.chattingPage.scrollHeight, this.chatPageScrollHeightBeforeLoad);
-        if (!this.loading) {
-          if (this.lastId !== 0) {
-            // 第一次加载，滚动到最后
-            await this.getNextChatHistoryList("loadMore")
-          }
-        }
-      }
-    },
+
     appendMsg(msg) {
       this.messageTextareaValue = `${this.messageTextareaValue || ''}${msg || ''}`
     },
