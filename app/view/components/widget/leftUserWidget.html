@@ -19,7 +19,7 @@
           </span>
         </v-card-title>
         <v-card-subtitle class="ma-0 pa-0 pt-1 card_subtitle" :style="{'max-width': 'calc('+ (isMobile ? '100vw' : '285px') +' - 130px)'}">
-          <span>{{ ['连接成功', '连接中...', '连接断开'][isSocketOnline] }} </span>
+          <span>{{ socketStatus.label }} </span>
           <v-badge right bordered light dot
             :color="['green accent-3', 'amber darken-1', 'deep-orange accent-3'][isSocketOnline]"
             offset-x="-1" offset-y="0"

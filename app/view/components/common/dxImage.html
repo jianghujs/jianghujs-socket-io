@@ -1,24 +1,30 @@
 <!-- dx-img 图片组件封装 -->
 <script type="text/x-template" id="_dxImg">
 <div ref="dxImgDiv" class="dxImgDiv">
-  <canvas v-if="useCanvas" class="dxImageCanvas" :style="{'border-radius': userAvatar ? '50%' : '5px'}"
-          :width="width" :height="height" ref="canvas" @click="imagePopup"></canvas>
-  <div v-if="finalSrc && finalSrc !== '' && !render"
-    class="dxImgDom"
-    :style="{ 'background-size': chatImage || noticeImage || emoji ? 'contain' : 'cover', 'background-image': 'url(' + finalSrc + ')'}"
-    @click="imagePopup"
-  ></div>
-  <span class="imgError" v-if="!finalSrc || finalSrc === ''">图片加载中</span>
+<canvas v-if="useCanvas" class="dxImageCanvas" :style="{'border-radius': userAvatar ? '50%' : '5px'}"
+        :width="width" :height="height" ref="canvas" @click="imagePopup"></canvas>
+<div v-if="finalSrc && finalSrc !== '' && !render"
+     class="dxImgDom"
+     :style="{ 'background-size': chatImage || noticeImage || emoji || fit === 'contain' ? 'contain' : 'cover', 'background-image': 'url(' + finalSrc + ')'}"
+     @click="imagePopup"
+></div>
+<span class="imgError" v-if="!finalSrc || finalSrc === ''">图片加载中</span>
 </div>
 </script>
 
 <script>
 // 已加载的图片暂存
-window.preloadImages = {};
+if(!window.preloadImages) {
+  window.preloadImages = {};
+}
 Vue.component('dxImg', {
   name: 'dxImg',
   template: '#_dxImg',
   props: {
+    fit: {
+      type: String,
+      default: 'cover'
+    }, // contain
     userId: String,
     // 图片地址
     src: String,
@@ -36,13 +42,33 @@ Vue.component('dxImg', {
     return {
       upload: window.appInfo.upload,
       public: window.appInfo.public,
-      finalSrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
-      lazySrc: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+      finalSrc: null,
+      lazySrc: null,
       width: 100,
       height: 100,
       useCanvas: false,
       render: false,
       setParentWhCount: 0
+    }
+  },
+  computed: {
+    src_() {
+      if(_.isEmpty(this.src)) {
+        return this.lazySrc;
+      }
+      if(this.src.endsWith('upload')) {
+        return this.lazySrc;
+      }
+      if(this.src.indexOf('upload/') > -1) {
+        return `${this.upload}/${this.src.split('upload/')[1]}`;
+      }
+      if(this.src.indexOf('http') > -1) {
+        return this.src;
+      }
+      if(this.src.indexOf('data:image/') > -1) {
+        return this.src;
+      }
+      return `${this.upload}/${this.src}`;
     }
   },
   watch: {
@@ -55,12 +81,13 @@ Vue.component('dxImg', {
       immediate: true,
       handler(newVal, oldVal) {
         // 如果 src 为空，则替换为 lazySrc
-        if ((!newVal || newVal.endsWith('undefined')) && (!oldVal || oldVal.endsWith('undefined'))) {
+        this.render = false;
+        this.useCanvas = false;
+        this.setDefaultImg();
+        if (!newVal || newVal.endsWith('undefined') || newVal.endsWith('null') || newVal.endsWith('/upload')) {
           this.finalSrc = this.lazySrc;
-          this.useCanvas = false;
-          this.render = false;
         } else {
-          this.imgLoaded();
+          if(newVal !== oldVal) this.imgLoaded();
         }
       }
     }
@@ -86,7 +113,7 @@ Vue.component('dxImg', {
       }
     },
     imgOnLoad (imgKey, img) {
-      this.finalSrc = this.src;
+      this.finalSrc = this.src_;
       this.drawChatImage(img);
       if (this.chatImage) {
         if (window.vueData.isChatFirstLoad) {
@@ -96,11 +123,10 @@ Vue.component('dxImg', {
         }
       }
     },
-    imgLoaded() {
-      this.setParentWh();
-      this.setDefaultImg();
+    async imgLoaded() {
+      await this.setParentWh();
       this.finalSrc = this.lazySrc;
-      const imgKey = encodeURI(this.src);
+      const imgKey = encodeURI(this.src_);
       let img;
       if (preloadImages.hasOwnProperty(imgKey)) {
         this.finalSrc = preloadImages[imgKey].src;
@@ -108,34 +134,43 @@ Vue.component('dxImg', {
         this.imgOnLoad(imgKey, img);
       } else {
         img = new Image();
-        img.src = this.src;
-        img.onload = () => {
-          if (!preloadImages.hasOwnProperty(imgKey)) {
-            preloadImages[imgKey] = img;
+        try {
+          img.src = this.src_;
+          img.onload = () => {
+            if (!preloadImages.hasOwnProperty(imgKey)) {
+              preloadImages[imgKey] = img;
+            }
+            this.imgOnLoad(imgKey, img)
           }
-          this.imgOnLoad(imgKey, img)
-        }
-        img.onerror = () => {
+          img.onerror = () => {
+            this.useCanvas = false;
+            this.finalSrc = this.lazySrc;
+          }
+        } catch (error) {
           this.useCanvas = false;
           this.finalSrc = this.lazySrc;
         }
       }
     },
-    setParentWh() {
-      this.setParentWhCount++;
-      if (!this.$refs.dxImgDiv || !this.$refs.dxImgDiv.parentElement || !this.$refs.dxImgDiv.parentElement.clientWidth) {
-        if(this.setParentWhCount < 50) {
-          setTimeout(() => {
-            this.setParentWh();
-          }, 300)
+    async setParentWh() {
+      return new Promise(resolve => {
+        this.setParentWhCount++;
+        if (!this.$refs.dxImgDiv || !this.$refs.dxImgDiv.parentElement || !this.$refs.dxImgDiv.parentElement.clientWidth) {
+          if(this.setParentWhCount < 50) {
+            setTimeout(async () => {
+              resolve(await this.setParentWh());
+            }, 100)
+          } else {
+            this.width = this.width || 100;
+            this.height = this.height || 100;
+            resolve(true);
+          }
         } else {
-          this.width = this.width || 100;
-          this.height = this.height || 100;
+          this.width = this.$refs.dxImgDiv.parentElement.clientWidth;
+          this.height = this.$refs.dxImgDiv.parentElement.clientHeight;
+          resolve(true);
         }
-      } else {
-        this.width = this.$refs.dxImgDiv.parentElement.clientWidth;
-        this.height = this.$refs.dxImgDiv.parentElement.clientHeight;
-      }
+      })
     },
     drawChatImage(img) {
       const isGif = img.src.indexOf('.gif') !== -1;
@@ -154,16 +189,45 @@ Vue.component('dxImg', {
             canvas.style.height = this.height + 'px';
             ctx.fillStyle = `rgb(255, 255, 255)`;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            if(this.userAvatar) {
-              const cropLeft = img.width > img.height ? (img.width - img.height) / 2 : 0;
-              const cropTop = img.width > img.height ? 0 : (img.height - img.width) / 2;
-              const cropWh = img.width > img.height ? img.height : img.width;
-              ctx.drawImage(img, cropLeft, cropTop, cropWh, cropWh, 0, 0, canvas.width, canvas.height);
-            } else {
-              const left = img.width > img.height ? 0 : (img.height - img.width) * (canvas.height / img.height) / 2;
-              const top = img.width > img.height ? (img.width - img.height) * (canvas.width / img.width) / 2 : 0;
-              ctx.drawImage(img, 0, 0, img.width, img.height, left, top, canvas.width - left * 2, canvas.height - top * 2);
+
+            const imgRatio = img.width/img.height;
+            const canvasRatio = canvas.width/canvas.height;
+            if(this.fit === 'cover') {
+              if(imgRatio > canvasRatio) {
+                const percent = canvas.height / img.height;
+                const left = (img.width * percent - canvas.width) / 2;
+                ctx.drawImage(img,
+                    left, 0, img.width - left * 2, img.height, // 原图
+                    0, 0, canvas.width, canvas.height // 画布
+                );
+              } else {
+                const percent = canvas.width / img.width;
+                const top = (img.height * percent - canvas.height) / 2;
+                ctx.drawImage(img,
+                    0, top, img.width, img.height - top * 2, // 原图
+                    0, 0, canvas.width, canvas.height // 画布
+                );
+              }
             }
+
+            if(this.fit === 'contain') {
+              if(imgRatio > canvasRatio) {
+                const percent = canvas.width / img.width;
+                const top = (canvas.height - img.height * percent) / 2;
+                ctx.drawImage(img,
+                    0, 0, img.width, img.height, // 原图
+                    0, top, canvas.width, canvas.height - top * 2 // 画布
+                );
+              } else {
+                const percent = canvas.height / img.height;
+                const left = (canvas.height - img.width * percent) / 2;
+                ctx.drawImage(img,
+                    0, 0, img.width, img.height, // 原图
+                    0, left, canvas.width - left * 2, canvas.height // 画布
+                );
+              }
+            }
+
             ctx.scale(1 / ratio, 1 / ratio)
             setTimeout(() => {
               this.render = true;
@@ -185,7 +249,7 @@ Vue.component('dxImg', {
     imagePopup() {
       if (this.enableViewer) {
         // TODO: 聊天列表中点击可以上下翻页
-        window.viewImage(this.src)
+        window.viewImage(this.src_)
       }
       this.$emit('click')
       this.$nextTick(() => {
@@ -208,26 +272,26 @@ Vue.component('dxImg', {
   position: relative;
   max-width: 100%;
   max-height: 100%;
-  background: #ffffff;
+  background: #F1F1F1;
   width: 100%;
   height: 100%
 }
 .dxImgDom {
-  width: 100%; height: 100%; background-color: #ffffff; background-position: center center; position: absolute; left: 0;top: 0; z-index: 1;
-  //transition: opacity .15s;
-  //opacity: 0;
+  width: 100%; height: 100%; background-color: #F1F1F1; background-position: center center; position: absolute; left: 0;top: 0; z-index: 1;
+//transition: opacity .15s;
+//opacity: 0;
 }
 .dxImageCanvas {
   position: absolute; left: 0;top: 0; z-index: 2;
-  //transition: opacity .15s;
-  //opacity: 0;
+//transition: opacity .15s;
+//opacity: 0;
 }
 .imgError {
   display: block;
   line-height: 160px;
   width: 160px;
   text-align: center;
-  background: #ffffff;
+  background: #F1F1F1;
   height: 100%;
   color: #cccccc;
 }

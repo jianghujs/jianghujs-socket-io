@@ -1,0 +1,142 @@
+<template id="loadMore">
+  <div ref="loadContainer" @scroll="onPageScroll">
+    <template v-if="sessionId">
+      <div class="emptyChatDetail">
+        <div transition="expand-transition" v-show="loadState === loadStatus.loading">
+          <span>加载中</span>
+          <img src="../public/img/login_loading.gif" alt/>
+        </div>
+        <div transition="expand-transition" v-show="loadState === loadStatus.empty">
+          暂无聊天详情
+        </div>
+        <div transition="expand-transition" v-show="loadState === loadStatus.finish">
+          全部加载完毕
+        </div>
+      </div>
+      <slot></slot>
+    </template>
+  </div>
+</template>
+<script>
+Vue.component('load_more', {
+  template: '#loadMore',
+  name: 'load_more',
+  props: ["sessionId", 'handler'],
+  data: () => ({
+    loading: false,
+    loadState: 'loading',
+    loadStatus: {
+      loading: 'loading',
+      finish: 'finish',
+      empty: 'empty',
+      complete: 'complete',
+    },
+    chatPageScrollHeightBeforeLoad: 0, // 1. 有时候加载更多完成后会导致页面抖动一下，手动给他回位到加载更多之前的位置上，视觉上保证，没有变动， 2.在进行同步之前保存下当前的滚动位置，同步完后，滚动回去
+  }),
+  watch: {
+    sessionId(value) {
+      if (value) {
+        this.chatPageScrollHeightBeforeLoad = 0;
+        this.loadState = this.loadStatus.loading;
+        this.loadMore();
+      }
+    }
+  },
+  created() {
+  },
+  mounted() {
+  },
+  methods: {
+    onPageScroll(event) {
+      if (event.target.scrollTop === 0) {
+        this.loadMore();
+      }
+    },
+    async loadMore() {
+      if (this.loadState !== this.loadStatus.finish && this.loadState !== this.loadStatus.empty) {
+        this.loadState = this.loadStatus.loading;
+        this.chatPageScrollHeightBeforeLoad = Math.max(this.$refs.loadContainer.scrollHeight, this.chatPageScrollHeightBeforeLoad);
+        if (!this.loading) {
+          this.loading = true;
+          this.loadState = await this.handler('loadMore');
+          this.loading = false;
+          this.fixScrollPositionOnRenderEnd(0);
+        }
+      }
+    },
+    fixScrollPositionOnRenderEnd(count) {
+      const scrollHeightAfterLoad = this.$refs.loadContainer.scrollHeight;
+      if (scrollHeightAfterLoad > this.chatPageScrollHeightBeforeLoad) {
+        this.$refs.loadContainer.scrollTop = scrollHeightAfterLoad - this.chatPageScrollHeightBeforeLoad;
+      } else {
+        if (count < 50) {
+          requestAnimationFrame(() => {
+            this.fixScrollPositionOnRenderEnd(++count);
+          })
+        }
+      }
+    },
+
+    mustSetScrollTop() {
+      // 手指正在滑动，停止递归定位
+      if (window.touchIng) return false;
+      requestAnimationFrame(() => {
+        try {
+          const scrollHeight = this.$refs.loadContainer.scrollHeight;
+          if (
+            this.$refs.loadContainer.offsetHeight + this.$refs.loadContainer.scrollTop < scrollHeight - 10
+          ) {
+            this.$refs.loadContainer.scrollTop = scrollHeight;
+            this.mustSetScrollTop();
+          }
+        } catch (e) {
+          this.mustSetScrollTop();
+        }
+      });
+      return false;
+    },
+    scrollToBottom({mustToBottom}) {
+      this.$emit('onScrollToBottom');
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          try {
+            if (mustToBottom) {
+              this.mustSetScrollTop();
+            } else {
+              if(this.$refs.loadContainer) {
+                this.$refs.loadContainer.scrollTop = this.$refs.loadContainer.scrollHeight;
+              }
+            }
+            this.$forceUpdate();
+          } catch (err) {
+          }
+        });
+      });
+    },
+  }
+})
+</script>
+<style>
+
+.emptyChatDetail {
+  width: 100%;
+  text-align: center;
+  line-height: 100px;
+  color: #999999;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: loadingShown 0.3s infinite;
+  /* Safari 和 Chrome */
+  animation-iteration-count: 1;
+  overflow: hidden;
+}
+
+.emptyChatDetail img {
+  width: 20px;
+  height: 20px;
+  transform: translateY(5px);
+}
+
+</style>
