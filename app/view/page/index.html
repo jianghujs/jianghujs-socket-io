@@ -67,8 +67,10 @@ window.registerData(
         return list;
       },
       currentChatSession() {
-        debugger
         return this.chatListBackUps.slice().find(item => item.chatId === this.currentChatSessionId);
+      },
+      mobileLeftHide() {
+        return !this.currentChatSessionId
       }
     }
 )
@@ -107,9 +109,6 @@ new Vue({
       deep: true,
       handler() {
       }
-    },
-    mobileLeftHide(value) {
-      window.mobileLeftHide = value;
     },
     async currentChatSessionId(v) {
       try {

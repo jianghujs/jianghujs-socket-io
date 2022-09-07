@@ -207,7 +207,7 @@ Vue.component('ChattingMessagePage', {
     async onSocketReConnect({hasError}) {
       console.log("断线重连监听:middleChatMessageWidget", hasError)
       if (hasError) {
-        this.getNextChatHistoryList("onSocketReConnect");
+        this.getNextChatHistoryList();
         this.delMessageOffline();
       }
     },
@@ -242,7 +242,7 @@ Vue.component('ChattingMessagePage', {
           }
         }
       }
-      if (isMobile && !window.mobileLeftHide) {
+      if (this.isMobile && !this.mobileLeftHide) {
         return;
       }
       if (!params.loading && !params.error) {
@@ -312,7 +312,7 @@ Vue.component('ChattingMessagePage', {
           })
       ).data.appData.resultData;
     },
-    async getNextChatHistoryList(type) {
+    async getNextChatHistoryList() {
       const result = await this.getMessageHistoryRequest(this.lastId, this.sessionId);
       return new Promise(resolve => {
         setTimeout(() => {
