@@ -5,7 +5,7 @@
     <v-main class="chatMain mob-app-main">
       <middleNoticeWidget v-if="isMobile"/>
       <ChattingMessagePage
-        :sessionId="nowChatSessionId"
+        :sessionId="currentChatSessionId"
         ref="chattingPage"
       />
     </v-main>
@@ -60,7 +60,7 @@
     vueComponent: 'middlePanel',
     computed: window.vueComputed,
     watch: {
-      nowChatSessionId(v) {
+      currentChatSessionId(v) {
       }
     },
     created() {
@@ -236,8 +236,8 @@
         const socketParams = {
           messageContent,
           messageContentType,
-          toUserId: targetUserId || this.nowChatSessionId,
-          toRoomId: targetUserId || this.nowChatSessionId,
+          toUserId: targetUserId || this.currentChatSessionId,
+          toRoomId: targetUserId || this.currentChatSessionId,
           messageFingerprint
         };
         const tempParams = {
@@ -310,7 +310,7 @@
        * @return {Promise<void>}
        */
       async delMessageOffline() {
-        const chatId = this.nowChatSessionId
+        const chatId = this.currentChatSessionId
         if (this.chatListBackUps) {
           const clickChatSession = this.chatListBackUps.find(
             chatSession => chatSession.chatId === chatId

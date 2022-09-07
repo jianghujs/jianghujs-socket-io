@@ -176,10 +176,10 @@
       },
       messageTextareaValue(value, old) {
         // 如果当前内容和草稿内容一样，就不触发 at
-        if (value === this.draft[this.nowChatSessionId]) {
+        if (value === this.draft[this.currentChatSessionId]) {
           return;
         }
-        this.draft[this.nowChatSessionId] = value;
+        this.draft[this.currentChatSessionId] = value;
         localStorage.setItem('draft', JSON.stringify(this.draft));
         if ((value || '').length - (old || '').length === 1) {
           const selectionStart =
