@@ -13,10 +13,6 @@
 <!-- vue script 代码块 -->
 <!-- 注意：本项目的 vue 为每个页面使用一个 vue 实例 -->
 {% block vue_body %}
-{% include 'components/impl/indexHandler.html' %}
-{% include 'components/impl/socketHandler.html' %}
-{% include 'components/impl/messageHandler.html' %}
-
 {% include 'components/widget/leftUserWidget.html' %} {% include
 'components/widget/leftChatSessionWidget.html' %} {% include
 'components/widget/leftPanelWidget.html' %} {% include
@@ -34,16 +30,11 @@
 <script type="module">
 window.registerData(
     {
-      indexHandler: new IndexHandler(),
-      socketHandler: new SocketHandler(),
-      messageHandler: new MessageHandler(),
       messageTextareaValue: '',
       currentChatSessionId: null,
       chatListBackUps: [],
       myFriendList: [],
       myFriendListBackUps: [],
-      userRoomRoleList: [],
-      userRoomRoleListBackUps: [],
       botList: [],
       botListBackUps: [],
       searchUserUid: null,
@@ -66,17 +57,18 @@ window.registerData(
       chatList() {
         let list = this.chatListBackUps.slice();
         if (!_.isEmpty(this.searchKeyword)) {
-          list = this.indexHandler.filterBySearchKeyword(list, this.searchKeyword);
+          list = this.filterBySearchKeyword(list, this.searchKeyword);
         }
 
         if (!_.isEmpty(this.botList)) {
-          list = this.indexHandler.filterByBotList(list, this.botList);
+          list = this.filterByBotList(list, this.botList);
         }
 
         return list;
       },
       currentChatSession() {
-        return this.chatListBackUps.slice().find(item => this.getDataId(item) === this.currentChatSessionId);
+        debugger
+        return this.chatListBackUps.slice().find(item => item.chatId === this.currentChatSessionId);
       }
     }
 )
@@ -100,7 +92,8 @@ new Vue({
     this.doUiAction('initWebSocket');
     this.doUiAction('initDefaultVariable');
     this.doUiAction('getConstantList');
-    await this.doUiAction('getUserInfo');
+    this.doUiAction('getUserInfo');
+    this.doUiAction('getChatSessionList');
     await this.doUiAction('setSyncStatusToSuccess');
     this.handlerSystemBack();
   },
@@ -128,6 +121,27 @@ new Vue({
     }
   },
   methods: {
+
+    filterByBotList(list, botList) {
+      return list.filter(item => {
+        const botIncludeChat = botList.some(bot => {
+          if (bot.friendId === item.chatId) {
+            Object.assign(bot, item);
+            return true;
+          }
+          return false;
+        });
+        return !botIncludeChat;
+      })
+    },
+    filterBySearchKeyword(list, searchKeyword) {
+      return list.filter(v => {
+        if (v.chatName && v.chatName.toUpperCase().includes(searchKeyword.toUpperCase())) {
+          return true;
+        }
+        return false;
+      })
+    },
     handlerSystemBack() {
       history.pushState({}, '', `?chatList=${new Date().getTime()}`);
       window.addEventListener('popstate', () => {
@@ -151,7 +165,18 @@ new Vue({
     },
     // ✅禁止系统菜单和文字选中
     disableSystemEvent() {
-      this.indexHandler.disableSystemEvent(this.isMobile);
+      document.oncontextmenu = function () {
+        event.returnValue =
+            !this.isMobile ||
+            (this.isMobile &&
+                (event.target.localName === 'textarea' || event.target.localName === 'input'));
+      };
+      document.onselectstart = function () {
+        event.returnValue =
+            !this.isMobile ||
+            (this.isMobile &&
+                (event.target.localName === 'textarea' || event.target.localName === 'input'));
+      };
     },
     /** 初始化socket */
     initWebSocket() {
@@ -166,23 +191,48 @@ new Vue({
       this.socketClient.addListeners('deleteChatSession', result => this.doUiAction('onDeleteChatSession', result));
     },
     async getConstantList() {
-      this.indexHandler.syncAppLinkActionConfig()
+      const data = (
+          await window.jianghuAxios({
+            data: {
+              appData: {
+                pageId: 'allPage',
+                actionId: 'getConstantList',
+                whereIn: {
+                  constantKey: ['appLinkActionConfig']
+                }
+              }
+            }
+          })
+      ).data.appData.resultData;
+      const {rows: constantList} = data;
+      if (constantList.length) {
+        localStorage.setItem('appLinkActionConfig', constantList[0].constantValue)
+      }
     },
     async getUserInfo() {
       this.userInfo = await refreshUserInfo();
-      this.userRoomRoleList = _.cloneDeep(global.userRoomRoleList);
-      this.userRoomRoleListBackUps = _.cloneDeep(global.userRoomRoleList);
-      if (this.isRoom && !this.userRoomRoleList.some(item => item.roomId === this.currentChatSessionId)) {
-        this.currentChatSessionId = null;
-      }
     },
 
     // 过滤和排序列表
     reFilterList() {
       // chatListBackUps 也要重排
       if (this.chatListBackUps) {
-        this.chatListBackUps = this.indexHandler.sortChatListBackUps(this.chatListBackUps);
+        this.chatListBackUps = this.sortChatListBackUps(this.chatListBackUps);
       }
+    },
+    sortChatListBackUps(chatListBackUps) {
+      return chatListBackUps
+          .map(o => {
+            let maxTime = o.messageTimeString;
+            if (o.topChatOrder && o.topChatOrder.localeCompare(o.messageTimeString) > 0) {
+              maxTime = o.topChatOrder;
+            }
+            o.orderCompare = o.topChatOrder ? 'T' + maxTime : maxTime;
+            return o;
+          })
+          .sort((a, b) => {
+            return b.orderCompare.localeCompare(a.orderCompare);
+          });
     },
     preventDefault,
     /** 手动触发系统后退 */
@@ -347,17 +397,6 @@ new Vue({
       return null;
     },
     /**
-     * 获取发送消息socket actionID
-     * @param forwardType
-     */
-    getSendMsgActionId(forwardType = 0) {
-      if (forwardType === 1) return 'userSendMessageToRoom';
-      else if (forwardType === 2) return 'userSendMessageToUser';
-      return this.isRoom
-          ? 'userSendMessageToRoom'
-          : 'userSendMessageToUser';
-    },
-    /**
      * 判断消息是否在聊天列表中
      * @param params
      */
@@ -418,18 +457,6 @@ new Vue({
                 item.chatName = params.toRoomName;
               }
               return item.chatId === params.toRoomId;
-            })
-            this.userRoomRoleList.find(item => {
-              if (item.roomId === params.toRoomId) {
-                item.roomName = params.toRoomName;
-              }
-              return item.roomId === params.toRoomId;
-            })
-            this.userRoomRoleListBackUps.find(item => {
-              if (item.roomId === params.toRoomId) {
-                item.roomName = params.toRoomName;
-              }
-              return item.roomId === params.toRoomId;
             })
             this.$refs.rightPanel && this.$refs.rightPanel.roomInfoChange(params.toRoomId);
           }

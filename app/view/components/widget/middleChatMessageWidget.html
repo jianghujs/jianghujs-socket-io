@@ -294,8 +294,26 @@ Vue.component('ChattingMessagePage', {
       }
       return menu;
     },
+    async getMessageHistoryRequest(lastId, userIdOrRoomId) {
+      return (
+          await window.jianghuAxios({
+            data: {
+              appData: {
+                pageId: 'chat',
+                actionId: 'getMessageHistory',
+                actionData: {
+                  lastId,
+                  pageSize: 15,
+                  messageType: 'room',
+                  userIdOrRoomId: userIdOrRoomId
+                }
+              }
+            }
+          })
+      ).data.appData.resultData;
+    },
     async getNextChatHistoryList(type) {
-      const result = await this.messageHandler.getMessageHistoryRequest(this.lastId, this.sessionId);
+      const result = await this.getMessageHistoryRequest(this.lastId, this.sessionId);
       return new Promise(resolve => {
         setTimeout(() => {
           if (this.lastId !== 0) {

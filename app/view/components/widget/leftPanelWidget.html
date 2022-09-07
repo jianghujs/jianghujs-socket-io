@@ -215,6 +215,9 @@
           }
         });
         this.doUiAction('reFilterList')
+        if (!this.isMobile && !this.currentChatSessionId) {
+          this.currentChatSessionId = this.chatListBackUps[0].chatId;
+        }
         this.reFilterChatSessionByRobot();
       },
       updateChatListItem(params) {

@@ -43,6 +43,11 @@
           return this.mobileMessageTextareaFocus;
         }
         return true;
+      },
+      sendMsgActionId() {
+        return this.currentChatSession.messageType === 'room'
+            ? 'userSendMessageToRoom'
+            : 'userSendMessageToUser';
       }
     }
   )
@@ -164,13 +169,6 @@
        * 获取发送消息socket actionID
        * @param forwardType
        */
-      getSendMsgActionId(forwardType = 0) {
-        if (forwardType === 1) return 'userSendMessageToRoom';
-        else if (forwardType === 2) return 'userSendMessageToUser';
-        return this.isRoom
-          ? 'userSendMessageToRoom'
-          : 'userSendMessageToUser';
-      },
       async uploadFileMsg(
         file,
         tempParams,
@@ -217,8 +215,7 @@
           file = null,
           targetUserId = null
         },
-        update = true,
-        forwardType = 0
+        update = true
       ) {
         this.doUiAction('scrollToBottom')
         // 不在线，不发送
@@ -292,13 +289,13 @@
             });
             await window.socket.emitMsg(
               socketParams,
-              this.getSendMsgActionId(forwardType)
+              this.sendMsgActionId
             );
           }
         } else {
           await window.socket.emitMsg(
             socketParams,
-            this.getSendMsgActionId(forwardType)
+            this.sendMsgActionId
           );
         }
         this.$forceUpdate();

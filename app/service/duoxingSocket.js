@@ -69,14 +69,10 @@ function getTargetDeviceTypeByMessageContentType(messageContentType) {
 
 class DuoxingSocketService extends Service {
   async connect() {
+    console.log("开始", new Date())
     const { actionData } = this.ctx.request.body.appData;
     validateUtil.validate(actionDataScheme.connect, actionData);
-    const {
-      knex,
-      jianghuKnex,
-      socketIO,
-      config: { appId }
-    } = this.app;
+    const { jianghuKnex } = this.app;
     const { userInfo } = this.ctx;
     const { user } = userInfo;
 
@@ -100,15 +96,27 @@ class DuoxingSocketService extends Service {
     // socketIO.sockets.appendSocketIdToUserSocketIdMap(userId, socketId);
     // const afterAppendUserSocketIdList = socketIO.sockets.getSocketIdListByUserId(userId);
     await jianghuKnex(tableEnum._user_session, this.ctx).where({ userId, deviceId, deviceType }).update({ socketStatus: duoxingSocketStatusEnum.online });
-    const currentUserOnlineSocketCount = (await jianghuKnex(tableEnum._user_session).where({ userId, deviceId, socketStatus: duoxingSocketStatusEnum.online }).count())[0]["count(*)"];
 
     // 通过发送在线消息, 告知好友--> 我上线了
+    this.socketEmitToFriendId(fromUserId, fromUsername, username, userId, deviceId);
+    console.log("结束", new Date())
+    return { userId, username, socketId, deviceId, deviceType };
+  }
+
+  async socketEmitToFriendId(fromUserId, fromUsername, username, userId, deviceId) {
+    const {
+      knex,
+      jianghuKnex,
+      socketIO,
+      config: { appId }
+    } = this.app;
+    const currentUserOnlineSocketCount = (await jianghuKnex(tableEnum._user_session).where({ userId, deviceId, socketStatus: duoxingSocketStatusEnum.online }).count())[0]["count(*)"];
     if (currentUserOnlineSocketCount === 1) {
-      const friendList = await jianghuKnex(tableEnum.duoxing_user_friend).where({ userId }).select();
+      const friendList = await jianghuKnex(tableEnum.duoxing_user_friend).where({userId}).select();
       const noticeType = noticeTypeEnum.onlineNotice;
       const messageContentType = duoxingMessageContentTypeEnum.notice;
       for (const friend of friendList) {
-        const { friendId } = friend;
+        const {friendId} = friend;
         const appData = {
           appId,
           actionData: {
@@ -120,12 +128,10 @@ class DuoxingSocketService extends Service {
             messageContentType
           }
         };
-        const socketBody = socketForward.userNoticeBodyBuild({ appData });
-        await this.socketEmit({ userId: friendId, socketBody, socketIO, knex });
+        const socketBody = socketForward.userNoticeBodyBuild({appData});
+        this.socketEmit({userId: friendId, socketBody, socketIO, knex});
       }
     }
-
-    return { userId, username, socketId, deviceId, deviceType };
   }
 
   async disconnect() {

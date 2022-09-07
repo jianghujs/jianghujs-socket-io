@@ -9,13 +9,13 @@
   >
     <div class="d-flex flex-no-wrap justify-space-between align-center">
       <v-avatar size="35px" style="background-color: #EEEEEE" class="ma-2">
-        <dx-img :src="upload + user.userAvatar" userAvatar></dx-img>
+        <dx-img :src="upload + userInfo.userAvatar" userAvatar></dx-img>
       </v-avatar>
 
       <div class="d-flex flex-column justify-center align-start">
         <v-card-title class="ma-0 pa-0 nickname" style="line-height: 1">
           <span>
-            {{ user.username || "·" }}
+            {{ userInfo.username || "·" }}
           </span>
         </v-card-title>
         <v-card-subtitle class="ma-0 pa-0 pt-1 card_subtitle" :style="{'max-width': 'calc('+ (isMobile ? '100vw' : '285px') +' - 130px)'}">
@@ -104,7 +104,7 @@
           this.$forceUpdate();
         }
       },
-      user: {
+      userInfo: {
         immediate: true,
         handler(value, value1) {
         }
