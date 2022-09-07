@@ -21,7 +21,7 @@
         <v-card-subtitle class="ma-0 pa-0 pt-1 card_subtitle" :style="{'max-width': 'calc('+ (isMobile ? '100vw' : '285px') +' - 130px)'}">
           <span>{{ socketStatus.label }} </span>
           <v-badge right bordered light dot
-            :color="['green accent-3', 'amber darken-1', 'deep-orange accent-3'][isSocketOnline]"
+            :color="socketStatus.color"
             offset-x="-1" offset-y="0"
           >
           </v-badge>
@@ -43,7 +43,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="(item, index) in items" :key="item.inx" @click="mclick(item.inx)">
+            <v-list-item v-for="(item, index) in items" :key="item.inx" @click="menuClick(item.inx)">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -59,30 +59,17 @@
       showMenu: false,
       x: 0,
       y: 0,
-      sync: window.sync,
-      upload: window.appInfo.upload,
       items: [
         { inx: 10, title: '退出登录' },
         { inx: 15, title: '应用重载' }
       ],
-      plusMenu: [
-      ],
-      // 需要一个 socketClient 放在 data 中，否则 online 状态会没有响应式
-      socketClient: null,
-      isMobile: false,
     },
     {
       isSocketOnline() {
-        if (!window.socket) {
-          return 1;
-        }
-        if (window.socket && window.socket.online === null) {
-          return 1;
-        }
-        if (window.socket && window.socket.online === false) {
+        if (this.socketClient && this.socketClient.online === false) {
           return 2;
         }
-        if (window.socket && window.socket.online === true) {
+        if (this.socketClient && this.socketClient.online === true) {
           return 0;
         }
         return 1;
@@ -125,16 +112,32 @@
           this.showMenu = true;
         });
       },
-      mclick(e) {
-        if (e === 7) {
-          this.toggleMute();
-        } else {
-          this.$emit('userinfo_menu_click', e);
+      async menuClick(e) {
+        switch (e) {
+          case 10: {
+            await this.logout();
+            break;
+          }
+          case 15: {
+            window.location.href = location.href;
+            break;
+          }
         }
       },
-      toggleMute() {
-        this.isMuted = !this.isMuted;
-        webOptions('isMuted', this.isMuted);
+      async logout() {
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'allPage',
+              actionId: 'logout',
+              actionData: {needSetCookies: true}
+            }
+          }
+        });
+        localStorage.removeItem(window.appInfo.appId + '_userInfo');
+        localStorage.removeItem(window.appInfo.appId + '_authToken');
+        localStorage.removeItem(window.appInfo.appId + '_refreshToken');
+        location.href = `/${window.appInfo.appId}/page/login`;
       }
     }
   });

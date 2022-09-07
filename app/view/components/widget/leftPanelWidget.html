@@ -11,10 +11,10 @@
         touchless
       >
         <!--   用户信息   -->
-        <LeftUserWidget @userinfo_menu_click="onUserWidgetMenuClick" />
+        <LeftUserWidget />
         <v-list class="leftDataList" ref="leftDataList">
           <v-list-item-group
-            :value="nowChatSessionId"
+            :value="currentChatSessionId"
             @change="onLeftItemChange"
             color="primary"
             active-class
@@ -70,7 +70,7 @@
 <script>
   window.registerData(
     {
-      nowChatSessionId: null,
+      currentChatSessionId: null,
       friendListCtrlType: '',
       selectMultiSend: false,
       isMuted: webOptions('isMuted') || false, // 消息静音，系统
@@ -135,9 +135,9 @@
       },
       isActiveItem(item) {
         if (item.friendDeviceId === undefined) {
-          return this.friendDeviceId == null && this.nowChatSessionId === getDataId(item);
+          return this.friendDeviceId == null && this.currentChatSessionId === getDataId(item);
         }
-        return this.friendDeviceId === item.friendDeviceId && this.nowChatSessionId === getDataId(item)
+        return this.friendDeviceId === item.friendDeviceId && this.currentChatSessionId === getDataId(item)
 
       },
       isRobot(item) {
@@ -161,7 +161,7 @@
       // 从新加载玩chatSessionList后，更新当前激活中的chatItem 和 id
       async updateNowChatItemInfo () {
         if (this.chatSessionListAndBotList.length > 2) {
-          if (_.isEmpty(this.nowChatSessionId) && !this.isMobile) {
+          if (_.isEmpty(this.currentChatSessionId) && !this.isMobile) {
             // 第一条是分组标题，如果第二条是聊天的分组标题，就是没有小程序，直接取第三条
             let firstChat = this.chatSessionListAndBotList[1];
             if (firstChat.dataListSubTitle) {
@@ -172,20 +172,20 @@
               if (this.isRobot(firstChat)) {
                 this.friendDeviceId = firstChat.friendDeviceId;
               }
-              this.nowChatSessionId = firstChat.chatId || firstChat.friendId;
+              this.currentChatSessionId = firstChat.chatId || firstChat.friendId;
               this.nowChatItem = firstChat;
             });
           } else {
             if (this.isChat) {
               // 同步nowChatSessionId
-              if (!this.chatSessionListAndBotList.some(item => (item.chatId || item.friendId) === this.nowChatSessionId)) {
-                this.nowChatSessionId = null;
+              if (!this.chatSessionListAndBotList.some(item => (item.chatId || item.friendId) === this.currentChatSessionId)) {
+                this.currentChatSessionId = null;
                 this.nowChatItem = null;
               }
             }
           }
         } else {
-          this.nowChatSessionId = null;
+          this.currentChatSessionId = null;
           this.nowChatItem = null;
         }
       },
@@ -281,8 +281,8 @@
           return getDataId(v) === value;
         });
         if (findNowChatItem) {
-          this.nowChatItem = findNowChatItem;
-          this.nowChatSessionId = getDataId(findNowChatItem);
+          this.currentChatSessionId = findNowChatItem.chatId;
+          debugger
         }
         return true;
       },
@@ -360,33 +360,6 @@
           }
         });
       },
-
-      // 左上角用户的操作菜单
-      async onUserWidgetMenuClick(e) {
-        // eslint-disable-next-line default-case
-        switch (e) {
-          case 10: {
-            await window.jianghuAxios({
-              data: {
-                appData: {
-                  pageId: 'allPage',
-                  actionId: 'logout',
-                  actionData: { needSetCookies: true }
-                }
-              }
-            });
-            localStorage.removeItem(window.appInfo.appId + '_userInfo');
-            localStorage.removeItem(window.appInfo.appId + '_authToken');
-            localStorage.removeItem(window.appInfo.appId + '_refreshToken');
-            location.href = `/${window.appInfo.appId}/page/login`;
-            break;
-          }
-          case 15: {
-            window.location.href = location.href;
-            break;
-          }
-        }
-      }
     }
   });
 </script>
