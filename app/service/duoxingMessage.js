@@ -18,17 +18,6 @@ const actionDataScheme = Object.freeze({
       userIdOrRoomId: { type: "string" },
     },
   },
-  getMessageHistoryByMaxId: {
-    type: "object",
-    additionalProperties: true,
-    required: ["messageType", "userIdOrRoomId", "maxId"],
-    properties: {
-      maxId: { type: "number" },
-      pageSize: { anyOf: [{ type: "number" }, { type: "null" }] },
-      messageType: { type: "string" },
-      userIdOrRoomId: { type: "string" },
-    },
-  },
   revokeMessage: {
     type: "object",
     additionalProperties: true,
@@ -55,15 +44,6 @@ const actionDataScheme = Object.freeze({
       type: { type: "string" },
       top: { type: "boolean" },
       muted: { type: "boolean" },
-    },
-  },
-  deleteChatSession: {
-    type: "object",
-    additionalProperties: true,
-    required: ["chatId", "type"],
-    properties: {
-      chatId: { type: "string" },
-      type: { type: "string" },
     },
   },
 });
@@ -146,47 +126,6 @@ class DuoxingChatService extends Service {
     if (duoxingChatMessageTypeEnum.room === messageType) {
       const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
         .where("id", "<", lastId)
-        .where({ messageType: duoxingChatMessageTypeEnum.room })
-        .where({ toRoomId: userIdOrRoomId })
-        .orderBy("id", "desc")
-        .limit(pageSize);
-
-      return { rows: messageHistoryList };
-    }
-
-    return { rows: [] };
-  }
-
-  async getMessageHistoryByMaxId() {
-    const { jianghuKnex, knex, config, _cache } = this.app;
-    const { appId } = config;
-    const { actionData } = this.ctx.request.body.appData;
-    const { userId, username } = this.ctx.userInfo;
-    validateUtil.validate(actionDataScheme.getMessageHistoryByMaxId, actionData);
-
-    const { messageType, userIdOrRoomId } = actionData;
-    const pageSize = actionData.pageSize || 100;
-    const maxId = actionData.maxId || 0;
-
-    if (duoxingChatMessageTypeEnum.user === messageType) {
-      const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
-        .where("id", ">", maxId)
-        .where({ messageType: duoxingChatMessageTypeEnum.user })
-        .where(function () {
-          this.where({ toUserId: userIdOrRoomId, fromUserId: userId }).orWhere({
-            fromUserId: userIdOrRoomId,
-            toUserId: userId,
-          });
-        })
-        .orderBy("id", "desc")
-        .limit(pageSize);
-
-      return { rows: messageHistoryList };
-    }
-
-    if (duoxingChatMessageTypeEnum.room === messageType) {
-      const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
-        .where("id", ">", maxId)
         .where({ messageType: duoxingChatMessageTypeEnum.room })
         .where({ toRoomId: userIdOrRoomId })
         .orderBy("id", "desc")
@@ -281,30 +220,6 @@ class DuoxingChatService extends Service {
       appId,
       pageId: "socket",
       actionId: "delMessageOffline",
-      actionData,
-    };
-    const socketBody = socketForward.bodyBuild({ appData });
-    await this.ctx.service.duoxingSocket.socketEmit({ userId, socketBody });
-    return {};
-  }
-
-  // 删除会话，只做软删除，新会话过来时会更新
-  async deleteChatSession() {
-    const { jianghuKnex, knex, config } = this.app;
-    const { appId } = config;
-    const { actionData } = this.ctx.request.body.appData;
-    const { userId, username } = this.ctx.userInfo;
-    validateUtil.validate(actionDataScheme.deleteChatSession, actionData);
-
-    const { chatId, type } = actionData;
-
-    await jianghuKnex(tableEnum.duoxing_chat_session).where({ userId, type, chatId }).delete();
-
-    // 通知其它端更新会话列表
-    const appData = {
-      appId,
-      pageId: "socket",
-      actionId: "deleteChatSession",
       actionData,
     };
     const socketBody = socketForward.bodyBuild({ appData });

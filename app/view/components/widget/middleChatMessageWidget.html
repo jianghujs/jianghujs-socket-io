@@ -81,31 +81,6 @@
                 @click="doUiAction('reSendMsg', item)"
               >mdi-alert-circle
               </v-icon>
-              <v-menu v-else-if="!isMoreSel" transition="slide-y-transition" bottom>
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    dark
-                    icon
-                    :ref="'messageMenuBtn_' + item.messageFingerprint"
-                    v-bind="attrs"
-                    class="mt-0"
-                    v-on="on"
-                  >
-                    <v-icon color="grey lighten-1">mdi-dots-horizontal</v-icon>
-                  </v-btn>
-                </template>
-                <v-list dense>
-                  <v-list-item
-                    dense
-                    v-for="(menu, i) in getChatMenu(item)"
-                    :key="i"
-                    @click="menu.method(item, item.messageFingerprint)"
-                    :class="menu.class"
-                  >
-                    <v-list-item-title>{{ menu.title }}</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
               <v-spacer></v-spacer>
             </div>
           </div>
@@ -124,25 +99,11 @@
 window.registerData(
   {
     noticeType: [
-      'createRoom',
-      'addRoomUser',
-      'delRoomUser',
-      'transferRoom',
-      'quitRoom',
-      'destroyRoom'
     ],
     chatHistoryList: null,
     newMsgCount: 0,
     upload: window.appInfo.upload,
     public: window.appInfo.public,
-    completed: false,
-    isMoreSel: false,
-    checkList: [],
-    forwardId: 0,
-    touchTimeHandle: '',
-    loadState: 'loading',
-    loading: false,
-    chatPageScrollHeightBeforeLoad: 0
   },
   {
     chatHistoryListReverse() {
@@ -169,7 +130,6 @@ Vue.component('ChattingMessagePage', {
   props: ["sessionId"],
   watch: {
     sessionId(value) {
-      this.chatPageScrollHeightBeforeLoad = 0;
       this.chatHistoryList = [];
     }
   },
@@ -303,7 +263,7 @@ Vue.component('ChattingMessagePage', {
                 actionData: {
                   lastId,
                   pageSize: 15,
-                  messageType: 'room',
+                  messageType: this.isRoom ? 'room' : 'user',
                   userIdOrRoomId: userIdOrRoomId
                 }
               }
@@ -341,18 +301,6 @@ Vue.component('ChattingMessagePage', {
 
     scrollToBottom({mustToBottom}) {
       this.$refs.chattingPage.scrollToBottom({mustToBottom});
-    },
-    resetScrollTop(count) {
-      const _chatPageScrollHeightBeforeLoad = this.$refs.chattingPage.scrollHeight;
-      if (_chatPageScrollHeightBeforeLoad > this.chatPageScrollHeightBeforeLoad) {
-        this.$refs.chattingPage.scrollTop = _chatPageScrollHeightBeforeLoad - this.chatPageScrollHeightBeforeLoad;
-      } else {
-        if (count < 50) {
-          requestAnimationFrame(() => {
-            this.resetScrollTop(++count);
-          })
-        }
-      }
     },
     async copyMsg(item, id) {
       const copymsg = window.document.querySelector('#copymsg');

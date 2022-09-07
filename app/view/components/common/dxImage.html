@@ -68,6 +68,9 @@ Vue.component('dxImg', {
       if(this.src.indexOf('data:image/') > -1) {
         return this.src;
       }
+      if(this.src.indexOf('public/') > -1) {
+        return this.src;
+      }
       return `${this.upload}/${this.src}`;
     }
   },

@@ -33,41 +33,22 @@ class DuoxingMessageService extends Service {
           messageHistoryId
         );
       }
-      if(noticeType == noticeTypeEnum.delUserFriend) {
-        // 对方的会话
-        await this.deleteSingleChatSession(
-          toUserId,
-          duoxingChatMessageTypeEnum.user,
-          fromUserId,
-          messageHistoryId,
-          true
-        );
-        // 自己的会话
-        await this.deleteSingleChatSession(
-          fromUserId,
-          duoxingChatMessageTypeEnum.user,
-          toUserId,
-          messageHistoryId,
-          false
-        );
-      } else {
-        // 对方的会话
-        await this.updateSingleChatSession(
-          toUserId,
-          duoxingChatMessageTypeEnum.user,
-          fromUserId,
-          messageHistoryId,
-          true
-        );
-        // 自己的会话
-        await this.updateSingleChatSession(
-          fromUserId,
-          duoxingChatMessageTypeEnum.user,
-          toUserId,
-          messageHistoryId,
-          false
-        );
-      }
+      // 对方的会话
+      await this.updateSingleChatSession(
+        toUserId,
+        duoxingChatMessageTypeEnum.user,
+        fromUserId,
+        messageHistoryId,
+        true
+      );
+      // 自己的会话
+      await this.updateSingleChatSession(
+        fromUserId,
+        duoxingChatMessageTypeEnum.user,
+        toUserId,
+        messageHistoryId,
+        false
+      );
 
     }
     return messageHistoryId;

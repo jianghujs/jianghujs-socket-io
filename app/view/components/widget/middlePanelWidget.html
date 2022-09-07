@@ -32,7 +32,6 @@
   window.registerData(
     {
       isMoreSelectMode: false, // 开启多选模式
-      friendListCtrlType: '',
       currentResendMsg: {},
       mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
     },
@@ -83,9 +82,6 @@
       messageTextareaDomBlur() {
         this.$refs.chatInput.messageTextareaDomBlur();
       },
-      clearCheckList() {
-        this.$refs.chattingPage.checkList = [];
-      },
       /**
        * 撤销消息
        * @param item
@@ -106,13 +102,7 @@
       // 当引用消息
       onQuoteMsg(item) {
         let messageContent = item.messageContent;
-        if (item.messageContentType === duoxingMessageContentTypeEnum.userCard) {
-          try {
-            messageContent = `[${item.messageContent},,,${item.messageContentType}]`;
-          } catch (error) {
-            messageContent = item.messageContent;
-          }
-        } else if (item.messageContentType !== 'text') {
+        if (item.messageContentType !== 'text') {
           try {
             messageContent = `[${JSON.parse(item.messageContent).downloadPath
             },,,${item.messageContentType}]`;
@@ -214,8 +204,7 @@
           messageFingerprint = uuid(),
           file = null,
           targetUserId = null
-        },
-        update = true
+        }
       ) {
         this.doUiAction('scrollToBottom')
         // 不在线，不发送
@@ -249,7 +238,7 @@
           process: 0
         };
         // 先更新一个 loading 消息
-        this.getChattingPage().refreshMessage(tempParams, update);
+        this.getChattingPage().refreshMessage(tempParams);
         setTimeout(
           () => {
             if (tempParams.loading === true) {
@@ -278,7 +267,6 @@
                 loading: false,
                 error: true
               },
-              update
             );
           } else {
             const { filename, downloadPath, binarySize } = uploadResult.data.appData.resultData;

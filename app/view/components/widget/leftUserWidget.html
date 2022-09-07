@@ -56,27 +56,12 @@
 <script>
   window.registerData(
     {
-      showMenu: false,
-      x: 0,
-      y: 0,
       items: [
         { inx: 10, title: '退出登录' },
         { inx: 15, title: '应用重载' }
       ],
-    },
-    {
-      isSocketOnline() {
-        if (this.socketClient && this.socketClient.online === false) {
-          return 2;
-        }
-        if (this.socketClient && this.socketClient.online === true) {
-          return 0;
-        }
-        return 1;
-      }
-    }
+    }, {}
   )
-
 
   Vue.component('LeftUserWidget', {
     template: '#_LeftUserWidget',
@@ -84,34 +69,12 @@
     data: () => window.vueData,
     vueComponent: 'leftUser',
     computed: window.vueComputed,
-    watch: {
-      isMuted: {
-        deep: true,
-        handler(value) {
-          this.$forceUpdate();
-        }
-      },
-      userInfo: {
-        immediate: true,
-        handler(value, value1) {
-        }
-      }
-    },
     async created() {
       this.socketClient = window.socket;
     },
     mounted() {
     },
     methods: {
-      show(e) {
-        e.preventDefault();
-        this.showMenu = false;
-        this.x = e.clientX;
-        this.y = e.clientY;
-        this.$nextTick(() => {
-          this.showMenu = true;
-        });
-      },
       async menuClick(e) {
         switch (e) {
           case 10: {

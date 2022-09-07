@@ -33,11 +33,6 @@ window.registerData(
       messageTextareaValue: '',
       currentChatSessionId: null,
       chatListBackUps: [],
-      myFriendList: [],
-      myFriendListBackUps: [],
-      botList: [],
-      botListBackUps: [],
-      searchUserUid: null,
       socketClient: window.socket,
       userInfo: {
         // Tip: 设置默认图片, 避免页面image初始化渲染异常
@@ -55,17 +50,17 @@ window.registerData(
         const color = ['green accent-3', 'amber darken-1', 'deep-orange accent-3'][this.isSocketOnline || 0];
         return {label, color};
       },
+      isSocketOnline() {
+        if (this.socketClient && this.socketClient.online === false) {
+          return 2;
+        }
+        if (this.socketClient && this.socketClient.online === true) {
+          return 0;
+        }
+        return 1;
+      },
       chatList() {
-        let list = this.chatListBackUps.slice();
-        if (!_.isEmpty(this.searchKeyword)) {
-          list = this.filterBySearchKeyword(list, this.searchKeyword);
-        }
-
-        if (!_.isEmpty(this.botList)) {
-          list = this.filterByBotList(list, this.botList);
-        }
-
-        return list;
+        return this.chatListBackUps.slice();
       },
       currentChatSession() {
         return this.chatListBackUps.slice().find(item => item.chatId === this.currentChatSessionId);
@@ -108,30 +103,15 @@ new Vue({
         this.messageTextareaValue = null;
       }
       this.$forceUpdate();
+    },
+    userInfo: {
+      deep: true,
+      immediate: true,
+      handler(value, value1) {
+      }
     }
   },
   methods: {
-
-    filterByBotList(list, botList) {
-      return list.filter(item => {
-        const botIncludeChat = botList.some(bot => {
-          if (bot.friendId === item.chatId) {
-            Object.assign(bot, item);
-            return true;
-          }
-          return false;
-        });
-        return !botIncludeChat;
-      })
-    },
-    filterBySearchKeyword(list, searchKeyword) {
-      return list.filter(v => {
-        if (v.chatName && v.chatName.toUpperCase().includes(searchKeyword.toUpperCase())) {
-          return true;
-        }
-        return false;
-      })
-    },
     handlerSystemBack() {
       history.pushState({}, '', `?chatList=${new Date().getTime()}`);
       window.addEventListener('popstate', () => {
@@ -272,7 +252,7 @@ new Vue({
         return;
       }
       // 更新chatList 中的数据
-      this.updateChatList(params)
+      this.doUiAction("updateChatListItem", {params});
       // 消息在左侧列表，并且不是正在聊天中，更新左侧列表对应消息，上下下线的通知不渲染
       if (params.noticeType !== 'errorNotice') {
         if (this.isExistInChatSession(params)) {
@@ -304,13 +284,6 @@ new Vue({
       return dayjs(params.messageTimeString).valueOf() > dayjs(this.currentChatSession.messageTimeString).valueOf();
     },
 
-    /**
-     * 更新 chatList
-     * @param params
-     */
-    updateChatList(params) {
-      this.$refs.leftPanel && this.$refs.leftPanel.updateChatListItem(params);
-    },
 
     /**
      * 更新未读消息
@@ -462,13 +435,7 @@ new Vue({
      * @param params
      */
     setOnlineStatus(params) {
-      this.myFriendListBackUps.some(friend => {
-        const isMessageUser = friend.friendId === params.fromUserId;
-        if (isMessageUser) {
-          friend.isOnline = params.noticeType === 'onlineNotice';
-        }
-        return isMessageUser;
-      });
+
     },
 
     /**
@@ -483,9 +450,7 @@ new Vue({
         title: title
       });
       // 未静音，播放消息提示音
-      if (!this.$refs.leftPanel.isMuted) {
-        this.playBeep();
-      }
+      this.playBeep();
     },
 
     /**
@@ -705,10 +670,6 @@ new Vue({
   background-color: #B71C1C;
 }
 
-.searchKeyword .v-label {
-  color: #cccccc;
-  font-size: 12px;
-}
 
 .message {
   position: relative;

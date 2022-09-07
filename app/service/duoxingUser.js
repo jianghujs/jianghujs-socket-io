@@ -9,37 +9,10 @@ const validateUtil = require("@jianghujs/jianghu/app/common/validateUtil");
 const _ = require("lodash");
 const dayjs = require('dayjs');
 const actionDataScheme = Object.freeze({
-  setUserDetail: {
-    type: "object",
-    additionalProperties: true,
-    required: [],
-    properties: {
-      username: { anyOf: [{ type: "string" }, { type: "null" }] },
-      userAvatar: { anyOf: [{ type: "string" }, { type: "null" }] },
-      contactNumber: { anyOf: [{ type: "string" }, { type: "null" }] },
-      gender: {
-        anyOf: [{ type: "string", enum: [genderEnum.male, genderEnum.female] }, { type: "null" }],
-      },
-      birthday: { anyOf: [{ type: "string", format: "date-time" }, { type: "null" }] },
-      signature: { anyOf: [{ type: "string" }, { type: "null" }] },
-      email: { anyOf: [{ type: "string" }, { type: "null" }] },
-    },
-  },
+
 });
 
 class DuoxingUserService extends Service {
-  async setUserDetail() {
-    const { actionData } = this.ctx.request.body.appData;
-    const { jianghuKnex, config } = this.app;
-    const { userInfo } = this.ctx;
-    const { userId } = userInfo;
-    validateUtil.validate(actionDataScheme.setUserDetail, actionData);
-
-    const updateParams = _.pick(actionData, ["username", "userAvatar", "contactNumber", "gender", "birthday", "signature", "email"]);
-    await jianghuKnex(tableEnum._user, this.ctx).where({ userId }).jhUpdate(updateParams);
-    const newUserDatail = await jianghuKnex(tableEnum.view01_user).where({ userId }).first();
-    return newUserDatail;
-  }
 
   async getUserRoomRoleListService() {
     const { knex } = this.app;

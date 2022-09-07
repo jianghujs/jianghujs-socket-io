@@ -20,18 +20,12 @@
             active-class
             class="listItem"
           >
-            <template v-if="leftDataList.length">
-              <template v-for="(item, index) in leftDataList">
+            <template v-if="chatList.length">
+              <template v-for="(item, index) in chatList">
                 <div :data-index="index"
-                     :hidden="isHidden(item)"
                      :key="`${index}_${item.chatId}`">
-                  <v-list-item-content
-                    v-if="item.dataListSubTitle === 'chatSessionStart'"
-                    class="pa-0 ma-0">
-                    <v-subheader >聊天</v-subheader>
-                  </v-list-item-content>
                   <v-list-item
-                    v-else-if="canRender(index)"
+                    v-if="canRender(index)"
                     class="pa-0 ma-0"
                     :value="getDataId(item)"
                     :class="{ 'activeItem': isActiveItem(item) }"
@@ -39,7 +33,6 @@
                     <ChatWidget
                       :isOnline="isOnline(item.chatId)"
                       @onClearUnread="delMessageOffline"
-                      @toggleMuted="onChatMuted"
                       :ref="'chatWidget_' + getDataId(item)"
                       :data="item"
                     />
@@ -56,7 +49,7 @@
             </template>
             <template v-else>
               <div style="width: 100%; line-height: 100px; text-align: center;">
-                {{ menuIndex === 0 ? '暂无信息' : '开发中...' }}
+                加载中
               </div>
             </template>
           </v-list-item-group>
@@ -70,34 +63,11 @@
 <script>
   window.registerData(
     {
-      currentChatSessionId: null,
-      friendListCtrlType: '',
-      selectMultiSend: false,
-      isMuted: webOptions('isMuted') || false, // 消息静音，系统
       leftListScrollTop: 0,
       leftListScrollHeight: 0,
-      mutedIdList: [],
-      menuIndex: 0, // 菜单
-      searchKeyword: null,
-      requestFriendList: [],
-      collapseStatus: webOptions('collapseStatus') || false,
-      buildTime: +new Date(),
     },
-    {
-      chatSessionListAndBotList() {
-        return [
-          { dataListSubTitle: 'chatSessionStart' },
-          ...this.chatList
-        ];
-      },
-      // 左侧列表数据
-      leftDataList() {
-        return this.chatSessionListAndBotList;
-      },
-    }
+    { }
   )
-
-
   Vue.component('LeftPanel', {
     template: '#_LeftPanel',
     mixins: [ window.jianghuUiActionMixins ],
@@ -107,9 +77,6 @@
     props: {
     },
     watch: {
-      isMuted(value) {
-        console.log('静音', value);
-      },
       dataSyncStatus: {
         deep: true,
         handler(value) {
@@ -122,17 +89,7 @@
       this.getChatSessionList({ type: 'created' });
     },
     methods: {
-      // 展开或者收起
-      toggleCollapseStatus() {
-        this.collapseStatus = !this.collapseStatus;
-        webOptions('collapseStatus', this.collapseStatus);
-        // 强制刷新，无视key
-        this.buildTime = +new Date();
-        console.log(this.collapseStatus);
-      },
-      isHidden(item) {
-        return this.collapseStatus && this.menuIndex === 0;
-      },
+
       isActiveItem(item) {
         if (item.friendDeviceId === undefined) {
           return this.friendDeviceId == null && this.currentChatSessionId === getDataId(item);
@@ -144,51 +101,9 @@
         return !!item.friendDeviceType;
       },
       canRender(index) {
-        // 收起的情况下，有把index向上移动机器人数量
-        if (this.collapseStatus && this.menuIndex === 0) {
-          // index 包含机器人和聊天的标题，故大于length正好
-          if (index > this.botList.length) {
-            return (index - this.botList.length) * 70 >= this.leftListScrollTop - 210 && (index - this.botList.length) * 70 <= this.leftListScrollTop + this.leftListScrollHeight + 210;
-          }
-        }
         return index * 70 >= this.leftListScrollTop - 210 && index * 70 <= this.leftListScrollTop + this.leftListScrollHeight + 210;
       },
-      // 通过robot列表，过滤掉已经是机器人的回话，避免出现两次
-      reFilterChatSessionByRobot() {
-        // 从聊天列表中过滤掉机器人
-        this.updateNowChatItemInfo();
-      },
-      // 从新加载玩chatSessionList后，更新当前激活中的chatItem 和 id
-      async updateNowChatItemInfo () {
-        if (this.chatSessionListAndBotList.length > 2) {
-          if (_.isEmpty(this.currentChatSessionId) && !this.isMobile) {
-            // 第一条是分组标题，如果第二条是聊天的分组标题，就是没有小程序，直接取第三条
-            let firstChat = this.chatSessionListAndBotList[1];
-            if (firstChat.dataListSubTitle) {
-              firstChat = this.chatSessionListAndBotList[2];
-            }
-            await this.$nextTick(() => {
-              // 默认选中第一条
-              if (this.isRobot(firstChat)) {
-                this.friendDeviceId = firstChat.friendDeviceId;
-              }
-              this.currentChatSessionId = firstChat.chatId || firstChat.friendId;
-              this.nowChatItem = firstChat;
-            });
-          } else {
-            if (this.isChat) {
-              // 同步nowChatSessionId
-              if (!this.chatSessionListAndBotList.some(item => (item.chatId || item.friendId) === this.currentChatSessionId)) {
-                this.currentChatSessionId = null;
-                this.nowChatItem = null;
-              }
-            }
-          }
-        } else {
-          this.currentChatSessionId = null;
-          this.nowChatItem = null;
-        }
-      },
+
       // 获取会话列表
       async getChatSessionList({ type }) {
         this.chatListBackUps = (
@@ -203,6 +118,7 @@
           })
         ).data.appData.resultData.rows;
 
+        // chatRoomExtend 解析
         this.chatListBackUps.forEach(item => {
           try {
             if (item.chatRoomExtend) {
@@ -218,9 +134,8 @@
         if (!this.isMobile && !this.currentChatSessionId) {
           this.currentChatSessionId = this.chatListBackUps[0].chatId;
         }
-        this.reFilterChatSessionByRobot();
       },
-      updateChatListItem(params) {
+      updateChatListItem({params}) {
         // 更新完整数据表
         let nowIndex = this.chatListBackUps.findIndex(v => {
           return v.chatId === this.getDataId(params);
@@ -277,7 +192,7 @@
       // 左侧点击
       onLeftItemChange(value) {
         if (!value) return false;
-        const findNowChatItem = this.leftDataList.find(v => {
+        const findNowChatItem = this.chatList.find(v => {
           return getDataId(v) === value;
         });
         if (findNowChatItem) {
@@ -317,48 +232,12 @@
           });
         }
       },
-      // 仅限于聊天置顶, 其他两项不需要置顶
-      checkIsTop(item) {
-        if (!this.menuIndex) {
-          return !!item.topChatOrder;
-        }
-        return false;
-      },
       /**
        * 检查用户在线状态
        * @param chatId
        */
       isOnline(chatId) {
-        const findFriendFromFriendListWhereChatId =
-          this.myFriendListBackUps.find(friend => friend.friendId === chatId);
-        if (findFriendFromFriendListWhereChatId) {
-          return findFriendFromFriendListWhereChatId.isOnline;
-        }
         return false;
-      },
-
-      onChatMuted(toggleMutedChatId) {
-        const key = Object.keys(toggleMutedChatId)[0];
-        const value = toggleMutedChatId[key];
-        if (value) {
-          this.mutedIdList.push(key);
-        } else {
-          this.mutedIdList = this.mutedIdList.filter(v => v !== key);
-        }
-      },
-      // 当左侧三列数据进行删除操作
-      async onDeleteData(id) {
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'chat',
-              actionId: 'delUserFriend',
-              actionData: {
-                friendId: id
-              }
-            }
-          }
-        });
       },
     }
   });

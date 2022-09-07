@@ -141,7 +141,6 @@
 
   const getDataId = item => {
     if (item) {
-      // TODO: 后面后端接口数据重构好后， 都改成chatId
       if (item.hasOwnProperty('messageType')) {
         if (item.chatId) {
           return item.chatId;
@@ -217,21 +216,6 @@
     revoke: 'revoke'
   })
 
-  const base64ToFile = ({ base64, name }) => {
-    var arr = base64.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    const theBlob = new Blob([u8arr], { type: mime });
-    theBlob.lastModifiedDate = new Date();
-    theBlob.name = name;
-    return theBlob;
-  }
-
   const uuid = (t = 21) => {
     let e = ''
     const crypto = window.crypto || window.msCrypto
@@ -242,20 +226,6 @@
       e += n < 36 ? n.toString(36) : n < 62 ? (n - 26).toString(36).toUpperCase() : n < 63 ? '_' : '-'
     }
     return e
-  }
-
-  /**
-   * 数据排序，按字母
-   * get data
-   * @param data
-   * @param key
-   */
-  const sortList = (data, key) => {
-    data.sort((a, b) => {
-      return ConvertPinyin((a[key] || '').substring(0, 1)).substring(0, 1).toLowerCase()
-        .charCodeAt(0) - ConvertPinyin((b[key] || '').substring(0, 1)).substring(0, 1).toLowerCase()
-          .charCodeAt(0);
-    })
   }
 
   const refreshUserInfo = async () => {

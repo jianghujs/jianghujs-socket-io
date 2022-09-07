@@ -40,17 +40,6 @@ const actionDataScheme = Object.freeze({
       messageContentType: { type: 'string' },
       messageFingerprint: { type: 'string' }
     }
-  },
-  botExchange: {
-    type: 'object',
-    additionalProperties: true,
-    required: [ 'toUserId', 'messageContent', 'messageContentType', 'messageFingerprint' ],
-    properties: {
-      toUserId: { type: 'string' },
-      messageContent: { anyOf: [{ type: 'string' }, { type: 'object' }] },
-      messageContentType: { type: 'string' },
-      messageFingerprint: { type: 'string' }
-    }
   }
 });
 
@@ -304,7 +293,7 @@ class DuoxingSocketService extends Service {
 
     const messageType = duoxingChatMessageTypeEnum.room;
     // 历史消息落库
-    await this.ctx.service.data.duoxingMessage.insertWithChatSessionUpdate(
+    this.ctx.service.data.duoxingMessage.insertWithChatSessionUpdate(
       {
         fromUserId,
         toRoomId,

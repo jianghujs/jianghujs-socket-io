@@ -19,13 +19,6 @@
   <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
     <v-icon>mdi-image-outline</v-icon>
   </v-btn>
-  <v-btn icon @click="doUiAction('startRecordMethod')" :class="{ 'startRecord': startRecord }">
-    <v-icon>mdi-microphone</v-icon>
-  </v-btn>
-  <v-btn v-if="recordFile" icon @click="playRecord" :color="recordPlayIng ? 'red' : '#666666'">
-    <v-icon>{{ recordPlayIng ? 'mdi-stop-circle-outline' : 'mdi-motion-play-outline' }}</v-icon>
-  </v-btn>
-  <v-btn v-if="recordFile" depressed small color="success" @click="sendAudioMsg()">发送录音</v-btn>
   <v-spacer/>
 </v-toolbar>
 <div
@@ -56,7 +49,7 @@
         row-height="15"
         :autoGrow="isMobile"
         counter="7000"
-        :rules="[msgInputValueLength(7000)]"
+        :rules="[textareaRules(7000)]"
         placeholder="输入聊天信息，按Enter发送"
         @keydown.enter.exact.prevent
         @keydown.13.exact="() => {
@@ -70,23 +63,6 @@
         ref="messageTextareaDom"
     />
   </v-form>
-  <div v-else class="recordBtn" @touchstart="doUiAction('preventDefault')">
-    <span class="contSelect">按住 说话</span>
-    <v-bottom-sheet v-if="startRecord" v-model="startRecord" class="recordUI">
-      <v-sheet class="recordSheet d-flex flex-column">
-        <div
-            class="cancelSendAudioArea"
-            :class="{ 'recordSendStatus': recordSendStatus == false }"
-        >
-          <div class="recordAnim"></div>
-          <span class="contSelect">松开 取消</span>
-        </div>
-        <div class="canSendAudioArea" :class="{ 'recordSendStatus': recordSendStatus == true }">
-          <span class="contSelect">松开 发送</span>
-        </div>
-      </v-sheet>
-    </v-bottom-sheet>
-  </div>
 </div>
 
 <template>
@@ -130,15 +106,14 @@
 <script>
 window.registerData(
     {
+      audioPermission: false,
       isEmotionDialogShow: false, // 表情包开关
       startRecord: false, // 是否开始录音
-      recordFile: null, // 录音文件
       recordPlayIng: false, // 播放状态
       recordPlaySource: null, // 播放状态
       recordSendStatus: true, // 松开手指的位置，决定是否发送语音
       recordMode: false, // 语音模式
-      msgInputValueLength: len => v =>
-          (v || '').length < len || `消息内容最长${len}个文字`
+      textareaRules: len => v => (v || '').length < len || `消息内容最长${len}个文字`
     },
     {
       textareaExpanded() {
@@ -162,12 +137,6 @@ Vue.component('ChatInputWidget', {
     this.initMob();
   },
   watch: {
-    recordMode(value) {
-      // 是否开启了录音模式，先发起权限申请
-      if (value) {
-        this.requestAudioPermission()
-      }
-    },
     messageTextareaValue(value, old) {
       // 如果当前内容和草稿内容一样，就不触发 at
       if (value === this.draft[this.currentChatSessionId]) {
@@ -185,14 +154,20 @@ Vue.component('ChatInputWidget', {
   },
   methods: {
     requestAudioPermission() {
-      Recorder.getPermission().then(
-          () => {
-            console.log('给权限了');
-          },
-          error => {
-            console.log(`${error.name} : ${error.message}`);
-          }
-      );
+      return new Promise((resolve, reject) => {
+        Recorder.getPermission().then(
+            () => {
+              console.log('给权限了');
+              this.audioPermission = true;
+              resolve(true)
+            },
+            error => {
+              console.log(`${error.name} : ${error.message}`);
+              this.audioPermission = false;
+              reject(false)
+            }
+        );
+      })
     },
     include() {
       return [document.querySelector('.emoticon-open-btn')];
@@ -253,127 +228,6 @@ Vue.component('ChatInputWidget', {
       if (this.recordMode) {
         this.mobileMessageTextareaFocus = false
       }
-    },
-    /**
-     * 开始录音
-     * @param event
-     */
-    startTouch(event) {
-      window.touchIng = true;
-      document.body.classList.add('stopUserSelect');
-      if (this.recordMode) {
-        const touchDoms = document.elementsFromPoint(
-            event.touches[0].pageX,
-            event.touches[0].pageY
-        );
-        if (touchDoms.some(v => v.className === 'recordBtn')) {
-          event.preventDefault();
-          this.startRecord = true;
-          this.startRecordMethod();
-        }
-      }
-    },
-    /**
-     * 启动录音
-     */
-    startRecordMethod() {
-      const start = () => {
-        this.recorder = new Recorder();
-        this.recorder.start().then(
-            () => {
-            },
-            error => {
-              console.log(`${error.name} : ${error.message}`);
-            }
-        );
-      };
-      if (!this.isMobile) {
-        if (this.startRecord) {
-          this.recordSendStatus = true;
-          this.stopRecord();
-        } else {
-          this.requestAudioPermission()
-        }
-      } else {
-        start();
-      }
-    },
-    /**
-     * 当手指抬起，判断手指抬起的为止，是否发送语音
-     * @param event
-     */
-    touchMove(event) {
-      if (this.startRecord && this.isMobile) {
-        const touchDoms = document.elementsFromPoint(
-            event.touches[0].pageX,
-            event.touches[0].pageY
-        );
-        if (touchDoms.some(v => v.className === 'cancelSendAudioArea')) {
-          this.recordSendStatus = false;
-        }
-        if (touchDoms.some(v => v.className === 'canSendAudioArea')) {
-          this.recordSendStatus = true;
-        }
-      }
-    },
-    /**
-     * 停止录音，并获取录音文件
-     * @param event
-     */
-    stopRecord(event) {
-      window.touchIng = false;
-      document.body.classList.remove('stopUserSelect');
-      if (!this.startRecord) return;
-      this.startRecord = false;
-      if (!this.recordSendStatus) return;
-      if (this.recorder.duration < 1) return;
-      this.recordFile = this.recorder.getWAVBlob();
-      if (this.isMobile) {
-        this.sendAudioMsg();
-      }
-      this.recorder.destroy().then(() => {
-        this.recorder = null;
-      });
-    },
-
-    /**
-     * 录音试听
-     * @return {boolean}
-     */
-    playRecord() {
-      if (this.recordPlayIng && this.recordPlaySource) {
-        this.recordPlaySource.stop().close();
-        this.recordPlaySource = null;
-        return false;
-      }
-      const context = new (window.AudioContext || window.webkitAudioContext)();
-      this.recordPlaySource = context.createBufferSource();
-      const read = new FileReader();
-      const self = this;
-      read.onload = function () {
-        // 将arrayBuffer转成audioBuffer
-        context.decodeAudioData(
-            this.result, function (buffer) {
-              // 设置数据
-              self.recordPlaySource.buffer = buffer;
-              // connect到扬声器
-              self.recordPlaySource.connect(context.destination);
-              self.recordPlaySource.start();
-              self.recordPlayIng = true;
-              self.$forceUpdate();
-              self.recordPlaySource.onended = () => {
-                self.recordPlayIng = false;
-                self.$forceUpdate();
-              };
-            },
-            function () {
-              console.log('error');
-            }
-        );
-      };
-      // 利用filereader将file转成arraybuffer格式
-      read.readAsArrayBuffer(this.recordFile);
-      return null;
     },
 
     /**
@@ -450,36 +304,6 @@ Vue.component('ChatInputWidget', {
       });
     },
 
-    /**
-     * 发送语音消息
-     */
-    async sendAudioMsg(obj = {}) {
-      const {name, _base64, messageFingerprint} = obj
-      const filename = `recordFile_${_.random(100000, 999999)}.mp3`
-      let file = this.recordFile;
-      file.name = filename;
-      await this.doUiAction('sendMsg', {
-        messageContent: JSON.stringify({
-          filename,
-          downloadPath: '',
-          binarySize: ''
-        }),
-        messageContentType: duoxingMessageContentTypeEnum.audio,
-        file,
-        messageFingerprint,
-      });
-      this.recordFile = null;
-    },
-    getBase64(file) {
-      return new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = function () {
-          resolve(reader.result);
-        };
-        reader.readAsDataURL(file);
-      });
-    },
-
     // 当选择文件
     async onChooseFile(event) {
       const file = event.target.files[0]
@@ -504,7 +328,7 @@ Vue.component('ChatInputWidget', {
       await this.doUiAction('sendMsg', {
         messageContent: JSON.stringify({
           filename: '',
-          downloadPath: await this.getBase64(event.target.files[0]),
+          downloadPath: await window.jianghuAxios.fileToBase64(event.target.files[0]),
           binarySize: ''
         }),
         messageContentType,
@@ -518,7 +342,7 @@ Vue.component('ChatInputWidget', {
       await this.doUiAction('sendMsg', {
         messageContent: JSON.stringify({
           filename: '',
-          downloadPath: await this.getBase64(event.target.files[0]),
+          downloadPath: await window.jianghuAxios.fileToBase64(event.target.files[0]),
           binarySize: ''
         }),
         messageContentType,

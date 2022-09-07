@@ -108,25 +108,10 @@ module.exports.duoxingSocketStatusEnum = Object.freeze({
 })
 
 module.exports.noticeTypeEnum = Object.freeze({
-  // room
-  createRoom: 'createRoom',
-  destroyRoom: 'destroyRoom',
-  addRoomUser: 'addRoomUser',
-  delRoomUser: 'delRoomUser',
-  setRoomUserRole: 'setRoomUserRole',
-  setRoomInfo: 'setRoomInfo',
-  transferRoom: 'transferRoom',
-  quitRoom: 'quitRoom',
-  // user
-  addUserFriend: 'addUserFriend',
-  delUserFriend: 'delUserFriend',
-  acceptUserFriend: 'acceptUserFriend',
-  rejectUserFriend: 'rejectUserFriend',
   // 非聊天记录类型
   onlineNotice: 'onlineNotice',
   offlineNotice: 'offlineNotice',
-  errorNotice: 'errorNotice',
-  refreshRoomNotice: 'refreshRoomNotice'
+  errorNotice: 'errorNotice'
 })
 
 module.exports.duoxingRoomRoleInfoEnum = Object.freeze({
