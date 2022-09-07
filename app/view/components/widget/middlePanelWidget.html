@@ -121,7 +121,7 @@
           }
         }
         this.messageTextareaValue = `${messageContent} \n------------------------\n Re @${item.fromUsername}: `
-        this.$refs.chatInput.makeMsgTextarearFocus();
+        this.$refs.chatInput.keepTextareaSelectionAtLast();
       },
       /**
        * 重新发送消息，弹窗
