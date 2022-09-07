@@ -225,48 +225,6 @@
       "operationAt": null
     },
     {
-      "id": 129,
-      "pageId": "index",
-      "uiActionType": "ui",
-      "uiActionId": "onToggleChatSession",
-      "desc": "✅收到聊天消息回调",
-      "uiActionHook": null,
-      "uiActionConfig": "{\"main\": [{\"function\": \"onToggleChatSession\"}]}",
-      "appDataSchema": null,
-      "operation": "insert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
-    },
-    {
-      "id": 130,
-      "pageId": "index",
-      "uiActionType": "ui",
-      "uiActionId": "onDelMessageOffline",
-      "desc": "✅收到聊天消息删除的消息回调",
-      "uiActionHook": null,
-      "uiActionConfig": "{\"main\": [{\"function\": \"onDelMessageOffline\"}]}",
-      "appDataSchema": null,
-      "operation": "insert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
-    },
-    {
-      "id": 131,
-      "pageId": "index",
-      "uiActionType": "ui",
-      "uiActionId": "onDeleteChatSession",
-      "desc": "✅收到聊天删除的消息回调",
-      "uiActionHook": null,
-      "uiActionConfig": "{\"main\": [{\"function\": \"onDeleteChatSession\"}]}",
-      "appDataSchema": null,
-      "operation": "insert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
-    },
-    {
       "id": 132,
       "pageId": "index",
       "uiActionType": "ui",

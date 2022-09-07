@@ -47,6 +47,7 @@ window.registerData(
       draft: JSON.parse(localStorage.getItem('draft') || '{}'),
       dataSyncStatus: '',
       getDataId,
+      isMobile: window.isMobile
     },
     {
       socketStatus() {
@@ -175,9 +176,6 @@ new Vue({
       this.socketClient.addListeners('userMessage', result => this.doUiAction('onUserMessage', result));
       this.socketClient.addListeners('roomNotice', result => this.doUiAction('onRoomNotice', result));
       this.socketClient.addListeners('roomMessage', result => this.doUiAction('onRoomMessage', result));
-      this.socketClient.addListeners('toggleChatSession', result => this.doUiAction('onToggleChatSession', result));
-      this.socketClient.addListeners('delMessageOffline', result => this.doUiAction('onDelMessageOffline', result));
-      this.socketClient.addListeners('deleteChatSession', result => this.doUiAction('onDeleteChatSession', result));
     },
     async getConstantList() {
       const data = (
@@ -211,13 +209,13 @@ new Vue({
     },
     sortChatListBackUps(chatListBackUps) {
       return chatListBackUps
-          .map(o => {
-            let maxTime = o.messageTimeString;
-            if (o.topChatOrder && o.topChatOrder.localeCompare(o.messageTimeString) > 0) {
-              maxTime = o.topChatOrder;
+          .map(chatItem => {
+            let maxTime = chatItem.messageTimeString;
+            if (chatItem.topChatOrder && chatItem.topChatOrder.localeCompare(chatItem.messageTimeString) > 0) {
+              maxTime = chatItem.topChatOrder;
             }
-            o.orderCompare = o.topChatOrder ? 'T' + maxTime : maxTime;
-            return o;
+            chatItem.orderCompare = chatItem.topChatOrder ? 'T' + maxTime : maxTime;
+            return chatItem;
           })
           .sort((a, b) => {
             return b.orderCompare.localeCompare(a.orderCompare);
@@ -227,7 +225,7 @@ new Vue({
     /** 手动触发系统后退 */
     windowBack() {
       this.$nextTick(() => {
-        if (isMobile) {
+        if (this.isMobile) {
           window.history.back();
         }
       });
@@ -266,39 +264,11 @@ new Vue({
       this.renderChatSession(result);
       this.handleNoticeMessage(result);
     },
-    onDelMessageOffline(result) {
-      this.doUiAction('getChatSessionList', {type: 'onDelMessageOffline'});
-    },
-    // socket 置顶的通知
-    onToggleChatSession(result) {
-      const nowIndex = this.chatListBackUps.findIndex(v => {
-        return v.chatId === result.chatId;
-      });
-      if (result.top === true || result.top === false) {
-        this.chatListBackUps[nowIndex].topChatOrder = result.top
-            ? window.dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ')
-            : '';
-      }
-      if (result.muted === true || result.muted === false) {
-        this.chatListBackUps[nowIndex].muted = result.muted;
-      }
-      this.reFilterList();
-    },
-    onDeleteChatSession(result) {
-      const nowIndex = this.chatList.findIndex(v => {
-        return v.chatId === result.chatId;
-      });
-      this.chatList.splice(nowIndex, 1);
-      const backIndex = this.chatListBackUps.findIndex(v => {
-        return v.chatId === result.chatId;
-      });
-      this.chatListBackUps.splice(backIndex, 1);
-    },
 
     // 更新左侧列表的聊天内容和顺序
     renderChatSession(params) {
       // 撤回的不是最后一条消息，不用重新渲染
-      if(params.messageStatus === 'revoke' && !this.isRevokeLastMessage(params)){
+      if (params.messageStatus === 'revoke' && !this.isRevokeLastMessage(params)) {
         return;
       }
       // 更新chatList 中的数据
@@ -330,7 +300,7 @@ new Vue({
      * 是否是撤销最后一条消息
      * @param params
      */
-    isRevokeLastMessage(params){
+    isRevokeLastMessage(params) {
       return dayjs(params.messageTimeString).valueOf() > dayjs(this.currentChatSession.messageTimeString).valueOf();
     },
 
@@ -338,7 +308,7 @@ new Vue({
      * 更新 chatList
      * @param params
      */
-    updateChatList(params){
+    updateChatList(params) {
       this.$refs.leftPanel && this.$refs.leftPanel.updateChatListItem(params);
     },
 
@@ -346,7 +316,7 @@ new Vue({
      * 更新未读消息
      * @param params
      */
-    updateMessageCount(params){
+    updateMessageCount(params) {
       //如果不是是自己发的消息，未读+1
       if (params.fromUserId !== this.userInfo.userId) {
         this.chatListBackUps = this.chatListBackUps.map(v => {
@@ -363,7 +333,7 @@ new Vue({
      * 重新渲染会话
      * @param params
      */
-    reRenderSession(params){
+    reRenderSession(params) {
       if (
           window.$vueComponent.leftPanel.$refs['chatWidget_' + this.getDataId(params)] &&
           window.$vueComponent.leftPanel.$refs['chatWidget_' + this.getDataId(params)].length
@@ -378,8 +348,10 @@ new Vue({
      * 渲染聊天内容
      * @param params
      */
-    refreshMessage(params){
-      this.$refs.middlePanel && this.$refs.middlePanel.getChattingPage().refreshMessage(params);
+    refreshMessage(params) {
+      if(this.$refs.middlePanel) {
+        this.$refs.middlePanel.getChattingPage().refreshMessage(params);
+      }
       this.$forceUpdate();
     },
 
@@ -414,22 +386,13 @@ new Vue({
       historyNowPage = location.search;
     },
 
-    getDataName(item) {
-      if (item) {
-        if (item.hasOwnProperty('messageType')) {
-          return item.chatName;
-        }
-        return item.roomName || item.friendUsername;
-      }
-      return null;
-    },
     /**
      * 判断消息是否在聊天列表中
      * @param params
      */
     isExistInChatSession(params) {
       const dataId = this.getDataId(params);
-      return this.chatList.some(v => this.getDataId(v) === dataId);
+      return this.chatList.some(chat => this.getDataId(chat) === dataId);
     },
 
     /** 播放消息提示音 **/
@@ -460,11 +423,6 @@ new Vue({
      * @param params
      */
     handleNoticeMessage(params) {
-      // 更新群直播间的公告信息
-      if (params.noticeType && params.noticeType === 'refreshRoomNotice') {
-        this.refreshRoomNotice(params)
-        return;
-      }
       // 静音了，不处理
       if (this.isMsgMuted(params)) {
         return;
@@ -481,26 +439,12 @@ new Vue({
     },
 
     /**
-     * 更新群直播间的公告信息
-     * @param params
-     */
-     refreshRoomNotice(params){
-      const isNowRoom = this.currentChatSessionId === params.toRoomId;
-      if (isNowRoom) {
-        this.doUiAction('getRoomInfo', {justGetRoomSliderShow: true})
-      }
-    },
-
-    /**
      * 处理通知类消息
      * @param params
      */
-     handleNotice(params){
-      if(!!params.messageContent){
-        // 更新房间消息
-        if (params.messageType === 'room' && params.noticeType === 'setRoomInfo') {
-          this.setRoomInfo(params)
-        }
+    handleNotice(params) {
+      if (!!params.messageContent) {
+
         // 更新上下线状态改变
         const excludeNoticeType = ['onlineNotice', 'offlineNotice'];
         if (excludeNoticeType.includes(params.noticeType)) {
@@ -512,25 +456,12 @@ new Vue({
       }
     },
 
-    /**
-     * 更新房间消息
-     * @param params
-     */
-    setRoomInfo(params){
-      this.chatListBackUps.find(item => {
-        if (item.chatId === params.toRoomId) {
-          item.chatName = params.toRoomName;
-        }
-        return item.chatId === params.toRoomId;
-      })
-      this.$refs.rightPanel && this.$refs.rightPanel.roomInfoChange(params.toRoomId);
-    },
 
     /**
      * 用户上下线状态改变
      * @param params
      */
-     setOnlineStatus(params){
+    setOnlineStatus(params) {
       this.myFriendListBackUps.some(friend => {
         const isMessageUser = friend.friendId === params.fromUserId;
         if (isMessageUser) {
@@ -545,7 +476,7 @@ new Vue({
      * @param msg
      * @param title
      */
-    showNotify(msg, title){
+    showNotify(msg, title) {
       // 显示通知
       window.vtoast.showAndNotify({
         message: msg,
@@ -558,7 +489,7 @@ new Vue({
     },
 
     /**
-     * 消息所谓会话是否设置了免打扰
+     * 检查是否消息面打扰
      * @param msg
      */
     isMsgMuted(msg) {
