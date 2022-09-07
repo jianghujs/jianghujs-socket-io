@@ -1,272 +1,267 @@
 <!-- 左栏聊天列表 -->
 <script type="text/x-template" id="_ChatWidget">
-  <v-card
+<v-card
     class="rounded-0 chatItem ma-0 pt-2"
     :class="[chatWidgetStyle]"
     @click="clearOfflineMessageCount"
-  >
-    <div class="d-flex flex-no-wrap justify-space-between">
-      <v-badge bordered right :color="isMuted() ? 'grey' : 'red'" :content="data_.offlineMessageCount" :value="data_.offlineMessageCount" offset-x="23" offset-y="22" >
-        <template v-if="isRoom">
-          <v-avatar size="40px" class="ma-2">
-            <dx-img :src="upload + data_.chatAvatar" roomAvatar></dx-img>
-          </v-avatar>
-        </template>
-        <template v-else>
-          <v-badge
-            bordered
-            bottom
-            :color="isOnline_ ? 'green accent-3' : 'grey lighten-2'"
-            dot
-            offset-x="17"
-            offset-y="17"
-          >
-            <v-avatar size="40px" class="ma-2">
-              <dx-img :src="upload + data_.chatAvatar" userAvatar></dx-img>
-            </v-avatar>
-          </v-badge>
-        </template>
+>
+<div class="d-flex flex-no-wrap justify-space-between">
+  <v-badge bordered right :color="isMuted() ? 'grey' : 'red'" :content="data_.offlineMessageCount"
+           :value="data_.offlineMessageCount" offset-x="23" offset-y="22">
+    <template v-if="isRoom">
+      <v-avatar size="40px" class="ma-2">
+        <dx-img :src="upload + data_.chatAvatar" roomAvatar></dx-img>
+      </v-avatar>
+    </template>
+    <template v-else>
+      <v-badge
+          bordered
+          bottom
+          :color="isOnline_ ? 'green accent-3' : 'grey lighten-2'"
+          dot
+          offset-x="17"
+          offset-y="17"
+      >
+        <v-avatar size="40px" class="ma-2">
+          <dx-img :src="upload + data_.chatAvatar" userAvatar></dx-img>
+        </v-avatar>
       </v-badge>
+    </template>
+  </v-badge>
 
-      <div class="d-flex flex-column justify-center align-start" style="overflow: hidden; flex: 1">
-        <v-card-title class="ma-0 pa-0 pr-1 itemTitle" style="width: 100%">
-          <v-row class="ma-0 pa-0">
-            <div style="flex: 1"><v-icon size="14" v-if="isMuted()">mdi-volume-off</v-icon>{{ data_.chatName }}</div>
-          </v-row>
-        </v-card-title>
-        <div class="d-flex align-center" style="width: 100%">
-          <v-card-subtitle
-            class="ma-0 pa-0 subtitle overflow-hidden d-block"
-            :style="{ 'color': atMe ? '#ff0000' : '#999999' }"
-            style="width: 90%; text-overflow: ellipsis; flex: 1"
-            v-html="filterXss(data_.fromUsername + '：' + getMessageContent(data_, true))"
-          ></v-card-subtitle>
-          <span
-            style="font-size: 12px; color: #999999"
-            class="pr-2"
-          >{{ getTimerStr(data_.messageTimeString) }}</span>
+  <div class="d-flex flex-column justify-center align-start" style="overflow: hidden; flex: 1">
+    <v-card-title class="ma-0 pa-0 pr-1 itemTitle" style="width: 100%">
+      <v-row class="ma-0 pa-0">
+        <div style="flex: 1">
+          <v-icon size="14" v-if="isMuted()">mdi-volume-off</v-icon>
+          {{ data_.chatName }}
         </div>
-      </div>
+      </v-row>
+    </v-card-title>
+    <div class="d-flex align-center" style="width: 100%">
+      <v-card-subtitle
+          class="ma-0 pa-0 subtitle overflow-hidden d-block"
+          :style="{ 'color': atMe ? '#ff0000' : '#999999' }"
+          style="width: 90%; text-overflow: ellipsis; flex: 1"
+          v-html="filterXss(data_.fromUsername + '：' + getMessageContent(data_, true))"
+      ></v-card-subtitle>
+      <span
+          style="font-size: 12px; color: #999999"
+          class="pr-2"
+      >{{ parseTimerLabel(data_.messageTimeString) }}</span>
     </div>
-  </v-card>
+  </div>
+</div>
+</v-card>
 </script>
 
 <script>
-  Vue.component('ChatWidget', {
-    template: '#_ChatWidget',
-    props: {
-      data: {
-        type: Object,
-        default: () => { }
-      },
-      isOnline: {
-        type: Boolean,
-        default: false
-      },
-      dataType: {
-        type: String,
-        default: 'chat'
+Vue.component('ChatWidget', {
+  template: '#_ChatWidget',
+  props: {
+    data: {
+      type: Object,
+      default: () => {
       }
     },
-    computed: {
-      atMe() {
-        // 已读就不标红了
-        if (this.userInfo && this.data_.fromUserId === this.userInfo.userId) {
-          return false;
-        }
-        // 已读就不标红了
-        if (this.data_.offlineMessageCount === 0) {
-          return false;
-        }
-        // Tip: userInfo有时候慢于chatList, 所以会导致 列表渲染异常, 这里要规避下
-        // 如果最新的对话有引用，则不在引用中查找 at
-        let realContent = this.data_.messageContent;
-        if (!realContent) return false;
-        if (realContent.includes('\n------------------------\n Re @')) {
-          const index = realContent.lastIndexOf(
-            '\n------------------------\n Re @'
-          );
-          realContent = realContent.slice(
-            index + '\n------------------------\n '.length
-          );
-        }
-        if (this.userInfo && this.userInfo.username) {
-          return (
-            realContent.includes(`@${this.userInfo.username}`) ||
-            this.data_.messageContent.includes('@所有人')
-          );
-        }
-        return realContent.includes('@所有人');
-      },
-      isRoom() {
-        return this.data.messageType === 'room';
-      },
-      data_() {
-        return this.data;
-      },
-      isOnline_() {
-        return this.isOnline;
+    isOnline: {
+      type: Boolean,
+      default: false
+    },
+    dataType: {
+      type: String,
+      default: 'chat'
+    }
+  },
+  computed: {
+    atMe() {
+      // 已读就不标红了
+      if (this.userInfo && this.data_.fromUserId === this.userInfo.userId) {
+        return false;
+      }
+      // 已读就不标红了
+      if (this.data_.offlineMessageCount === 0) {
+        return false;
+      }
+      // Tip: userInfo有时候慢于chatList, 所以会导致 列表渲染异常, 这里要规避下
+      // 如果最新的对话有引用，则不在引用中查找 at
+      if (this.userInfo && this.userInfo.username) {
+        return this.data_.messageContent.includes(`@${this.userInfo.username}`);
+      }
+      return this.data_.messageContent.includes('@所有人');
+    },
+    isRoom() {
+      return this.data.messageType === 'room';
+    },
+    data_() {
+      return this.data;
+    },
+    isOnline_() {
+      return this.isOnline;
+    }
+  },
+  data() {
+    return {
+      userInfo: JSON.parse(localStorage.getItem(window.appInfo.appId + '_userInfo')),
+      upload: window.appInfo.upload,
+      chatWidgetStyle: {}
+    };
+  },
+  watch: {},
+  methods: {
+    clearOfflineMessageCount({justCleanUi = false}) {
+      if (!justCleanUi) {
+        this.$emit('onClearUnread', this.data.chatId);
+      }
+      this.data_.offlineMessageCount = 0;
+    },
+    margeNewMessage(params) {
+      for (const paramsKey in params) {
+        this.data[paramsKey] = params[paramsKey];
       }
     },
-    data() {
-      return {
-        userInfo: JSON.parse(localStorage.getItem(window.appInfo.appId + '_userInfo')),
-        upload: window.appInfo.upload,
-        chatWidgetStyle: {}
+    // 更新接收来的信消息，plusCount：如果当前回话中，不需要增加红点数子
+    reRenderSessionBySocketMessage(params) {
+      if (params.noticeType === 'onlineNotice' || params.noticeType === 'offlineNotice') {
+        this.isOnline_ = params.noticeType === 'onlineNotice';
+        return false;
+      }
+      this.margeNewMessage(params)
+      this.renderUi()
+      return null;
+    },
+    renderUi() {
+      this.chatWidgetStyle = {
+        willChange: true,
+        active: true
       };
-    },
-    watch: {},
-    methods: {
-      clearOfflineMessageCount({ justCleanUi = false }) {
-        if (!justCleanUi) {
-          this.$emit('onClearUnread', this.data.chatId);
-        }
-        this.data_.offlineMessageCount = 0;
-      },
-      // 更新接收来的信消息，plusCount：如果当前回话中，不需要增加红点数子
-      reRenderSessionBySocketMessage(params) {
-        if (
-          params.noticeType === 'onlineNotice' ||
-          params.noticeType === 'offlineNotice'
-        ) {
-          this.isOnline_ = params.noticeType === 'onlineNotice';
-          return false;
-        }
-        for (const paramsKey in params) {
-          this.data[paramsKey] = params[paramsKey];
-        }
-        this.chatWidgetStyle = {
-          willChange: true,
-          active: true
-        };
-        this.$nextTick(() => {
-          setTimeout(() => {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.chatWidgetStyle = {
+            willChange: true,
+            active: false
+          };
+          this.$nextTick(() => {
             this.chatWidgetStyle = {
-              willChange: true,
+              willChange: false,
               active: false
             };
-            this.$nextTick(() => {
-              this.chatWidgetStyle = {
-                willChange: false,
-                active: false
-              };
-            });
-          }, 300);
-        });
-        return null;
-      },
-      isTop() {
-        return !!this.data.topChatOrder;
-      },
-      isMuted() {
-        return !!this.data.muted;
-      },
-      async deleteChatSession() {
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'chat',
-              actionId: 'deleteChatSession',
-              actionData: {
-                type: this.data.messageType,
-                chatId: this.data.chatId
-              }
+          });
+        }, 300);
+      });
+    },
+    isTop() {
+      return !!this.data.topChatOrder;
+    },
+    isMuted() {
+      return !!this.data.muted;
+    },
+    async deleteChatSession() {
+      await window.jianghuAxios({
+        data: {
+          appData: {
+            pageId: 'chat',
+            actionId: 'deleteChatSession',
+            actionData: {
+              type: this.data.messageType,
+              chatId: this.data.chatId
             }
           }
-        });
-        this.data.recordStatus = 'delete';
-      },
-      filterXss(content) {
-        return content.replace(/</g, '&lt;');
-      },
-      getMessageContent,
-      getTimerStr(messageTimeString) {
-        const _messageTime = dayjs(messageTimeString);
-        const diffSecond = dayjs().diff(_messageTime, 'second');
-        const todayHour = dayjs().hour();
-        const minute = dayjs().minute();
-        const second = dayjs().second();
-        const onDayFullSecond = 3600 * 24;
-        const todayFullSecond = 3600 * todayHour + 60 * minute + second;
-        // 当天
-        if (diffSecond <= todayFullSecond) {
-          return _messageTime.format('HH:mm');
-        } else if (diffSecond <= todayFullSecond + onDayFullSecond) {
-          return `昨天${_messageTime.format('HH:mm')}`;
-        } else if (diffSecond <= todayFullSecond + onDayFullSecond * 2) {
-          return `前天${_messageTime.format('HH:mm')}`;
-        } else if (_messageTime.year() === dayjs().year()) {
-          return `${_messageTime.format('M月D日')}`;
         }
-        return dayjs(_messageTime).format('YY年M月D日');
+      });
+      this.data.recordStatus = 'delete';
+    },
+    filterXss(content) {
+      return content.replace(/</g, '&lt;');
+    },
+    getMessageContent,
+    parseTimerLabel(messageTimeString) {
+      const _messageTime = dayjs(messageTimeString);
+      const diffSecond = dayjs().diff(_messageTime, 'second');
+      const todayHour = dayjs().hour();
+      const minute = dayjs().minute();
+      const second = dayjs().second();
+      const onDayFullSecond = 3600 * 24;
+      const todayFullSecond = 3600 * todayHour + 60 * minute + second;
+      // 当天
+      if (diffSecond <= todayFullSecond) {
+        return _messageTime.format('HH:mm');
+      } else if (diffSecond <= todayFullSecond + onDayFullSecond) {
+        return `昨天${_messageTime.format('HH:mm')}`;
+      } else if (diffSecond <= todayFullSecond + onDayFullSecond * 2) {
+        return `前天${_messageTime.format('HH:mm')}`;
+      } else if (_messageTime.year() === dayjs().year()) {
+        return `${_messageTime.format('M月D日')}`;
       }
+      return dayjs(_messageTime).format('YY年M月D日');
     }
-  });
+  }
+});
 </script>
 <style scoped>
-  .chatItem {
-    height: 70px;
-    width: 100%;
-    box-shadow: none !important;
+.chatItem {
+  height: 70px;
+  width: 100%;
+  box-shadow: none !important;
+  background-color: transparent;
+}
+
+.chatItem.willChange {
+  will-change: auto;
+}
+
+.chatItem.active {
+  animation: chatBgAnim 0.3s infinite;
+  -webkit-animation: chatBgAnim 0.3s infinite;
+  /* Safari 和 Chrome */
+  animation-iteration-count: 1;
+  -webkit-animation-iteration-count: 1;
+}
+
+@keyframes chatBgAnim {
+  from {
+    background-color: #40c4ff;
+  }
+
+  to {
     background-color: transparent;
   }
+}
 
-  .chatItem.willChange {
-    will-change: auto;
-  }
-
-  .chatItem.active {
-    animation: chatBgAnim 0.3s infinite;
-    -webkit-animation: chatBgAnim 0.3s infinite;
-    /* Safari 和 Chrome */
-    animation-iteration-count: 1;
-    -webkit-animation-iteration-count: 1;
-  }
-
-  @keyframes chatBgAnim {
-    from {
-      background-color: #40c4ff;
-    }
-
-    to {
-      background-color: transparent;
-    }
-  }
-
-  @-webkit-keyframes chatBgAnim
+@-webkit-keyframes chatBgAnim
 
   /*Safari and Chrome*/
-    {
-    from {
-      background-color: #40c4ff;
-    }
-
-    to {
-      background-color: transparent;
-    }
+{
+  from {
+    background-color: #40c4ff;
   }
 
-  .itemTitle {
-    font-size: 14px;
-    line-height: 1.5rem;
+  to {
+    background-color: transparent;
   }
+}
 
-  .subtitle {
-    display: flex;
-    font-size: 12px;
-    white-space: nowrap;
-    color: #999999;
-  }
+.itemTitle {
+  font-size: 14px;
+  line-height: 1.5rem;
+}
 
-  .subtitle>br {
-    content: "";
-  }
+.subtitle {
+  display: flex;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #999999;
+}
 
-  .subtitle>br::after {
-    content: "<br>";
-  }
+.subtitle > br {
+  content: "";
+}
 
-  .subtitle span.title {
-    flex: 1;
-  }
+.subtitle > br::after {
+  content: "<br>";
+}
+
+.subtitle span.title {
+  flex: 1;
+}
 </style>

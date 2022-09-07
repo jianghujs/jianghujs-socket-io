@@ -11,7 +11,7 @@
         touchless
       >
         <!--   用户信息   -->
-        <LeftUserWidget @userinfo_menu_click="onUserWidgetMenuClick" />
+        <LeftUserWidget />
         <v-list class="leftDataList" ref="leftDataList">
           <v-list-item-group
             :value="currentChatSessionId"
@@ -360,33 +360,6 @@
           }
         });
       },
-
-      // 左上角用户的操作菜单
-      async onUserWidgetMenuClick(e) {
-        // eslint-disable-next-line default-case
-        switch (e) {
-          case 10: {
-            await window.jianghuAxios({
-              data: {
-                appData: {
-                  pageId: 'allPage',
-                  actionId: 'logout',
-                  actionData: { needSetCookies: true }
-                }
-              }
-            });
-            localStorage.removeItem(window.appInfo.appId + '_userInfo');
-            localStorage.removeItem(window.appInfo.appId + '_authToken');
-            localStorage.removeItem(window.appInfo.appId + '_refreshToken');
-            location.href = `/${window.appInfo.appId}/page/login`;
-            break;
-          }
-          case 15: {
-            window.location.href = location.href;
-            break;
-          }
-        }
-      }
     }
   });
 </script>
