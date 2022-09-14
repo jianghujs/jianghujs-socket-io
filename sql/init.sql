@@ -492,12 +492,9 @@ CREATE TABLE `_user_group_role_page` (
 # DATA DUMP FOR TABLE: _user_group_role_page
 # ------------------------------------------------------------
 
-INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (17,'*','public','*','login','allow','登陆页; 开放给所有用户;','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (18,'*','login','*','manual','allow','操作手册页; 开放给登陆用户;','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (19,'*','login','*','help','allow','帮助页; 开放给登陆用户;','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (31,'*','login','*','index','allow','聊天','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (32,'*','login','*','xiaochengxu','allow','小程序页面; 开放给登陆用户;','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_page` (`id`,`user`,`group`,`role`,`page`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (33,'admin01','*','*','*','allow','所有页面权限; 只开放给admin01','insert',NULL,NULL,NULL);
+
+INSERT INTO `_user_group_role_page` (`id`,`user`, `group`, `role`, `page`, `allowOrDeny`, `desc`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (1, '*', 'login', '*', '*', 'allow', ‘所有页面; 开放给登陆用户;', 'insert', NULL, NULL, NULL);
+
 
 
 
@@ -526,26 +523,9 @@ CREATE TABLE `_user_group_role_resource` (
 # DATA DUMP FOR TABLE: _user_group_role_resource
 # ------------------------------------------------------------
 
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'admin01','*','*','*','allow','所有resource 权限, 开放给 admin01用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (2,'*','public','*','login.passwordLogin','allow','登陆resource, 开放给所有用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (3,'*','public','*','xiaochengxu.checkXiaochengxuIsOnline','allow','检查小程序是否已经在线, 开放给所有人','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (4,'*','public','*','socket.disconnect','allow','断开socket连接, 开放给所有人','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (11,'*','public','*','allPage.getConstantList','allow','查询常量resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (31,'*','login','*','allPage.logout','allow','登出resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (33,'*','login','*','allPage.userInfo','allow','用户个人信息resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (34,'*','login','*','allPage.uploadByBase64','allow','上传文件resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (35,'*','login','*','allPage.uploadByStream','allow','上传文件resource, 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (36,'*','login','*','allPage.*','allow','allPage相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (37,'*','login','*','user.*','allow','用户个人信息相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (38,'*','login','*','chat.*','allow','聊天相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (39,'*','login','*','socket.*','allow','socket相关resource; 开放给所有登陆成功的用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (136,'*','*','roomOwner','chat.destroyRoom','allow','销毁群, 开放给 当前群主','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (137,'*','*','roomOwner,roomAdmin,roomUser','chat.addRoomUser','allow','添加群用户, 开放给当前群管理员 & 群主 & 群用户','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (138,'*','*','roomOwner,roomAdmin','chat.delRoomUser','allow','删除群用户, 开放给 当前群管理员 & 群主','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (139,'*','*','roomOwner,roomAdmin','chat.setRoomInfo','allow','设置群信息, 开放给 当前群管理员 & 群主','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (140,'*','*','roomOwner,roomAdmin','chat.setRoomUserRole','allow','设置群用户角色, 开放给当前群主','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (141,'*','*','roomOwner','chat.transferRoom','allow','移交群, 开放给 当前群主','insert',NULL,NULL,NULL);
-INSERT INTO `_user_group_role_resource` (`id`,`user`,`group`,`role`,`resource`,`allowOrDeny`,`desc`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (142,'*','*','roomOwner,roomAdmin,roomUser','chat.quitRoom','allow','退出群, 开放给所有用户','insert',NULL,NULL,NULL);
+INSERT INTO `jianghu_multiple_component`.`_user_group_role_resource` (`id`, `user`, `group`, `role`, `resource`, `allowOrDeny`, `desc`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (1, '*', 'login', '*', 'allPage.*', 'allow', '所有权限, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
+INSERT INTO `jianghu_multiple_component`.`_user_group_role_resource` (`id`, `user`, `group`, `role`, `resource`, `allowOrDeny`, `desc`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (2, '*', 'login', '*', '*', 'allow', '所有权限, 开放给所有登陆成功的用户', 'insert', NULL, NULL, NULL);
+
 
 
 
