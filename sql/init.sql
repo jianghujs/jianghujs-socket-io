@@ -71,8 +71,6 @@ CREATE TABLE `_group` (
 
 
 
-INSERT INTO `_group` (`id`,`groupId`,`groupName`,`groupType`,`groupDesc`,`groupAvatar`,`groupExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (1,'adminGroup','权限管理组','system','管理组','/groupAvatar/default.jpg','{\"allGroupUsername\":\"\"}','insert',NULL,NULL,NULL);
-INSERT INTO `_group` (`id`,`groupId`,`groupName`,`groupType`,`groupDesc`,`groupAvatar`,`groupExtend`,`operation`,`operationByUserId`,`operationByUser`,`operationAt`) VALUES (2,'login','登录用户组','system','用户组',NULL,'{\"allGroupUsername\":\"\"}','insert',NULL,NULL,NULL);
 
 
 
