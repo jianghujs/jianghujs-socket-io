@@ -67,7 +67,7 @@ CREATE TABLE `_group` (
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`),
   UNIQUE KEY `groupId_index` (`groupId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 COMMENT = '群组表;';
+) ENGINE = InnoDB COMMENT = '群组表;';
 
 
 
@@ -128,7 +128,7 @@ CREATE TABLE `_record_history` (
   PRIMARY KEY (`id`),
   KEY `index_record_id` (`recordId`),
   KEY `index_table_action` (`table`, `operation`)
-) ENGINE = InnoDB AUTO_INCREMENT = 42443 COMMENT = '数据历史表';
+) ENGINE = InnoDB COMMENT = '数据历史表';
 
 
 
@@ -155,7 +155,7 @@ CREATE TABLE `_resource` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 818 COMMENT = '请求资源表; resourceId=`${appId}.${pageId}.${actionId}`';
+) ENGINE = InnoDB AUTO_INCREMENT = 505 COMMENT = '请求资源表; resourceId=`${appId}.${pageId}.${actionId}`';
 
 
 
@@ -213,34 +213,27 @@ INSERT INTO `_role` (`id`,`roleId`,`roleName`,`roleDesc`,`operation`,`operationB
 
 
 
-# ------------------------------------------------------------
-# SCHEMA DUMP FOR TABLE: _test_case
-# ------------------------------------------------------------
-
 DROP TABLE IF EXISTS `_test_case`;
 CREATE TABLE `_test_case` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `pageId` varchar(255) DEFAULT NULL COMMENT '页面Id',
-  `testId` varchar(255) DEFAULT NULL COMMENT '测试用例Id',
-  `testName` varchar(255) DEFAULT NULL COMMENT '测试用例名',
-  `uiActionIdList` text COMMENT 'uiAction列表; 一个测试用例对应多个uiActionId',
-  `testOperation` text NOT NULL COMMENT '测试用例步骤;',
-  `expectedResult` text COMMENT '预期结果',
-  `operation` varchar(255) DEFAULT NULL COMMENT '操作; jhInsert, jhUpdate, jhDelete jhRestore',
-  `operationByUserId` varchar(255) DEFAULT NULL COMMENT '操作者userId; recordContent.operationByUserId',
-  `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名; recordContent.operationByUser',
-  `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; recordContent.operationAt; E.g: 2021-05-28T10:24:54+08:00 ',
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 64 COMMENT = '测试用例表';
-
-
-
-
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`pageId` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '页面Id',
+`testId` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '测试用例Id; 10000 ++',
+`testName` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '测试用例名',
+`uiActionIdList` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'uiAction列表; 一个测试用例对应多个uiActionId',
+`testOpeartion` text COLLATE utf8mb4_bin COMMENT '测试用例步骤;',
+`expectedResult` text COLLATE utf8mb4_bin COMMENT '期望结果',
+`operation` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作; jhInsert, jhUpdate, jhDelete jhRestore',
+`operationByUserId` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作者userId; recordContent.operationByUserId',
+`operationByUser` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作者用户名; recordContent.operationByUser',
+`operationAt` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '操作时间; recordContent.operationAt; E.g: 2021-05-28T10:24:54+08:00 ',
+PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='测试用例表';
 
 
 # ------------------------------------------------------------
 # SCHEMA DUMP FOR TABLE: _ui
 # ------------------------------------------------------------
+
 
 DROP TABLE IF EXISTS `_ui`;
 CREATE TABLE `_ui` (
@@ -257,7 +250,7 @@ CREATE TABLE `_ui` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 384 COMMENT = 'ui 施工方案';
+) ENGINE = InnoDB AUTO_INCREMENT = 162 COMMENT = 'ui 施工方案';
 
 
 
@@ -400,7 +393,7 @@ CREATE TABLE `_user_group_role_page` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 34 COMMENT = '用户群组角色 - 页面 映射表;';
+) ENGINE = InnoDB AUTO_INCREMENT = 4 COMMENT = '用户群组角色 - 页面 映射表;';
 
 
 
@@ -428,7 +421,7 @@ CREATE TABLE `_user_group_role_resource` (
   `operationByUser` varchar(255) DEFAULT NULL COMMENT '操作者用户名',
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 143 COMMENT = '用户群组角色 - 请求资源 映射表;';
+) ENGINE = InnoDB AUTO_INCREMENT = 4 COMMENT = '用户群组角色 - 请求资源 映射表;';
 
 
 
@@ -461,7 +454,7 @@ CREATE TABLE `_user_session` (
   UNIQUE KEY `userId_deviceId_index` (`userId`, `deviceId`) USING BTREE,
   KEY `userId_index` (`userId`),
   KEY `authToken_index` (`authToken`)
-) ENGINE = InnoDB AUTO_INCREMENT = 437 COMMENT = '用户session表; deviceId 维度;';
+) ENGINE = InnoDB COMMENT = '用户session表; deviceId 维度;';
 
 
 
@@ -487,7 +480,7 @@ CREATE TABLE `duoxing_chat_session` (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `_chat_session_chatId_type_userId_index` (`chatId`, `type`, `userId`),
   KEY `_userId_topChatOrder_lastMessageHistoryId_index` (`userId`, `topChatOrder`, `lastMessageHistoryId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7991 COMMENT = '聊天会话';
+) ENGINE = InnoDB COMMENT = '聊天会话';
 
 
 
@@ -519,7 +512,7 @@ CREATE TABLE `duoxing_message_history` (
   KEY `fromUser_index` (`fromUserId`) USING BTREE,
   KEY `toUserId_index` (`toUserId`) USING BTREE,
   KEY `toGroupId_index` (`toRoomId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21308 COMMENT = '消息历史表;';
+) ENGINE = InnoDB COMMENT = '消息历史表;';
 
 
 
@@ -1033,11 +1026,11 @@ select
   `dmh`.`id` AS `id`,
   `dmh`.`messageType` AS `messageType`,
   `dmh`.`fromUserId` AS `fromUserId`,
-  `fromUser`.`username` AS `fromUsername`,
-  `fromUser`.`userAvatar` AS `fromUserAvatar`,
+  `fromuser`.`username` AS `fromUsername`,
+  `fromuser`.`userAvatar` AS `fromUserAvatar`,
   `dmh`.`toUserId` AS `toUserId`,
-  `toUser`.`username` AS `toUsername`,
-  `toUser`.`userAvatar` AS `toUserAvatar`,
+  `touser`.`username` AS `toUsername`,
+  `touser`.`userAvatar` AS `toUserAvatar`,
   `dmh`.`toRoomId` AS `toRoomId`,
   `dmh`.`messageContent` AS `messageContent`,
   `dmh`.`messageFingerprint` AS `messageFingerprint`,
@@ -1049,9 +1042,9 @@ from
   (
   (
     `duoxing_message_history` `dmh`
-    left join `_user` `fromUser` on((`fromUser`.`userId` = `dmh`.`fromUserId`))
+    left join `_user` `fromuser` on((`fromuser`.`userId` = `dmh`.`fromUserId`))
   )
-  left join `_user` `toUser` on((`toUser`.`userId` = `dmh`.`toUserId`))
+  left join `_user` `touser` on((`touser`.`userId` = `dmh`.`toUserId`))
   );
 
 
