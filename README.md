@@ -25,7 +25,7 @@ use jianghujs_demo_socket_io;
 
 ## 测试账号 & 测试环境
 
-- admin/123456
+- admin01/123456
 
 ## 页面
 
