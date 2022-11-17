@@ -8,7 +8,7 @@
     "framework": "@jianghujs/jianghu"
   },
   "dependencies": {
-    "@jianghujs/jianghu": "3.0.80",
+    "@jianghujs/jianghu": "3.0.81",
     "@socket.io/redis-adapter": "^7.1.0",
     "ajv": "^8.7.1",
     "ajv-formats": "^2.1.1",
