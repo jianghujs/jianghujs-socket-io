@@ -37,42 +37,6 @@ function resourcePackageBuild ({ packageId, packageType, status, appData }) {
   }
 }
 
-module.exports.tableEnum = Object.freeze({
-  // ========================江湖表============================
-  _cache: "_cache",
-  _constant: "_constant",
-  _file: "_file",
-  _group: "_group",
-  room: "room",
-  _page: "_page",
-  _record_history: "_record_history",
-  _resource: "_resource",
-  _resource_request_log: "_resource_request_log",
-  _role: "_role",
-  _user: "_user",
-  _user_group_role: "_user_group_role",
-  _user_group_role_page: "_user_group_role_page",
-  _user_group_role_resource: "_user_group_role_resource",
-  _user_session: "_user_session",
-  access_control_student_basic: "access_control_student_basic",
-  duoxing_chat_session: "duoxing_chat_session",
-  duoxing_message_history: "duoxing_message_history",
-  duoxing_user_friend: "duoxing_user_friend",
-  duoxing_user_friend_request: "duoxing_user_friend_request",
-  // ========================View============================
-  view01_user: "view01_user",
-  view01_user_room_role: "view01_user_room_role",
-  view01_user_initialPassword: "view01_user_initialPassword",
-  view01_duoxing_message_history: "view01_duoxing_message_history",
-  view01_duoxing_user_friend_management: "view01_duoxing_user_friend_management",
-  view02_duoxing_user_friend_request: "view02_duoxing_user_friend_request",
-  view01_group_info: "view01_group_info",
-  view01_room_info: "view01_room_info",
-  view02_user_socket_count: "view02_user_socket_count",
-  view01_duoxing_chat_session: "view01_duoxing_chat_session",
-  view01_duoxing_user_friend: "view01_duoxing_user_friend",
-});
-
 module.exports.duoxingChatMessageTypeEnum = Object.freeze({
   notice: "notice",
   user: "user",

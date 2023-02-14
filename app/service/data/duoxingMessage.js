@@ -5,14 +5,13 @@ const Service = require('egg').Service;
 const { duoxingChatMessageTypeEnum, noticeTypeEnum } = require('../../constant/constant');
 // ========================================常用 require end=============================================
 const _ = require('lodash');
-const { tableEnum } = require('../../constant/constant');
 
 class DuoxingMessageService extends Service {
   // TODO: 给duoxing表添加 operation
   async insertWithChatSessionUpdate(params, mayFirst = false) {
     const { jianghuKnex } = this.app;
 
-    const messageHistoryId = await jianghuKnex(tableEnum.duoxing_message_history, this.ctx)
+    const messageHistoryId = await jianghuKnex('duoxing_message_history', this.ctx)
       .insert(params)
       .then((result) => result[0]);
 
@@ -61,7 +60,7 @@ class DuoxingMessageService extends Service {
       useTable = true;
     }
 
-    return jianghuKnex(tableEnum.duoxing_message_history)
+    return jianghuKnex('duoxing_message_history')
       .where({ messageType: duoxingChatMessageTypeEnum.user })
       .where(function () {
         this.where({ toUserId: userId }).orWhere({ fromUserId: userId });
@@ -78,7 +77,7 @@ class DuoxingMessageService extends Service {
       useTable = true;
     }
 
-    return jianghuKnex(tableEnum.duoxing_message_history)
+    return jianghuKnex('duoxing_message_history')
       .where({ messageType: duoxingChatMessageTypeEnum.room })
       .whereIn("toRoomId", roomIdList)
       .groupBy("toRoomId")
@@ -90,7 +89,7 @@ class DuoxingMessageService extends Service {
     const { jianghuKnex } = this.app;
 
     // 检查这些记录是否存在，不存在就插入
-    const exists = await jianghuKnex(tableEnum.duoxing_chat_session)
+    const exists = await jianghuKnex('duoxing_chat_session')
       .where({ chatId, type })
       .whereIn('userId', userIds)
       .select();
@@ -108,13 +107,13 @@ class DuoxingMessageService extends Service {
         lastMessageHistoryId: messageHistoryId
       });
     });
-    await jianghuKnex(tableEnum.duoxing_chat_session, this.ctx).insert(insertParams);
+    await jianghuKnex('duoxing_chat_session', this.ctx).insert(insertParams);
   }
 
   // 个人对话：对某个会话进行软删除
   async deleteSingleChatSession(userId, type, anotherUserId, lastMessageHistoryId, addUnreadCount) {
     const { jianghuKnex } = this.app;
-    return await jianghuKnex(tableEnum.duoxing_chat_session, this.ctx).where({
+    return await jianghuKnex('duoxing_chat_session', this.ctx).where({
       chatId: anotherUserId,
       type,
       userId,
@@ -125,7 +124,7 @@ class DuoxingMessageService extends Service {
   async updateSingleChatSession(userId, type, anotherUserId, lastMessageHistoryId, addUnreadCount) {
     const { jianghuKnex } = this.app;
 
-    const k = jianghuKnex(tableEnum.duoxing_chat_session, this.ctx).where({
+    const k = jianghuKnex('duoxing_chat_session', this.ctx).where({
       chatId: anotherUserId,
       type,
       userId,
@@ -140,7 +139,7 @@ class DuoxingMessageService extends Service {
   async updateChatSessionByRoomId(roomId, excludeUserId, lastMessageHistoryId, addUnreadCount) {
     const { jianghuKnex } = this.app;
 
-    const k = jianghuKnex(tableEnum.duoxing_chat_session, this.ctx)
+    const k = jianghuKnex('duoxing_chat_session', this.ctx)
       .where({ chatId: roomId, type: duoxingChatMessageTypeEnum.room })
       .whereNot({ userId: excludeUserId });
     if (addUnreadCount) {

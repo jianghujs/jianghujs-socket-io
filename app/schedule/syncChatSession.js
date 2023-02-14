@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('lodash');
-const { tableEnum, duoxingChatMessageTypeEnum, duoxingFriendStatusEnum } = require('../constant/constant');
+const { duoxingChatMessageTypeEnum, duoxingFriendStatusEnum } = require('../constant/constant');
 
 // 定时计算会话现状到 _chat_session 表中
 module.exports = app => {
@@ -19,19 +19,19 @@ module.exports = app => {
 
       const service = app.createAnonymousContext().service;
 
-      const allUserIdList = (await jianghuKnex(tableEnum.view01_user).select('userId')).map(item => item.userId);
-      const allUserRoomRoleList = await jianghuKnex(tableEnum.view01_user_room_role).select();
+      const allUserIdList = (await jianghuKnex('view01_user').select('userId')).map(item => item.userId);
+      const allUserRoomRoleList = await jianghuKnex('view01_user_room_role').select();
 
       for (const userId of allUserIdList) {
         const roomIdList = allUserRoomRoleList.filter(x => x.userId === userId).map(x => x.roomId);
-        const friendIdList = (await jianghuKnex(tableEnum.duoxing_user_friend).where({ userId, friendStatus: duoxingFriendStatusEnum.isFriend }).select('friendId')).map(item => item.friendId);
+        const friendIdList = (await jianghuKnex('duoxing_user_friend').where({ userId, friendStatus: duoxingFriendStatusEnum.isFriend }).select('friendId')).map(item => item.friendId);
 
         const userHistoryIdList = await service.data.duoxingMessage.getUserTopChatIdList(userId);
         const roomHistoryIdList = await service.data.duoxingMessage.getRoomTopChatIdList(roomIdList);
 
         const historyIdList = userHistoryIdList.concat(roomHistoryIdList).map(item => item.id);
 
-        let historyListTmp = await jianghuKnex(tableEnum.duoxing_message_history).whereIn('id', historyIdList).select();
+        let historyListTmp = await jianghuKnex('duoxing_message_history').whereIn('id', historyIdList).select();
 
         historyListTmp = _.orderBy(historyListTmp, [ 'messageTimeString' ], [ 'asc' ]);
 
@@ -63,7 +63,7 @@ module.exports = app => {
         }
 
         // 对比修复数据
-        const oldChatSessionList = await jianghuKnex(tableEnum.duoxing_chat_session).where({ userId }).orderBy('topChatOrder', 'desc')
+        const oldChatSessionList = await jianghuKnex('duoxing_chat_session').where({ userId }).orderBy('topChatOrder', 'desc')
           .orderBy('lastMessageHistoryId', 'asc')
           .select();
         const deleteChatSessionIdSet = new Set();
@@ -100,7 +100,7 @@ module.exports = app => {
           }
         }
         if (deleteChatSessionIdSet.size) {
-          await jianghuKnex(tableEnum.duoxing_chat_session, this.ctx)
+          await jianghuKnex('duoxing_chat_session', this.ctx)
             .whereIn('id', [ ...deleteChatSessionIdSet ])
             .delete();
           logger.info('[syncChatSession.js] delete chat session', {
@@ -110,7 +110,7 @@ module.exports = app => {
         }
         if (addChatSessionList.length) {
           for (const subList of _.chunk(addChatSessionList, 50)) {
-            await jianghuKnex(tableEnum.duoxing_chat_session, this.ctx).insert(subList);
+            await jianghuKnex('duoxing_chat_session', this.ctx).insert(subList);
           }
           logger.info('[syncChatSession.js] insert chat session', {
             insert: addChatSessionList.length,

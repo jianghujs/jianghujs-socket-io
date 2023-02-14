@@ -2,11 +2,11 @@
 
 const Service = require("egg").Service;
 const { BizError, errorInfoEnum } = require("../constant/error");
-const { tableEnum, socketForward, duoxingChatMessageTypeEnum, duoxingMessageStatusEnum } = require("../constant/constant");
+const { socketForward, duoxingChatMessageTypeEnum, duoxingMessageStatusEnum } = require("../constant/constant");
 const validateUtil = require("@jianghujs/jianghu/app/common/validateUtil");
 const _ = require("lodash");
 const dayjs = require("dayjs");
-const actionDataScheme = Object.freeze({
+const appDataSchema = Object.freeze({
   getMessageHistory: {
     type: "object",
     additionalProperties: true,
@@ -61,12 +61,12 @@ class DuoxingChatService extends Service {
     const { userId, username } = this.ctx.userInfo;
 
     // 获取会话
-    const chatSessionList = await jianghuKnex(tableEnum.view01_duoxing_chat_session).where({ userId }).orderBy("topChatOrder", "desc").orderBy("lastMessageHistoryId", "desc").select();
+    const chatSessionList = await jianghuKnex('view01_duoxing_chat_session').where({ userId }).orderBy("topChatOrder", "desc").orderBy("lastMessageHistoryId", "desc").select();
     if (!chatSessionList || !chatSessionList.length) {
       return { rows: [] };
     }
     // 获取历史消息内容
-    const msgList = await jianghuKnex(tableEnum.view01_duoxing_message_history)
+    const msgList = await jianghuKnex('view01_duoxing_message_history')
       .whereIn(
         "id",
         chatSessionList.map((o) => o.lastMessageHistoryId)
@@ -101,14 +101,14 @@ class DuoxingChatService extends Service {
     const { appId } = config;
     const { actionData } = this.ctx.request.body.appData;
     const { userId, username } = this.ctx.userInfo;
-    validateUtil.validate(actionDataScheme.getMessageHistory, actionData);
+    validateUtil.validate(appDataSchema.getMessageHistory, actionData);
 
     const { messageType, userIdOrRoomId } = actionData;
     const pageSize = actionData.pageSize || 20;
     const lastId = actionData.lastId || 2147483647;
 
     if (duoxingChatMessageTypeEnum.user === messageType) {
-      const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
+      const messageHistoryList = await knex('view01_duoxing_message_history')
         .where("id", "<", lastId)
         .where({ messageType: duoxingChatMessageTypeEnum.user })
         .where(function () {
@@ -124,7 +124,7 @@ class DuoxingChatService extends Service {
     }
 
     if (duoxingChatMessageTypeEnum.room === messageType) {
-      const messageHistoryList = await knex(tableEnum.view01_duoxing_message_history)
+      const messageHistoryList = await knex('view01_duoxing_message_history')
         .where("id", "<", lastId)
         .where({ messageType: duoxingChatMessageTypeEnum.room })
         .where({ toRoomId: userIdOrRoomId })
@@ -142,12 +142,12 @@ class DuoxingChatService extends Service {
     const { appId } = config;
     const { actionData } = this.ctx.request.body.appData;
     const { userId, username } = this.ctx.userInfo;
-    validateUtil.validate(actionDataScheme.revokeMessage, actionData);
+    validateUtil.validate(appDataSchema.revokeMessage, actionData);
 
     const fromUsername = username;
     const { messageFingerprint } = actionData;
 
-    const messageHistory = await jianghuKnex(tableEnum.duoxing_message_history)
+    const messageHistory = await jianghuKnex('duoxing_message_history')
       .where({ messageFingerprint })
       .first();
     if (!messageHistory) {
@@ -167,7 +167,7 @@ class DuoxingChatService extends Service {
     } = messageHistory;
 
     const messageStatus = duoxingMessageStatusEnum.revoke;
-    await jianghuKnex(tableEnum.duoxing_message_history, this.ctx)
+    await jianghuKnex('duoxing_message_history', this.ctx)
       .where({ messageFingerprint })
       .update({ messageStatus });
 
@@ -207,11 +207,11 @@ class DuoxingChatService extends Service {
     const { appId } = config;
     const { actionData } = this.ctx.request.body.appData;
     const { userId, username } = this.ctx.userInfo;
-    validateUtil.validate(actionDataScheme.delMessageOffline, actionData);
+    validateUtil.validate(appDataSchema.delMessageOffline, actionData);
 
     const { messageType, userIdOrRoomId } = actionData;
 
-    await knex(tableEnum.duoxing_chat_session, this.ctx)
+    await knex('duoxing_chat_session', this.ctx)
       .where({ userId, type: messageType, chatId: userIdOrRoomId })
       .update({ unreadCount: 0 });
 
