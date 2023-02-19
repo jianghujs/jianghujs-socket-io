@@ -1,18 +1,15 @@
 'use strict';
 
 const path = require('path');
-const assert = require('assert');
 
 const { middleware, middlewareMatch } = require('@jianghujs/jianghu/config/middlewareConfig');
-const jianghuPathTemp = require.resolve('@jianghujs/jianghu');
-const jianghuPath = path.join(jianghuPathTemp, '../');
+
+const eggJianghuDirResolve = require.resolve('@jianghujs/jianghu');
+const eggJianghuDir = path.join(eggJianghuDirResolve, '../');
 
 module.exports = appInfo => {
-  assert(appInfo);
 
   const appId = 'jianghujs_demo_socket_io';
-  const uploadDir = path.join(appInfo.baseDir, 'upload');
-  const downloadBasePath = `/${appId}/upload`;
 
   return {
     jiangHuConfig: {
@@ -38,32 +35,42 @@ module.exports = appInfo => {
       syncChatSessionInterval: "5m", // 5m 30s
     },
     appId,
-    primaryColor: "#0cc1e2",
-    primaryColorA80: "#F1FDFF",
     appTitle: "Socket IO 演示",
-    appLogo: `${appId}/public/img/logo.png`,
-    appType: "single",
-    appDirectoryLink: "",
+    appLogo: `${appId}/public/img/logo.svg`,
     indexPage: `/${appId}/page/index`,
     loginPage: `/${appId}/page/login`,
     helpPage: `/${appId}/page/help`,
-    uploadDir,
-    downloadBasePath,
+
+    uploadDir: path.join(appInfo.baseDir, 'upload'),
+    downloadBasePath: `/${appId}/upload`,
+
+    primaryColor: "#0cc1e2",
+    primaryColorA80: "#F1FDFF",
+
     static: {
-      maxAge: 0,
-      buffer: false,
+      dynamic: true,
       preload: false,
-      maxFiles: 0,
+      maxAge: 31536000,
+      buffer: true,
       dir: [
-        { prefix: `/${appId}/public/`, dir: path.join(appInfo.baseDir, "app/public") },
-        { prefix: `/${appId}/public/`, dir: path.join(jianghuPath, "app/public") },
+        { prefix: `/${appId}/public/`, dir: path.join(appInfo.baseDir, 'app/public') },
+        { prefix: `/${appId}/public/`, dir: path.join(eggJianghuDir, 'app/public') },
       ],
     },
-    view: {
-      defaultViewEngine: "nunjucks",
-      mapping: { ".html": "nunjucks" },
-      root: [path.join(appInfo.baseDir, "app/view"), path.join(jianghuPath, "app/view")].join(","),
+    jianghuConfig: {
+      enableUploadStaticFileCache: true,
+      enableUploadStaticFileAuthorization: false,
     },
+
+    view: {
+      defaultViewEngine: 'nunjucks',
+      mapping: { '.html': 'nunjucks' },
+      root: [
+        path.join(appInfo.baseDir, 'app/view'),
+        path.join(eggJianghuDir, 'app/view'),
+      ].join(','),
+    },
+
     middleware,
     ...middlewareMatch,
     socketIO: {
