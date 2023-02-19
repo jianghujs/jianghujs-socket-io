@@ -1,33 +1,31 @@
 <!--聊天对话界面-->
 <script type="text/x-template" id="_ChattingMessagePage">
-<load_more ref="chattingPage" :sessionId="sessionId"
-           :handler="getNextChatHistoryList"
-           class="chattingPage py-sm-3 px-sm-7 pa-2"
-           @onScrollToBottom="newMsgCount = 0"
-           @click="$emit('click', $event)">
+<load_more
+  ref="chattingPage" :sessionId="sessionId"
+  :handler="getNextChatHistoryList"
+  class="chattingPage py-sm-3 px-sm-7 pa-2"
+  @onScrollToBottom="newMsgCount = 0"
+  @click="$emit('click', $event)">
 <template v-if="sessionId">
   <template v-if="chatHistoryList && chatHistoryList.length > 0">
     <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.messageFingerprint">
       <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }" style="flex:1">
-        <template v-if="item.messageStatus === 'revoke'">
-          <div class="revokeMsg">
-            <span>{{ isFromMe(item) ? '我' : item.fromUsername }} 撤回了消息</span>
-            <span class="reEdit" v-if="isFromMe(item) && Date.now()-dayjs(item.messageTimestamp).valueOf()<=300000" @click="appendMsg(item.messageContent)"><a>重新编辑</a></span>
-          </div>
-        </template>
-        <template v-else-if="item.noticeType">
+        <template v-if="item.noticeType">
           <div class="noticeMsg">{{ item.messageContent }}</div>
         </template>
         <template v-else>
           <v-avatar size="40px" class="ma-2 mt-1">
-            <dx-img :src="upload + item.fromUserAvatar" userAvatar></dx-img>
+            <v-img :src="upload + item.fromUserAvatar">
+              <template v-slot:placeholder>
+                <v-icon size="45" style="opacity: 0.2">mdi-account-circle</v-icon>
+              </template>
+            </v-img>
           </v-avatar>
           <v-icon
             class="msgArrow"
             :class="{ 'isFromMe': isFromMe(item) }"
             :color="isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'"
-          >mdi-menu-left
-          </v-icon>
+          >mdi-menu-left</v-icon>
           <div class="messageItemBox">
             <div class="username" :class="{ 'isFromMe': isFromMe(item) }">
               <span>{{ item.fromUsername }}</span>
@@ -41,15 +39,6 @@
                 v-if="item.messageContentType === 'text'"
                 :content="item.messageContent"
                 :id="item.messageFingerprint"
-                @openMenu="openMenu"
-              />
-              <VoiceMessage
-                v-if="item.messageContentType === 'audio'"
-                :progress="item.progress"
-                :loading="item.loading"
-                :id="item.messageFingerprint"
-                :content="item.messageContent"
-                :is-me="isFromMe(item)"
               />
               <ImageMessage
                 v-if="item.messageContentType === 'image'"
@@ -59,12 +48,6 @@
               />
               <FileMessage
                 v-if="item.messageContentType === 'file'"
-                :progress="item.progress"
-                :content="item.messageContent"
-                :id="item.messageFingerprint"
-              />
-              <VideoMessage
-                v-if="item.messageContentType === 'video'"
                 :progress="item.progress"
                 :content="item.messageContent"
                 :id="item.messageFingerprint"
@@ -84,8 +67,7 @@
               <v-spacer></v-spacer>
             </div>
           </div>
-          <v-spacer/>
-          <div style="width: 60px"/>
+          <v-spacer />
         </template>
       </div>
     </div>
@@ -94,12 +76,10 @@
 <div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
 </load_more>
 </script>
-{% include 'components/widget/loadMore.html' %}
 <script>
 window.registerData(
   {
-    noticeType: [
-    ],
+    noticeType: [],
     chatHistoryList: null,
     newMsgCount: 0,
     upload: window.appInfo.upload,
@@ -134,7 +114,7 @@ Vue.component('ChattingMessagePage', {
     }
   },
   created() {
-    this.delMessageOffline();
+    this.doUiAction('delMessageOffline')
   },
 
   mounted() {
@@ -146,20 +126,10 @@ Vue.component('ChattingMessagePage', {
     }, 300);
   },
   methods: {
+
     onPageScroll(event) {
       if (event.target.scrollTop === 0) {
         this.loadMore();
-      }
-    },
-    openMenu(messageFingerprint) {
-      try {
-        console.log(this.$refs['messageMenuBtn_' + messageFingerprint][0].$el);
-        this.$refs['messageMenuBtn_' + messageFingerprint][0].$el.click();
-      } catch (err) {
-        console.error(err);
-        requestAnimationFrame(() => {
-          this.openMenu(messageFingerprint);
-        });
       }
     },
     // 断线重连监听
@@ -167,7 +137,7 @@ Vue.component('ChattingMessagePage', {
       console.log("断线重连监听:middleChatMessageWidget", hasError)
       if (hasError) {
         this.getNextChatHistoryList();
-        this.delMessageOffline();
+        this.doUiAction('delMessageOffline')
       }
     },
     dayjs: window.dayjs,
@@ -205,7 +175,7 @@ Vue.component('ChattingMessagePage', {
         return;
       }
       if (!params.loading && !params.error) {
-        this.delMessageOffline();
+        this.doUiAction('delMessageOffline')
       }
     },
 
@@ -223,23 +193,12 @@ Vue.component('ChattingMessagePage', {
       }
       this.$forceUpdate();
     },
-    // 已读
-    async delMessageOffline() {
-      this.doUiAction('delMessageOffline')
-    },
     isFromMe(item) {
-      if (!this.userInfo) {
-        this.userInfo = JSON.parse(
-          localStorage.getItem(window.appInfo.appId + '_userInfo')
-        );
-      }
-      return item.fromUserId === this.userInfo.userId;
+      return item.fromUserId === userInfo.userId;
     },
     // 格式化时间
-    formatChatTime,
     getChatMenu(item) {
       const menu = [
-        {title: '引用', method: this.quoteMsg},
       ];
       if (item.messageContentType === 'text') {
         menu.push({title: '复制', method: this.copyMsg});
@@ -249,26 +208,25 @@ Vue.component('ChattingMessagePage', {
         this.isFromMe(item) &&
         new Date().getTime() - dayjs(item.messageTimeString).valueOf() <= 300000
       ) {
-        menu.push({title: '撤销', method: this.revokeMsg});
       }
       return menu;
     },
     async getMessageHistoryRequest(lastId, userIdOrRoomId) {
       return (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getMessageHistory',
-                actionData: {
-                  lastId,
-                  pageSize: 15,
-                  messageType: this.isRoom ? 'room' : 'user',
-                  userIdOrRoomId: userIdOrRoomId
-                }
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'chat',
+              actionId: 'getMessageHistory',
+              actionData: {
+                lastId,
+                pageSize: 15,
+                messageType: this.isRoom ? 'room' : 'user',
+                userIdOrRoomId: userIdOrRoomId
               }
             }
-          })
+          }
+        })
       ).data.appData.resultData;
     },
     async getNextChatHistoryList() {
@@ -303,23 +261,7 @@ Vue.component('ChattingMessagePage', {
       this.$refs.chattingPage.scrollToBottom({mustToBottom});
     },
     async copyMsg(item, id) {
-      const copymsg = window.document.querySelector('#copymsg');
-      const btn = window.document.querySelector('#copymsgbtn');
-      copymsg.value = item.messageContent;
-      btn.click();
-      copymsg.blur();
       window.vtoast.success('复制成功');
-    },
-    quoteMsg(item) {
-      this.doUiAction('onQuoteMsg', item)
-    },
-    revokeMsg(item) {
-      const chatHistoryListIndex = this.chatHistoryList.findIndex((v, i) => {
-        return v.messageFingerprint === item.messageFingerprint;
-      });
-      this.chatHistoryList[chatHistoryListIndex].messageContent = '撤销消息';
-      this.chatHistoryList[chatHistoryListIndex].messageStatus = 'revoke';
-      this.doUiAction('sendRevokeMsg', item)
     },
     deleteMsg(item) {
       this.chatHistoryList = this.chatHistoryList.filter((v, i) => {
@@ -332,24 +274,100 @@ Vue.component('ChattingMessagePage', {
     appendMsg(msg) {
       this.messageTextareaValue = `${this.messageTextareaValue || ''}${msg || ''}`
     },
+
+
+    /**
+     * 重新发送消息，弹窗
+     * @param selectMsg
+     */
+    async reSendMsg(selectMsg) {
+      this.currentResendMsg = { ...selectMsg };
+      const { messageContentType } = this.currentResendMsg;
+      if (messageContentType === 'file') {
+        await window.confirmDialog({
+          title: '文件上传失败,请重新上传文件!',
+          confirmColor: 'primary',
+          cancelBtn: false
+        })
+        return;
+      }
+      if (await window.confirmDialog({
+        title: '该消息发送失败，是否重发？',
+        confirmColor: 'primary'
+      })) {
+        this.doReSendMsg();
+      }
+    },
+    /** 重新发送消息 */
+    async doReSendMsg() {
+      if (window.socket && !window.socket.online) {
+        window.vtoast.fail('离线中...，请稍后尝试发送');
+        return false;
+      }
+
+      if (this.currentResendMsg) {
+        await window.socket.emitMsg(
+          this.currentResendMsg,
+        );
+        this.$forceUpdate();
+        // 成功后
+        // console.log('this.currentResendMsg', this.currentResendMsg);
+        this.messageTextareaValue = null;
+        this.doUiAction('scrollToBottom', { mustToBottom: true })
+      }
+      return null;
+    },
+    formatChatTime(time){
+      time = this.dayjs(time).format('YYYY-MM-DD HH:mm:ss')
+      const date = time.toString();
+      const year = date.split('-')[0];
+      const month = date.split('-')[1];
+      const day = date.split('-')[2];
+      const d1 = new Date(year + '/' + month + '/' + day.split(' ')[0]);
+      const d3 = new Date(date.replace(/-/g, '/'));
+      const dd = new Date();
+      const y = dd.getFullYear();
+      const m = dd.getMonth() + 1;
+      const d = dd.getDate();
+      const d2 = new Date(y + '/' + m + '/' + d);
+      const iday = parseInt(d2 - d1) / 1000 / 60 / 60 / 24;
+      let hours = d3.getHours();
+      let minutes = d3.getMinutes();
+      if (minutes < 10) {
+        minutes = '0' + minutes;
+      }
+      if (hours < 10) {
+        hours = '0' + hours;
+      }
+      if (iday === 0) {
+        if (hours >= 12) {
+          return '下午 ' + hours + ':' + minutes;
+        }
+        return '上午 ' + hours + ':' + minutes;
+
+      } else if (iday === 1) {
+        let dt = '';
+        if (hours >= 12) {
+          dt = '下午 ' + hours + ':' + minutes;
+        } else {
+          dt = '上午 ' + hours + ':' + minutes;
+        }
+        return '昨天 ' + dt;
+      } else if (iday === 2) {
+        let dt = '';
+        if (hours >= 12) {
+          dt = '下午 ' + hours + ':' + minutes;
+        } else {
+          dt = '上午 ' + hours + ':' + minutes;
+        }
+        return '前天 ' + dt;
+      }
+      return year + '/' + month + '/' + d1.getDate()
+    },
   }
 });
 </script>
 <style>
-.revokeMsg {
-  width: 100%;
-  line-height: 50px;
-  font-size: 13px;
-  color: #999999;
-  text-align: center;
-}
-
-.reEdit {
-  line-height: 50px;
-  font-size: 13px;
-  color: blue;
-  text-align: left;
-}
 
 .noticeMsg {
   width: 100%;
@@ -447,24 +465,6 @@ Vue.component('ChattingMessagePage', {
 
 .chattingPage .messageItem .v-icon.isFromMe {
   transform: rotate(180deg);
-}
-
-.emptyChatDetail {
-  text-align: center;
-  color: #999999;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  height: 30px;
-  justify-content: center;
-  width: 100%;
-  line-height: 30px !important;
-  overflow: hidden;
-}
-
-.emptyChatDetail img {
-  width: 20px;
-  height: 20px;
 }
 
 .username.isFromMe {

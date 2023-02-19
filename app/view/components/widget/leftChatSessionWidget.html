@@ -1,29 +1,29 @@
 <!-- 左栏聊天列表 -->
 <script type="text/x-template" id="_ChatWidget">
 <v-card
-    class="rounded-0 chatItem ma-0 pt-2"
-    :class="[chatWidgetStyle]"
-    @click="clearOfflineMessageCount"
+  class="rounded-0 chatItem ma-0 pt-2"
+  :class="[chatWidgetStyle]"
+  @click="clearOfflineMessageCount"
 >
 <div class="d-flex flex-no-wrap justify-space-between">
-  <v-badge bordered right color="red" :content="data_.offlineMessageCount"
-           :value="data_.offlineMessageCount" offset-x="23" offset-y="22">
-    <template v-if="isRoom">
-      <v-avatar size="40px" class="ma-2">
-        <dx-img :src="upload + data_.chatAvatar" roomAvatar></dx-img>
-      </v-avatar>
-    </template>
-    <template v-else>
+  <v-badge
+    bordered right color="red" :content="data_.offlineMessageCount"
+    :value="data_.offlineMessageCount" offset-x="23" offset-y="22">
+    <template>
       <v-badge
-          bordered
-          bottom
-          :color="isOnline_ ? 'green accent-3' : 'grey lighten-2'"
-          dot
-          offset-x="17"
-          offset-y="17"
+        bordered
+        bottom
+        :color="isOnline_ ? 'green accent-3' : 'grey lighten-2'"
+        dot
+        offset-x="17"
+        offset-y="17"
       >
         <v-avatar size="40px" class="ma-2">
-          <dx-img :src="upload + data_.chatAvatar" userAvatar></dx-img>
+          <v-img :src="upload + data_.chatAvatar">
+            <template v-slot:placeholder>
+              <v-icon size="50" style="opacity: 0.2">mdi-account-circle</v-icon>
+            </template>
+          </v-img>
         </v-avatar>
       </v-badge>
     </template>
@@ -39,14 +39,14 @@
     </v-card-title>
     <div class="d-flex align-center" style="width: 100%">
       <v-card-subtitle
-          class="ma-0 pa-0 subtitle overflow-hidden d-block"
-          :style="{ 'color': '#999999' }"
-          style="width: 90%; text-overflow: ellipsis; flex: 1"
-          v-html="filterXss(data_.fromUsername + '：' + getMessageContent(data_, true))"
+        class="ma-0 pa-0 subtitle overflow-hidden d-block"
+        :style="{ 'color': '#999999' }"
+        style="width: 90%; text-overflow: ellipsis; flex: 1"
+        v-html="filterXss(data_.fromUsername + '：' + getMessageContent(data_, true))"
       ></v-card-subtitle>
       <span
-          style="font-size: 12px; color: #999999"
-          class="pr-2"
+        style="font-size: 12px; color: #999999"
+        class="pr-2"
       >{{ parseTimerLabel(data_.messageTimeString) }}</span>
     </div>
   </div>
@@ -85,7 +85,7 @@ Vue.component('ChatWidget', {
   },
   data() {
     return {
-      userInfo: JSON.parse(localStorage.getItem(window.appInfo.appId + '_userInfo')),
+      userInfo: window.userInfo,
       upload: window.appInfo.upload,
       chatWidgetStyle: {}
     };

@@ -1,46 +1,46 @@
 <!-- 聊天操作框 -->
 <script type="text/x-template" id="_ChatInputWidget">
 <div
-    class="d-flex footer"
-    :class="{ 'flex-column': mobExpandChat, 'flex-row-reverse': !mobExpandChat }"
+  class="d-flex footer"
+  :class="{ 'flex-column': mobExpandChat, 'flex-row-reverse': !mobExpandChat }"
 >
-<v-toolbar flat class="chatToolbar" v-if="!isMobile">
-  <v-btn
+  <v-toolbar flat class="chatToolbar" v-if="!isMobile">
+    <v-btn
       class="emoticon-open-btn"
       icon
       @mousedown="doUiAction('preventDefault')"
       @mouseup="isEmotionDialogShow = !isEmotionDialogShow"
-  >
-    <v-icon>mdi-emoticon-outline</v-icon>
-  </v-btn>
-  <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'filePicker' })">
-    <v-icon>mdi-folder-open-outline</v-icon>
-  </v-btn>
-  <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
-    <v-icon>mdi-image-outline</v-icon>
-  </v-btn>
-  <v-spacer/>
-</v-toolbar>
-<div
+    >
+      <v-icon>mdi-emoticon-outline</v-icon>
+    </v-btn>
+    <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'filePicker' })">
+      <v-icon>mdi-folder-open-outline</v-icon>
+    </v-btn>
+    <v-btn icon class="fileInputBox" @click="doUiAction('fileInputTap', { type: 'imagePicker' })">
+      <v-icon>mdi-image-outline</v-icon>
+    </v-btn>
+    <v-spacer />
+  </v-toolbar>
+  <div
     class="flex-grow-1 d-flex ml-2"
     :class="{ 'mr-2': isMobile, 'mb-2': isMobile, 'mt-2': isMobile }"
->
-  <v-btn
+  >
+    <v-btn
       class="mb-2 mr-2"
       v-if="isMobile"
       text
       icon
       color="grey darken-1"
       @click="toggleRecordMode"
-  >
-    <v-icon>{{ recordMode ? 'mdi-keyboard-outline' : 'mdi-microphone' }}</v-icon>
-  </v-btn>
-  <v-form
+    >
+      <v-icon>{{ recordMode ? 'mdi-keyboard-outline' : 'mdi-microphone' }}</v-icon>
+    </v-btn>
+    <v-form
       :class="{ 'pl-2': isMobile, 'pr-2': isMobile }"
       v-if="!recordMode || !isMobile"
       class="text-body-2 mt-0 mr-2 d-block"
-  >
-    <v-textarea
+    >
+      <v-textarea
         v-model="messageTextareaValue"
         no-resize
         @paste="onPaste"
@@ -61,70 +61,70 @@
         @click="focusTextArea"
         class="ma-0"
         ref="messageTextareaDom"
-    />
-  </v-form>
-</div>
+      />
+    </v-form>
+  </div>
 
-<template>
-  <input
+  <template>
+    <input
       ref="filePicker"
       type="file"
       class="fileInput"
       @change="onChooseFile"
       v-show="mobExpandChat"
-  />
-  <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage"/>
-  <input ref="videoPicker" type="file" class="fileInput" accept="video/*" @change="onChooseVideo"/>
-</template>
-<div class="d-flex ma-2 align-center justify-end">
-  <template v-if="mobExpandChat">
-    <span class="caption" style="color: #BDBDBD">按 Ctrl+Enter 换行，按 Enter 发送</span>
-    <div class="mr-2"></div>
+    />
+    <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage" />
   </template>
-  <v-btn
+  <div class="d-flex ma-2 align-center justify-end">
+    <template v-if="mobExpandChat">
+      <span class="caption" style="color: #BDBDBD">按 Ctrl+Enter 换行，按 Enter 发送</span>
+      <div class="mr-2"></div>
+    </template>
+    <v-btn
       depressed
       color="primary"
       @mousedown="doUiAction('preventDefault')"
       @mouseup="doUiAction('sendMsg', {})"
-  >发送
-  </v-btn>
-</div>
-<Emotion
+    >发送
+    </v-btn>
+  </div>
+  <Emotion
     v-model="isEmotionDialogShow"
     @close="isEmotionDialogShow = false"
     :class="{ 'mobExpandChat': isMobile && mobExpandChat}"
     @chooseEmotionItem="onEmotionTap"
     app
-    v-click-outside="{
-        handler: onClickOutside,
-        include: include,
-      }"
-></Emotion>
+    v-click-outside="emotionOutSide"
+  ></Emotion>
 </div>
 </script>
 
 <script>
 window.registerData(
-    {
-      audioPermission: false,
-      isEmotionDialogShow: false, // 表情包开关
-      startRecord: false, // 是否开始录音
-      recordPlayIng: false, // 播放状态
-      recordPlaySource: null, // 播放状态
-      recordSendStatus: true, // 松开手指的位置，决定是否发送语音
-      recordMode: false, // 语音模式
-      textareaRules: len => v => (v || '').length < len || `消息内容最长${len}个文字`
-    },
-    {
-      textareaExpanded() {
-        return (
-            this.mobExpandChat ||
-            (this.messageTextareaValue &&
-                this.messageTextareaValue.length &&
-                !this.recordMode)
-        );
-      }
+  {
+    audioPermission: false,
+    isEmotionDialogShow: false, // 表情包开关
+    startRecord: false, // 是否开始录音
+    recordPlayIng: false, // 播放状态
+    recordPlaySource: null, // 播放状态
+    recordSendStatus: true, // 松开手指的位置，决定是否发送语音
+    recordMode: false, // 语音模式
+    textareaRules: len => v => (v || '').length < len || `消息内容最长${len}个文字`,
+    emotionOutSide: {
+      handler: () => this.isEmotionDialogShow = false,
+      include: () => [document.querySelector('.emoticon-open-btn')],
     }
+  },
+  {
+    textareaExpanded() {
+      return (
+        this.mobExpandChat ||
+        (this.messageTextareaValue &&
+          this.messageTextareaValue.length &&
+          !this.recordMode)
+      );
+    }
+  }
 )
 
 Vue.component('ChatInputWidget', {
@@ -136,42 +136,7 @@ Vue.component('ChatInputWidget', {
   created() {
     this.initMob();
   },
-  watch: {
-    messageTextareaValue(value, old) {
-      // 如果当前内容和草稿内容一样，就不触发 at
-      if (value === this.draft[this.currentChatSessionId]) {
-        return;
-      }
-      this.draft[this.currentChatSessionId] = value;
-      localStorage.setItem('draft', JSON.stringify(this.draft));
-      if ((value || '').length - (old || '').length === 1) {
-        const selectionStart =
-            this.$refs.messageTextareaDom.$el.getElementsByTagName(
-                'textarea'
-            )[0].selectionStart;
-      }
-    },
-  },
   methods: {
-    requestAudioPermission() {
-      return new Promise((resolve, reject) => {
-        Recorder.getPermission().then(
-            () => {
-              console.log('给权限了');
-              this.audioPermission = true;
-              resolve(true)
-            },
-            error => {
-              console.log(`${error.name} : ${error.message}`);
-              this.audioPermission = false;
-              reject(false)
-            }
-        );
-      })
-    },
-    include() {
-      return [document.querySelector('.emoticon-open-btn')];
-    },
     // 当点击表情时
     onEmotionTap({emotion: {dir, ext}, index}) {
       if (dir === 'face01') {
@@ -188,18 +153,11 @@ Vue.component('ChatInputWidget', {
       }
     },
 
-    // 点击表情包外
-    onClickOutside(event) {
-      this.isEmotionDialogShow = false;
-    },
     /**
      * 初始化在手机上的事件
      */
     initMob() {
       if (this.isMobile) {
-        document.addEventListener('touchstart', this.startTouch);
-        document.addEventListener('touchmove', this.touchMove);
-        document.addEventListener('touchend', this.stopRecord);
         // 手机端 打开必定会 启动键盘
         this.registerOnResize();
       }
@@ -219,15 +177,6 @@ Vue.component('ChatInputWidget', {
           target.resizeFlag = null;
         }, 200);
       };
-    },
-    /**
-     * 录音和文字模式切换
-     */
-    toggleRecordMode() {
-      this.recordMode = !this.recordMode;
-      if (this.recordMode) {
-        this.mobileMessageTextareaFocus = false
-      }
     },
 
     /**
@@ -282,9 +231,9 @@ Vue.component('ChatInputWidget', {
       const messageTextareaDom = document.getElementById('messageTextareaId');
       const pos = messageTextareaDom.selectionEnd;
       this.messageTextareaValue =
-          this.messageTextareaValue.slice(0, pos) +
-          '\n' +
-          this.messageTextareaValue.slice(pos);
+        this.messageTextareaValue.slice(0, pos) +
+        '\n' +
+        this.messageTextareaValue.slice(pos);
 
       this.$nextTick(() => {
         messageTextareaDom.selectionEnd = pos + 1;
@@ -298,8 +247,8 @@ Vue.component('ChatInputWidget', {
         this.mobileMessageTextareaFocus = true
         if (!this.isMobile) {
           messageTextareaDom.selectionStart =
-              messageTextareaDom.selectionEnd =
-                  this.messageTextareaValue.length;
+            messageTextareaDom.selectionEnd =
+              this.messageTextareaValue.length;
         }
       });
     },
@@ -336,20 +285,7 @@ Vue.component('ChatInputWidget', {
       });
       this.$refs.imagePicker.value = null;
     },
-    // 当选择视频
-    async onChooseVideo(event) {
-      const messageContentType = duoxingMessageContentTypeEnum.video;
-      await this.doUiAction('sendMsg', {
-        messageContent: JSON.stringify({
-          filename: '',
-          downloadPath: await window.jianghuAxios.fileToBase64(event.target.files[0]),
-          binarySize: ''
-        }),
-        messageContentType,
-        file: event.target.files[0]
-      });
-      this.$refs.videoPicker.value = null;
-    },
+
     messageTextareaDomBlur() {
       this.$refs.messageTextareaDom.blur();
     },
@@ -359,7 +295,6 @@ Vue.component('ChatInputWidget', {
      */
     focusTextArea(event) {
       try {
-        // this.doUiAction('scrollToBottom')
         this.mobileMessageTextareaFocus = true
       } catch (e) {
         this.$nextTick(() => {

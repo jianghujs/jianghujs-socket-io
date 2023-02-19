@@ -1,243 +1,212 @@
 <!-- 左边栏 -->
 <script type="text/x-template" id="_LeftPanel">
-  <div>
-    <v-scroll-x-transition>
-      <v-navigation-drawer
-        app
-        width="285"
-        class="navigation-drawer mob-app-left"
-        v-show="true"
-        permanent
-        touchless
-      >
-        <!--   用户信息   -->
-        <LeftUserWidget />
-        <v-list class="leftDataList" ref="leftDataList">
-          <v-list-item-group
-            :value="currentChatSessionId"
-            @change="onLeftItemChange"
-            color="primary"
-            active-class
-            class="listItem"
-          >
-            <template v-if="chatList.length">
-              <template v-for="(item, index) in chatList">
-                <div :data-index="index"
-                     :key="`${index}_${item.chatId}`">
-                  <v-list-item
-                    v-if="canRender(index)"
-                    class="pa-0 ma-0"
-                    :value="getDataId(item)"
-                    :class="{ 'activeItem': isActiveItem(item) }"
-                  >
-                    <ChatWidget
-                      :isOnline="isOnline(item.chatId)"
-                      @onClearUnread="delMessageOffline"
-                      :ref="'chatWidget_' + getDataId(item)"
-                      :data="item"
-                    />
-                  </v-list-item>
-                  <div v-else class="leftDataListItemEmpty d-flex" style="height: 70px">
-                    <div class="empty_avatar ma-2"></div>
-                    <div class="empty_chatInfos d-flex">
-                      <div class="empty_title ma-2"></div>
-                      <div class="empty_message ma-2"></div>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </template>
-            <template v-else>
-              <div style="width: 100%; line-height: 100px; text-align: center;">
-                加载中
+<div>
+  <v-scroll-x-transition>
+    <v-navigation-drawer
+      app
+      width="285"
+      class="navigation-drawer mob-app-left"
+      v-show="true"
+      permanent
+      touchless
+    >
+      <!--   用户信息   -->
+      <LeftUserWidget />
+      <v-list class="leftDataList" ref="leftDataList">
+        <v-list-item-group
+          :value="currentChatSessionId"
+          @change="onLeftItemChange"
+          color="primary"
+          active-class
+          class="listItem"
+        >
+          <template v-if="chatList.length">
+            <template v-for="(item, index) in chatList">
+              <div
+                :data-index="index"
+                :key="`${index}_${item.chatId}`">
+                <v-list-item
+                  v-if="canRender(index)"
+                  class="pa-0 ma-0"
+                  :value="$root.getDataId(item)"
+                  :class="{ 'activeItem': isActiveItem(item) }"
+                >
+                  <ChatWidget
+                    :isOnline="isOnline(item.chatId)"
+                    @onClearUnread="doUiAction('delMessageOffline')"
+                    :ref="'chatWidget_' + $root.getDataId(item)"
+                    :data="item"
+                  />
+                </v-list-item>
               </div>
             </template>
-          </v-list-item-group>
-        </v-list>
-      </v-navigation-drawer>
-    </v-scroll-x-transition>
-  </div>
+          </template>
+          <template v-else>
+            <div style="width: 100%; line-height: 100px; text-align: center;">
+              加载中
+            </div>
+          </template>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+  </v-scroll-x-transition>
+</div>
 </script>
 
 
 <script>
-  window.registerData(
-    {
-      leftListScrollTop: 0,
-      leftListScrollHeight: 0,
+window.registerData(
+  {
+    leftListScrollTop: 0,
+    leftListScrollHeight: 0,
+  },
+  {}
+)
+Vue.component('LeftPanel', {
+  template: '#_LeftPanel',
+  mixins: [window.jianghuUiActionMixins],
+  data: () => window.vueData,
+  vueComponent: 'leftPanel',
+  computed: window.vueComputed,
+  props: {},
+  watch: {
+    dataSyncStatus: {
+      deep: true,
+      handler(value) {
+      }
+    }
+  },
+  mounted() {
+  },
+  async created() {
+    this.initLeftDataListScroll();
+    this.getChatSessionList({type: 'created'});
+  },
+  methods: {
+
+    isActiveItem(item) {
+      if (item.friendDeviceId === undefined) {
+        return this.friendDeviceId == null && this.currentChatSessionId === this.$root.getDataId(item);
+      }
+      return this.friendDeviceId === item.friendDeviceId && this.currentChatSessionId === this.$root.getDataId(item)
+
     },
-    { }
-  )
-  Vue.component('LeftPanel', {
-    template: '#_LeftPanel',
-    mixins: [ window.jianghuUiActionMixins ],
-    data: () => window.vueData,
-    vueComponent: 'leftPanel',
-    computed: window.vueComputed,
-    props: {
+    isRobot(item) {
+      return !!item.friendDeviceType;
     },
-    watch: {
-      dataSyncStatus: {
-        deep: true,
-        handler(value) {
+    canRender(index) {
+      return index * 70 >= this.leftListScrollTop - 210 && index * 70 <= this.leftListScrollTop + this.leftListScrollHeight + 210;
+    },
+
+    // 获取会话列表
+    async getChatSessionList({type}) {
+      this.chatListBackUps = (
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'chat',
+              actionId: 'getChatSession',
+              mark: type
+            }
+          }
+        })
+      ).data.appData.resultData.rows;
+
+      // chatRoomExtend 解析
+      this.chatListBackUps.forEach(item => {
+        try {
+          if (item.chatRoomExtend) {
+            item.chatRoomExtend = JSON.parse(item.chatRoomExtend);
+          } else {
+            item.chatRoomExtend = {};
+          }
+        } catch (error) {
+          item.chatRoomExtend = {};
+        }
+      });
+      this.doUiAction('reFilterList')
+      if (!this.isMobile && !this.currentChatSessionId) {
+        this.currentChatSessionId = this.chatListBackUps[0].chatId;
+      }
+    },
+    updateChatListItem({params}) {
+      // 更新完整数据表
+      let nowIndex = this.chatListBackUps.findIndex(v => {
+        return v.chatId === this.$root.getDataId(params);
+      });
+      if (nowIndex >= 0) {
+        for (const key of Object.keys(params)) {
+          if (params[key]) {
+            this.chatListBackUps[nowIndex][key] = params[key];
+          }
+        }
+      }
+      // 更新当前UI显示的数据表
+      nowIndex = this.chatList.findIndex(v => {
+        return v.chatId === this.$root.getDataId(params);
+      });
+      if (nowIndex >= 0) {
+        for (const key of Object.keys(params)) {
+          if (params[key]) {
+            this.chatList[nowIndex][key] = params[key];
+          }
         }
       }
     },
-    mounted() { },
-    async created() {
-      this.initLeftDataListScroll();
-      this.getChatSessionList({ type: 'created' });
+
+    /**
+     * 事件回调
+     * @param value
+     */
+    // 左侧点击
+    onLeftItemChange(value) {
+      if (!value) return false;
+      const findNowChatItem = this.chatList.find(v => {
+        return this.$root.getDataId(v) === value;
+      });
+      if (findNowChatItem) {
+        this.currentChatSessionId = findNowChatItem.chatId;
+      }
+      return true;
     },
-    methods: {
-
-      isActiveItem(item) {
-        if (item.friendDeviceId === undefined) {
-          return this.friendDeviceId == null && this.currentChatSessionId === getDataId(item);
-        }
-        return this.friendDeviceId === item.friendDeviceId && this.currentChatSessionId === getDataId(item)
-
-      },
-      isRobot(item) {
-        return !!item.friendDeviceType;
-      },
-      canRender(index) {
-        return index * 70 >= this.leftListScrollTop - 210 && index * 70 <= this.leftListScrollTop + this.leftListScrollHeight + 210;
-      },
-
-      // 获取会话列表
-      async getChatSessionList({ type }) {
-        this.chatListBackUps = (
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'getChatSession',
-                mark: type
-              }
-            }
-          })
-        ).data.appData.resultData.rows;
-
-        // chatRoomExtend 解析
-        this.chatListBackUps.forEach(item => {
-          try {
-            if (item.chatRoomExtend) {
-              item.chatRoomExtend = JSON.parse(item.chatRoomExtend);
-            } else {
-              item.chatRoomExtend = {};
-            }
-          } catch (error) {
-            item.chatRoomExtend = {};
-          }
-        });
-        this.doUiAction('reFilterList')
-        if (!this.isMobile && !this.currentChatSessionId) {
-          this.currentChatSessionId = this.chatListBackUps[0].chatId;
-        }
-      },
-      updateChatListItem({params}) {
-        // 更新完整数据表
-        let nowIndex = this.chatListBackUps.findIndex(v => {
-          return v.chatId === this.getDataId(params);
-        });
-        if (nowIndex >= 0) {
-          for (const key of Object.keys(params)) {
-            if (params[key]) {
-              this.chatListBackUps[nowIndex][key] = params[key];
-            }
-          }
-        }
-        // 更新当前UI显示的数据表
-        nowIndex = this.chatList.findIndex(v => {
-          return v.chatId === this.getDataId(params);
-        });
-        if (nowIndex >= 0) {
-          for (const key of Object.keys(params)) {
-            if (params[key]) {
-              this.chatList[nowIndex][key] = params[key];
-            }
-          }
-        }
-      },
-
-      /**
-       * 已读
-       * @param chatId
-       * @return {Promise<void>}
-       */
-      async delMessageOffline(chatId) {
-        const clickChatSession = this.chatListBackUps.find(
-          chatSession => chatSession.chatId === chatId
-        );
-        if (clickChatSession && clickChatSession.offlineMessageCount) {
-          clickChatSession.offlineMessageCount = 0;
-          await window.jianghuAxios({
-            data: {
-              appData: {
-                pageId: 'chat',
-                actionId: 'delMessageOffline',
-                actionData: {
-                  messageType: clickChatSession.messageType,
-                  userIdOrRoomId: `${chatId}`
-                }
-              }
-            }
-          });
-        }
-      },
-      /**
-       * 事件回调
-       * @param value
-       */
-      // 左侧点击
-      onLeftItemChange(value) {
-        if (!value) return false;
-        const findNowChatItem = this.chatList.find(v => {
-          return getDataId(v) === value;
-        });
-        if (findNowChatItem) {
-          this.currentChatSessionId = findNowChatItem.chatId;
-        }
-        return true;
-      },
-      /**
-       * 当左侧列表开始滑动
-       * @param event
-       */
-      leftListOnScroll(event) {
-        if (this.willRanderLeftListTimer) {
-          clearTimeout(this.willRanderLeftListTimer);
-        }
-        this.willRanderLeftListTimer = setTimeout(() => {
+    /**
+     * 当左侧列表开始滑动
+     * @param event
+     */
+    leftListOnScroll(event) {
+      if (this.willRanderLeftListTimer) {
+        clearTimeout(this.willRanderLeftListTimer);
+      }
+      this.willRanderLeftListTimer = setTimeout(() => {
+        this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
+        this.leftListScrollHeight = this.$refs.leftDataList.$el.offsetHeight;
+        console.log(this.leftListScrollHeight);
+      }, 60);
+    },
+    /**
+     * 绑定左侧的上下滑动
+     */
+    initLeftDataListScroll() {
+      try {
+        this.$nextTick(() => {
           this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
-          this.leftListScrollHeight = this.$refs.leftDataList.$el.offsetHeight;
-          console.log(this.leftListScrollHeight);
-        }, 60);
-      },
-      /**
-       * 绑定左侧的上下滑动
-       */
-      initLeftDataListScroll() {
-        try {
-          this.$nextTick(() => {
-            this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
-            this.leftListScrollHeight =
-              this.$refs.leftDataList.$el.offsetHeight;
-            this.$refs.leftDataList.$el.onscroll = this.leftListOnScroll;
-          });
-        } catch (e) {
-          requestAnimationFrame(() => {
-            this.initLeftDataListScroll();
-          });
-        }
-      },
-      /**
-       * 检查用户在线状态
-       * @param chatId
-       */
-      isOnline(chatId) {
-        return false;
-      },
-    }
-  });
+          this.leftListScrollHeight =
+            this.$refs.leftDataList.$el.offsetHeight;
+          this.$refs.leftDataList.$el.onscroll = this.leftListOnScroll;
+        });
+      } catch (e) {
+        requestAnimationFrame(() => {
+          this.initLeftDataListScroll();
+        });
+      }
+    },
+    /**
+     * 检查用户在线状态
+     * @param chatId
+     */
+    isOnline(chatId) {
+      return false;
+    },
+  }
+});
 </script>

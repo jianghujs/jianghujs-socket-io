@@ -8,8 +8,12 @@
     height="52"
   >
     <div class="d-flex flex-no-wrap justify-space-between align-center">
-      <v-avatar size="35px" style="background-color: #EEEEEE" class="ma-2">
-        <dx-img :src="upload + userInfo.userAvatar" userAvatar></dx-img>
+      <v-avatar size="35px" class="ma-2">
+        <v-img :src="upload + userInfo.userAvatar">
+          <template v-slot:placeholder>
+            <v-icon size="40" style="opacity: 1">mdi-account-circle</v-icon>
+          </template>
+        </v-img>
       </v-avatar>
 
       <div class="d-flex flex-column justify-center align-start">
@@ -106,11 +110,6 @@
   });
 </script>
 <style>
-  .userinfo_icon {
-    content: url("https://api.iconify.design/ph/gear-six-bold.svg?color=white");
-  }
-
-
   .card_subtitle {
     font-size: 12px;
     line-height: 1;
@@ -120,13 +119,4 @@
     color: #FFFFFF
   }
 
-  @keyframes syncAnim {
-    from {
-      opacity: 1;
-    }
-
-    to {
-      opacity: 0.1;
-    }
-  }
 </style>

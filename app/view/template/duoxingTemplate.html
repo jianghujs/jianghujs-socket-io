@@ -29,8 +29,8 @@
   <style>
     body {
       --cPrimaryColor: <$ ctx.app.config.primaryColor $>;
+      --primaryColorA80: <$ ctx.app.config.primaryColorA80 $>;
     }
-
     body .v-application .primary {
       background-color: var(--cPrimaryColor) !important;
       border-color: var(--cPrimaryColor) !important;
@@ -52,15 +52,11 @@
         {% endblock %}
         <jh-toast></jh-toast>
         <jh-confirm-dialog></jh-confirm-dialog>
-        <img-viewer></img-viewer>
       </div>
     </script>
   <div id="app"></div>
   <script src="/<$ ctx.app.config.appId $>/public/js/lib/vue.js"></script>
   <script src="/<$ ctx.app.config.appId $>/public/js//lib/vuetify.js"></script>
-
-  {% include 'components/common/imgViewer.html' %}
-  {% include 'components/common/dxImage.html' %}
 
   <!-- 加载框架工具脚本 >>>>>>>>>>>>> -->
   {% include 'utility/jianghuJs/prepareAppInfoV4.html' %}

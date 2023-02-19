@@ -298,9 +298,6 @@ class SocketContainer {
   checkSocketWhenInitEnd() {
     // web 上，进行定时的检查
     // socket 初始化后，9秒内如果未连接成功，则重新连接
-    if (!window.isApp) {
-      this.checkSocketThreeTimes(0, 3000);
-    }
   }
 }
 

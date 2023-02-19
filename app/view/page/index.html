@@ -6,42 +6,64 @@
   <!-- 左边栏 -->
   <LeftPanel ref="leftPanel" />
   <!-- 中间栏目 -->
-  <MiddlePanel ref="middlePanel" :currentChatSessionId="currentChatSessionId" />
+  <v-main class="chatMain mob-app-main">
+    <ChattingMessagePage :sessionId="currentChatSessionId" ref="chattingPage" />
+  </v-main>
+
+  <!-- 消息输入框 -->
+  <v-footer
+    app inset fixed color="transparent"
+    :height="isMobile ? (textareaExpanded ? 106 : 53) : 274"
+    class="vFooter ma-0 pa-0 mob-app-footer"
+    :class="{ 'mobExpandChat': mobExpandChat }"
+  >
+    <ChatInputWidget ref="chatInput" />
+  </v-footer>
 </v-app>
 {% endblock %}
 
 <!-- vue script 代码块 -->
 <!-- 注意：本项目的 vue 为每个页面使用一个 vue 实例 -->
 {% block vue_body %}
+
+<!--加载聊天列表相关组件 >>>>>>>>>>>> -->
 {% include 'components/widget/leftUserWidget.html' %}
 {% include 'components/widget/leftChatSessionWidget.html' %}
 {% include 'components/widget/leftPanelWidget.html' %}
-{% include 'components/widget/middlePanelWidget.html' %}
+<!--<<<<<<<<<<<< 加载聊天列表相关组件 -->
+
+<!--加载聊天详情相关组件 >>>>>>>>>>>> -->
 {% include 'components/widget/middleChatInputWidget.html' %}
 {% include 'components/widget/middleChatMessageWidget.html' %}
+{% include 'components/widget/loadMore.html' %}
+<!--<<<<<<<<<<<< 加载聊天详情相关组件 -->
+
+<!--加载消息条相关组件 >>>>>>>>>>>> -->
 {% include 'components/message/imageMessage.html' %}
 {% include 'components/message/fileMessage.html' %}
 {% include 'components/message/textMessage.html' %}
-{% include 'components/message/videoMessage.html' %}
-{% include 'components/message/voiceMessage.html' %}
-{% include 'components/common/clipboard.html' %}
+<!--<<<<<<<<<<<< 加载消息条相关组件 -->
+
+<!--加载发信息相关组件 >>>>>>>>>>>> -->
 {% include 'components/common/emotion.html' %}
+<!--<<<<<<<<<<<< 加载发信息相关组件 -->
 
 <script type="module">
 window.registerData(
   {
+    isMobile: window.innerWidth < 500,
     messageTextareaValue: '',
     currentChatSessionId: null,
     chatListBackUps: [],
     socketClient: window.socket,
-    userInfo: window.userInfo.user,
-    draft: JSON.parse(localStorage.getItem('draft') || '{}'),
+    userInfo: window.userInfo,
     dataSyncStatus: '',
-    getDataId,
-    isMobile: window.isMobile
+    currentResendMsg: {},
+    mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
   },
   {
     socketStatus() {
+
       const label = ['连接成功', '连接中...', '连接断开'][this.isSocketOnline || 0];
       const color = ['green accent-3', 'amber darken-1', 'deep-orange accent-3'][this.isSocketOnline || 0];
       return {label, color};
@@ -63,6 +85,18 @@ window.registerData(
     },
     mobileLeftHide() {
       return !this.currentChatSessionId
+    },
+    // 指示移动端时是否展开消息输入框
+    mobExpandChat() {
+      if (this.$vuetify.breakpoint.xs) {
+        return this.mobileMessageTextareaFocus;
+      }
+      return true;
+    },
+    sendMsgActionId() {
+      return this.currentChatSession.messageType === 'room'
+        ? 'userSendMessageToRoom'
+        : 'userSendMessageToUser';
     }
   }
 )
@@ -84,41 +118,28 @@ new Vue({
     this.doUiAction('setSyncStatusToSyncing');
     this.doUiAction('disableSystemEvent');
     this.doUiAction('initWebSocket');
-    this.doUiAction('initDefaultVariable');
     this.doUiAction('getConstantList');
-    this.doUiAction('getUserInfo');
-    this.doUiAction('getChatSessionList');
-    await this.doUiAction('setSyncStatusToSuccess');
-    this.handlerSystemBack();
+    await this.doUiAction('getChatSessionList');
+    this.doUiAction('setSyncStatusToSuccess');
   },
   watch: {
     async currentChatSessionId(v) {
-      try {
-        this.messageTextareaValue = v ? this.draft[v] : null;
-      } catch (e) {
-        this.messageTextareaValue = null;
-      }
+      this.messageTextareaValue = null;
       this.$forceUpdate();
     },
-    userInfo: {
-      deep: true,
-      immediate: true,
-      handler(value, value1) {
-      }
-    }
   },
   methods: {
-    doUiAction() {},
-    handlerSystemBack() {
-      history.pushState({}, '', `?chatList=${new Date().getTime()}`);
-      window.addEventListener('popstate', () => {
-        if (location.href.indexOf('/page/index?chatList=') > -1) {
-          history.pushState({}, '', `?chatList=${new Date().getTime()}`);
+    getDataId(item) {
+      if (item) {
+        if (item.hasOwnProperty('messageType')) {
+          if (item.chatId) {
+            return item.chatId;
+          }
+          return item.messageType === 'room' ? item.toRoomId : (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId);
         }
-      });
-    },
-    initDefaultVariable() {
-      this.doUiAction('pushState', {path: 'chatList'});
+        return item.roomId || item.friendId;
+      }
+      return null;
     },
     setSyncStatusToSyncing() {
       this.dataSyncStatus = 'syncing'
@@ -128,6 +149,7 @@ new Vue({
     },
     setSyncStatusToSuccess() {
       this.dataSyncStatus = 'success'
+      console.log('setSyncStatusToSuccess', this.dataSyncStatus)
       window.sync.ing = false;
     },
     // ✅禁止系统菜单和文字选中
@@ -174,7 +196,35 @@ new Vue({
       }
     },
     async getUserInfo() {
-      this.userInfo = await refreshUserInfo();
+      await refreshUserInfo();
+    },
+
+    /**
+     * 已读
+     * @return {Promise<void>}
+     */
+    async delMessageOffline() {
+      const chatId = this.currentChatSessionId
+      if (this.chatListBackUps) {
+        const clickChatSession = this.chatListBackUps.find(
+          chatSession => chatSession.chatId === chatId
+        );
+        if (clickChatSession && clickChatSession.offlineMessageCount) {
+          clickChatSession.offlineMessageCount = 0;
+          await window.jianghuAxios({
+            data: {
+              appData: {
+                pageId: 'chat',
+                actionId: 'delMessageOffline',
+                actionData: {
+                  messageType: clickChatSession.messageType,
+                  userIdOrRoomId: `${chatId}`
+                }
+              }
+            }
+          });
+        }
+      }
     },
 
     // 过滤和排序列表
@@ -267,7 +317,7 @@ new Vue({
         }
       }
       // 渲染聊天内容
-      if (this.getDataId(params) === this.currentChatSessionId) {
+      if (this.$root.getDataId(params) === this.currentChatSessionId) {
         this.refreshMessage(params)
       }
       return null;
@@ -290,7 +340,7 @@ new Vue({
       //如果不是是自己发的消息，未读+1
       if (params.fromUserId !== this.userInfo.userId) {
         this.chatListBackUps = this.chatListBackUps.map(v => {
-          const findSessionByParams = v.chatId === this.getDataId(params);
+          const findSessionByParams = v.chatId === this.$root.getDataId(params);
           if (findSessionByParams) {
             v.offlineMessageCount += 1;
           }
@@ -305,11 +355,11 @@ new Vue({
      */
     reRenderSession(params) {
       if (
-        window.$vueComponent.leftPanel.$refs['chatWidget_' + this.getDataId(params)] &&
-        window.$vueComponent.leftPanel.$refs['chatWidget_' + this.getDataId(params)].length
+        window.$vueComponent.leftPanel.$refs['chatWidget_' + this.$root.getDataId(params)] &&
+        window.$vueComponent.leftPanel.$refs['chatWidget_' + this.$root.getDataId(params)].length
       ) {
         window.$vueComponent.leftPanel.$refs[
-        'chatWidget_' + this.getDataId(params)
+        'chatWidget_' + this.$root.getDataId(params)
           ][0].reRenderSessionBySocketMessage(params);
       }
     },
@@ -319,9 +369,7 @@ new Vue({
      * @param params
      */
     refreshMessage(params) {
-      if (this.$refs.middlePanel) {
-        this.$refs.middlePanel.getChattingPage().refreshMessage(params);
-      }
+      this.getChattingPage().refreshMessage(params);
       this.$forceUpdate();
     },
 
@@ -335,8 +383,7 @@ new Vue({
           params.noticeType === 'errorNotice' &&
           params.errorCode === 'chat_not_user_friend'
         ) {
-          this.$refs.middlePanel
-            .getChattingPage()
+          this.getChattingPage()
             .refreshMessage({
               ...params.errorReasonSupplement,
               loading: false,
@@ -347,45 +394,32 @@ new Vue({
       }
     },
 
-    pushState({path}) {
-      if (location.search.includes(path)) {
-        history.replaceState({}, '', `?${path}=${Date.now()}`);
-      } else {
-        history.pushState({}, '', `?${path}=${Date.now()}`);
-      }
-      historyNowPage = location.search;
-    },
-
     /**
      * 判断消息是否在聊天列表中
      * @param params
      */
     isExistInChatSession(params) {
-      const dataId = this.getDataId(params);
-      return this.chatList.some(chat => this.getDataId(chat) === dataId);
+      const dataId = this.$root.getDataId(params);
+      return this.chatList.some(chat => this.$root.getDataId(chat) === dataId);
     },
 
     /** 播放消息提示音 **/
     async playBeep() {
-      if (!isApp) {
-        try {
-          await didaAudio.play();
-        } catch (e) {
-          if (await window.confirmDialog({
-            title: '您的网页无法自动播放消息提示音，需要确认后播放',
-            titleClass: 'text-body-1'
-          })) {
-            this.playBeepConfirm();
-          }
+      try {
+        await didaAudio.play();
+      } catch (e) {
+        if (await window.confirmDialog({
+          title: '您的网页无法自动播放消息提示音，需要确认后播放',
+          titleClass: 'text-body-1'
+        })) {
+          this.playBeepConfirm();
         }
       }
     },
 
     /** 确认消息提示音 */
     playBeepConfirm() {
-      if (!isApp) {
-        didaAudio.play();
-      }
+      didaAudio.play();
     },
 
     /**
@@ -467,7 +501,150 @@ new Vue({
         return false;
       }
       return chatSession.muted;
-    }
+    },
+
+    async sendMsg(
+      {
+        messageContent = this.messageTextareaValue || '',
+        messageContentType = 'text',
+        messageFingerprint = uuid(),
+        file = null,
+        targetUserId = null
+      }
+    ) {
+      this.doUiAction('scrollToBottom')
+      // 不在线，不发送
+      if (window.socket && window.socket.online === false) {
+        window.vtoast.fail('离线中...，请稍后尝试发送');
+        return;
+      }
+      // 超过7000个字，不发送
+      if (messageContent.length > 7000 && messageContentType === 'text') {
+        window.vtoast.fail('消息内容长度不得超过7000个文字', false, 'bottom');
+        return;
+      }
+      // 消息内容为空
+      if (messageContentType === 'text' && !messageContent) {
+        return;
+      }
+
+      const socketParams = {
+        messageContent,
+        messageContentType,
+        toUserId: targetUserId || this.currentChatSessionId,
+        toRoomId: targetUserId || this.currentChatSessionId,
+        messageFingerprint
+      };
+      const tempParams = {
+        ...socketParams,
+        fromUserId: this.userInfo.userId,
+        fromUsername: this.userInfo.username,
+        fromUserAvatar: this.userInfo.userAvatar,
+        loading: true,
+        process: 0
+      };
+      // 先更新一个 loading 消息
+      this.getChattingPage().refreshMessage(tempParams);
+      setTimeout(
+        () => {
+          if (tempParams.loading === true) {
+            tempParams.loading = false;
+            tempParams.error = true;
+          }
+        },
+        file ? 5000000 : 10000
+      );
+
+      if (file) {
+        const uploadResult = await this.uploadFileMsg(
+          file,
+          tempParams,
+          socketParams
+        );
+        if (
+          !uploadResult ||
+          !uploadResult.data.appData.resultData.filename ||
+          !uploadResult.data.appData.resultData.downloadPath ||
+          !uploadResult.data.appData.resultData.binarySize
+        ) {
+          this.getChattingPage().refreshMessage(
+            {
+              ...tempParams,
+              loading: false,
+              error: true
+            },
+          );
+        } else {
+          const { filename, downloadPath, binarySize } = uploadResult.data.appData.resultData;
+          socketParams.messageContent = JSON.stringify({
+            filename,
+            downloadPath,
+            binarySize
+          });
+          await window.socket.emitMsg(
+            socketParams,
+            this.sendMsgActionId
+          );
+        }
+      } else {
+        await window.socket.emitMsg(
+          socketParams,
+          this.sendMsgActionId
+        );
+      }
+      this.$forceUpdate();
+      // 成功后
+      // console.log('socketParams', socketParams);
+      this.messageTextareaValue = '';
+      window.vtoast.dismiss();
+      this.doUiAction('scrollToBottom', { mustToBottom: true })
+    },
+    /**
+     * 获取发送消息socket actionID
+     * @param forwardType
+     */
+    async uploadFileMsg(
+      file,
+      tempParams,
+      socketParams
+    ) {
+      let uploadResult;
+      const fileDirectory = `${this.userInfo.userId || 'chatFile'}/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}/`;
+      // 文件流
+      if (file) {
+        try {
+          // 使用 progress-linear https://vuetifyjs.com/zh-Hans/components/progress-linear/#section-989c8272
+          const that = this
+          this.getChattingPage().refreshChatItem({
+            ...tempParams,
+            progress: 1
+          });
+          uploadResult = await window.jianghuAxios.httpUploadByStream({ file, fileDirectory,
+            onProgress: (total, loaded) => {
+              let progress = Number((loaded * 100 / total).toFixed(2))
+              if (progress == 100) {
+                progress = 99
+              }
+              that.getChattingPage().refreshChatItem({
+                ...tempParams,
+                progress
+              });
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+        this.getChattingPage().refreshChatItem({
+          ...tempParams,
+          progress: 100
+        });
+      }
+      return uploadResult;
+    },
+
+    getChattingPage() {
+      return this.$refs.chattingPage;
+    },
   }
 });
 </script>
@@ -527,38 +704,6 @@ new Vue({
   border-radius: 4px;
 }
 
-.leftDataListItemEmpty {
-  align-items: stretch;
-}
-
-.leftDataListItemEmpty .empty_chatInfos {
-  flex: 1;
-  flex-flow: column;
-  align-items: flex-start;
-}
-
-.leftDataListItemEmpty .empty_message {
-  flex: 1;
-  width: 90%;
-  max-height: 14px;
-  background: #EEEEEE;
-}
-
-.leftDataListItemEmpty .empty_title {
-  flex: 1;
-  width: 50%;
-  max-height: 14px;
-  background: #EEEEEE;
-}
-
-.leftDataListItemEmpty .empty_avatar {
-  width: 40px;
-  height: 40px;
-  background: #EEEEEE;
-  border-radius: 20px;
-}
-
-
 .fileInput {
   opacity: 0;
   width: 0;
@@ -588,27 +733,6 @@ new Vue({
 .nickname {
   font-size: 14px;
   line-height: 1.5rem
-}
-
-.whatUp {
-  font-size: 12px;
-  white-space: nowrap
-}
-
-.controlBox {
-  width: 100%;
-  height: 30px;
-  border-bottom: 1px solid #EEEEEE;
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  justify-content: space-between;
-  color: #999999;
-
-}
-
-.controlBox span {
-  color: red;
 }
 
 .leftDataList .v-item-group .listItem {
@@ -641,7 +765,7 @@ new Vue({
 }
 
 .leftDataList .activeItem .chatItem {
-  background-color: < $ ctx . app . config . primaryColorA80 $ > !important;
+  background-color: var(--primaryColorA80) !important;
 }
 
 .leftDataList .activeItem {
@@ -649,24 +773,6 @@ new Vue({
   position: relative;
   overflow: hidden;
 }
-
-.leftDataList .isTopChat {
-  overflow: hidden;
-}
-
-.leftDataList .isTopChat::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  transform: rotate(-45deg) translate(-2px, -16px);
-  min-height: 0;
-  left: 0;
-  top: 0;
-  z-index: 999999;
-  background-color: #B71C1C;
-}
-
 
 .message {
   position: relative;
@@ -687,12 +793,6 @@ new Vue({
   z-index: 2;
 }
 
-.newFriendBtn {
-  margin: 10px;
-  width: calc(100% - 20px);
-  min-width: auto !important;
-}
-
 .flex-row-around {
   flex-direction: row;
   justify-content: space-around;
@@ -700,48 +800,10 @@ new Vue({
 }
 
 
-.contSelect {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.startRecord {
-  background: green;
-  animation: startRecordAnim 0.5s infinite;
-  animation-direction: alternate;
-}
-
 .v-badge__badge {
   z-index: 3;
 }
 
-@keyframes startRecordAnim {
-  from {
-    background: transparent;
-    color: #666666
-  }
-
-  to {
-    background: green;
-    color: #FFFFFF
-  }
-}
-
-@-webkit-keyframes startRecordAnim
-
-  /*Safari and Chrome*/
-{
-  from {
-    background: transparent;
-    color: #666666
-  }
-
-  to {
-    background: green;
-    color: #FFFFFF
-  }
-}
 
 .playIcon::before {
   content: "\F1591";
@@ -755,52 +817,8 @@ new Vue({
   transform: translate(5px, 2px);
 }
 
-.moreSelToolbar {
-  flex-direction: row !important;
-  font-size: 14px;
-  width: 100%;
-}
-
-.moreSelToolbar button {
-  flex: 1;
-}
-
-.moreSelToolbarMob {
-  padding-bottom: 0px;
-}
-
-.mob-app-bar-nav-icon {
-  display: none;
-}
-
-.mob-app-bar-basic-info {
-  display: none;
-}
-
-.mob-app-bar-basic-title {
-  color: #FFFFFF;
-  font-size: 14px;
-  font-weight: 500;
-  width: 100%;
-}
-
-.mob-app-bar-basic-info-back {
-  display: none;
-}
-
-.stopUserSelect {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
 
 @media screen and (max-width: 600px) {
-  .sendMsgEmoji {
-    right: 72px;
-    bottom: 8px;
-  }
-
   .leftDataList {
     height: calc(100vh - 180px) !important;
     -webkit-overflow-scrolling: touch;
@@ -809,14 +827,6 @@ new Vue({
 
   .mob-app-left {
     width: 100% !important;
-  }
-
-  .mob_nickname {
-    display: block !important;
-  }
-
-  .pc_nickname {
-    display: none;
   }
 
   .mobExpandChat .emotionContainer {
@@ -848,54 +858,18 @@ new Vue({
     font-size: 12px !important;
   }
 
-  .mob-app-footer {
-  }
-
-  .mob-app-left--hide {
-    display: none;
-  }
-
   .mob-app-main {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
 
-  .mob-app-bar {
-    left: 0 !important;
-    right: 0 !important;
-  }
-
   .mob-app-footer {
     left: 0 !important;
     right: 0 !important;
   }
 
-  .mob-app-bar-nav-icon {
-    display: block;
-  }
-
-  .mob-app-right--hide {
-    display: none;
-  }
-
-  .mob-app-bar-basic-info {
-    display: block;
-    font-size: 14px !important;
-    font-weight: 500;
-  }
-
-  .mob-app-bar-basic-info-back {
-    display: block;
-  }
-
   .emotionContainer {
     left: auto !important;
-  }
-
-  .v-overlay--active {
-  }
-
-  .v-dialog__content--active {
   }
 
   .footer {
@@ -944,91 +918,6 @@ new Vue({
     zoom: 0.9;
     transform: translateX(5px);
   }
-
-  .searchAndNewFriendBox .v-text-field {
-    flex: 1;
-  }
-
-  .newFriendBtn {
-    min-width: 0 !important;
-    width: auto !important;
-    max-width: 100px !important;
-    letter-spacing: 0 !important;
-    padding: 0 0 0 5px !important;
-  }
-
-  .searchAndNewFriendBox {
-    display: flex;
-    align-items: center;
-  }
-
-  .recordBtn {
-    flex: 1 !important;
-    border: 1px solid #cccccc !important;
-    padding: 6px 4px !important;
-    border-radius: 4px !important;
-    text-align: center !important;
-    font-size: 14px !important;
-    color: #666666 !important;
-  }
-
-  .recordSheet {
-    height: 90vh !important;
-    background: transparent !important;
-  }
-
-  .cancelSendAudioArea span {
-    height: 50px;
-    text-align: center;
-    color: #ffffff;
-    transition: all .2s linear;
-    border-radius: 100%;
-    line-height: 50px;
-    display: block;
-    margin: 40px auto;
-  }
-
-  .cancelSendAudioArea .recordAnim {
-    flex: 1;
-    background: url("app/public/img/play.gif") no-repeat bottom;
-  }
-
-  .cancelSendAudioArea.recordSendStatus span {
-    color: red;
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .cancelSendAudioArea {
-    flex: 1;
-    display: flex;
-    flex-flow: column;
-  }
-
-  .canSendAudioArea.recordSendStatus span {
-    color: #32d300;
-  }
-
-  .canSendAudioArea span {
-    color: #cccccc;
-    transition: all .2s linear;
-  }
-
-  .canSendAudioArea {
-    height: 50px;
-    background: #ffffff;
-    border-top-left-radius: 100%;
-    border-top-right-radius: 100%;
-    padding-bottom: 100px;
-    width: 120vw;
-    transform: translateX(-10vw);
-    text-align: center;
-    line-height: 100px;
-    font-weight: 400;
-    font-size: 16px;
-    color: #999999;
-  }
-
   .newMsgCount {
     bottom: 139px !important;
   }
