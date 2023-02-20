@@ -1,47 +1,42 @@
 <!-- 左边栏 -->
 <script type="text/x-template" id="_left-panel">
 <div>
-  <v-scroll-x-transition>
-    <v-navigation-drawer
-      app
-      width="285"
-      class="navigation-drawer mob-app-left"
-      v-show="true"
-      permanent
-      touchless
-    >
-      <!--   用户信息   -->
-      <left-user-widget />
-      <v-list class="leftDataList" ref="leftDataList">
-        <v-list-item-group
-          :value="currentChatSessionId"
-          @change="onLeftItemChange"
-          color="primary"
-          active-class="activeItem"
-        >
-          <template v-if="chatList.length">
-            <template v-for="(item, index) in chatList">
-              <v-list-item
-                class="pa-0 ma-0"
-                :value="$root.getDataId(item)"
-              >
-                <chat-item
-                  @onClearUnread="doUiAction('delMessageOffline')"
-                  :ref="'chatWidget_' + $root.getDataId(item)"
-                  :data="item"
-                />
-              </v-list-item>
-            </template>
+  <v-navigation-drawer
+    app
+    width="285"
+    class="navigation-drawer mob-app-left"
+    v-show="true"
+    permanent
+    touchless
+  >
+    <!--   用户信息   -->
+    <left-user-widget />
+    <v-list class="leftDataList pa-0 overflow-y-auto overflow-x-hidden" ref="leftDataList">
+      <v-list-item-group
+        :value="currentChatSessionId"
+        @change="selectChatItem"
+        color="primary"
+        mandatory
+        active-class="activeItem"
+      >
+        <!--聊天列表 >>>>>>>>>>>-->
+        <template v-if="chatList.length">
+          <template v-for="(chatItem, chatIndex) in chatList">
+            <chat-item
+              :chatItem="chatItem"
+              @clean-unread-count="doUiAction('delMessageOffline')"
+            />
           </template>
-          <template v-else>
-            <div style="width: 100%; line-height: 100px; text-align: center;">
-              加载中
-            </div>
-          </template>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
-  </v-scroll-x-transition>
+        </template>
+        <!--<<<<<<<<<< 聊天列表-->
+        <template v-else>
+          <div style="width: 100%; line-height: 100px; text-align: center;">
+            加载中
+          </div>
+        </template>
+      </v-list-item-group>
+    </v-list>
+  </v-navigation-drawer>
 </div>
 </script>
 
@@ -59,11 +54,6 @@ Vue.component('left-panel', {
   computed: window.vueComputed,
   props: {},
   watch: {
-    dataSyncStatus: {
-      deep: true,
-      handler(value) {
-      }
-    }
   },
   mounted() {
   },
@@ -110,7 +100,8 @@ Vue.component('left-panel', {
      * @param value
      */
     // 左侧点击
-    onLeftItemChange(value) {
+    selectChatItem(value) {
+      console.log('selectChatItem', value)
       if (!value) return false;
       const findNowChatItem = this.chatList.find(v => {
         return this.$root.getDataId(v) === value;

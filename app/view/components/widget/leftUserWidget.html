@@ -1,122 +1,115 @@
 <!-- 用户信息 -->
 <script type="text/x-template" id="_left-user-widget">
-  <v-card
-    dark
-    color="primary"
-    class="rounded-0 userInfoCard"
-    style="border-bottom: 1px solid #cccccc;"
-    height="52"
-  >
-    <div class="d-flex flex-no-wrap justify-space-between align-center">
-      <v-avatar size="35px" class="ma-2">
-        <v-img :src="upload + userInfo.userAvatar">
-          <template v-slot:placeholder>
-            <v-icon size="40" style="opacity: 1">mdi-account-circle</v-icon>
-          </template>
-        </v-img>
-      </v-avatar>
-
-      <div class="d-flex flex-column justify-center align-start">
-        <v-card-title class="ma-0 pa-0 nickname" style="line-height: 1">
-          <span>
-            {{ userInfo.username || "·" }}
-          </span>
-        </v-card-title>
-        <v-card-subtitle class="ma-0 pa-0 pt-1 card_subtitle" :style="{'max-width': 'calc('+ (isMobile ? '100vw' : '285px') +' - 130px)'}">
-          <span>{{ socketStatus.label }} </span>
-          <v-badge right bordered light dot
-            :color="socketStatus.color"
-            offset-x="-1" offset-y="0"
-          >
-          </v-badge>
-          <span class="pl-5">{{ dataSyncStatus == 'success' ? '同步成功' : '同步中...' }}</span>
-          <v-badge right bordered light dot
-            :color="dataSyncStatus == 'success' ? 'green accent-3' : 'amber darken-1'"
-            offset-x="-1" offset-y="0"
-          >
-          </v-badge>
-          <span class="pl-5"></span>
-        </v-card-subtitle>
-      </div>
-      <v-spacer></v-spacer>
-      <div class="userInfoCard__settings d-flex mr-2">
-        <v-menu offset-y>
-          <template #activator="{ on, attrs }">
-            <v-btn text dark :small="!isMobile" icon class="rounded-0" color="blue lighten-2" v-bind="attrs" v-on="on">
-              <v-icon :size="isMobile ? 20 : 16" color="white">mdi-cog</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item v-for="(item, index) in items" :key="item.inx" @click="menuClick(item.inx)">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
-    </div>
-  </v-card>
+<v-toolbar color="primary" dark class="pa-0 jh-toolbar" height="52" style="flex: none">
+<v-list-item class="pa-0 ma-0">
+  <!--头像-->
+  <v-list-item-avatar size="35px" class="ma-2">
+    <v-img :src="upload + userInfo.userAvatar">
+      <template v-slot:placeholder>
+        <v-icon size="40" style="opacity: 1">mdi-account-circle</v-icon>
+      </template>
+    </v-img>
+  </v-list-item-avatar>
+  <!--用户信息-->
+  <v-list-item-content class="d-flex flex-column justify-center align-start">
+    <v-card-title class="ma-0 pa-0 nickname" style="line-height: 1">
+      <span>{{ userInfo.username || "···" }}</span>
+    </v-card-title>
+    <!--socket状态, resource同步状态-->
+    <v-card-subtitle class="ma-0 pa-0 pt-1 jh-userinfo-card-subtitle">
+      <v-badge right bordered light dot :color="socketStatus.color" offset-x="-2" offset-y="11">
+        <span>{{ socketStatus.label }} </span>
+      </v-badge>
+      <v-badge right bordered light dot :color="dataSyncStatus.color" offset-x="-2" offset-y="11">
+        <span class="pl-5">{{ dataSyncStatus.label }}</span>
+      </v-badge>
+    </v-card-subtitle>
+  </v-list-item-content>
+  <!--用户操作菜单-->
+  <v-list-item-action class="userInfoCard__settings d-flex mr-2">
+    <v-menu offset-y>
+      <template #activator="{ on, attrs }">
+        <v-btn text dark :small="!isMobile" icon class="rounded-0" color="blue lighten-2" v-bind="attrs" v-on="on">
+          <v-icon :size="isMobile ? 20 : 16" color="white">mdi-cog</v-icon>
+        </v-btn>
+      </template>
+      <!--操作菜单列表-->
+      <v-list>
+        <v-list-item v-for="(item, index) in items" :key="item.inx" @click="menuClick(item.inx)">
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </v-list-item-action>
+</v-list-item>
+</v-toolbar>
 </script>
 
 <script>
-  window.registerData(
-    {
-      items: [
-        { inx: 10, title: '退出登录' },
-        { inx: 15, title: '应用重载' }
-      ],
-    }, {}
-  )
+window.registerData(
+  {
+    items: [
+      {inx: 10, title: '退出登录'},
+      {inx: 15, title: '应用重载'}
+    ],
+  }, {}
+)
 
-  Vue.component('left-user-widget', {
-    template: '#_left-user-widget',
-    mixins: [ window.jianghuUiActionMixins ],
-    data: () => window.vueData,
-    vueComponent: 'leftUser',
-    computed: window.vueComputed,
-    async created() {
-      this.socketClient = window.socket;
+Vue.component('left-user-widget', {
+  template: '#_left-user-widget',
+  mixins: [window.jianghuUiActionMixins],
+  data: () => window.vueData,
+  vueComponent: 'leftUser',
+  computed: window.vueComputed,
+  async created() {
+    this.socketClient = window.socket;
+  },
+  mounted() {
+  },
+  methods: {
+    async menuClick(e) {
+      switch (e) {
+        case 10: {
+          await this.logout();
+          break;
+        }
+        case 15: {
+          window.location.href = location.href;
+          break;
+        }
+      }
     },
-    mounted() {
-    },
-    methods: {
-      async menuClick(e) {
-        switch (e) {
-          case 10: {
-            await this.logout();
-            break;
-          }
-          case 15: {
-            window.location.href = location.href;
-            break;
+    async logout() {
+      await window.jianghuAxios({
+        data: {
+          appData: {
+            pageId: 'allPage',
+            actionId: 'logout',
+            actionData: {needSetCookies: true}
           }
         }
-      },
-      async logout() {
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'allPage',
-              actionId: 'logout',
-              actionData: {needSetCookies: true}
-            }
-          }
-        });
-        localStorage.removeItem(window.appInfo.appId + '_userInfo');
-        localStorage.removeItem(window.appInfo.appId + '_authToken');
-        localStorage.removeItem(window.appInfo.appId + '_refreshToken');
-        location.href = `/${window.appInfo.appId}/page/login`;
-      }
+      });
+      localStorage.removeItem(window.appInfo.appId + '_userInfo');
+      localStorage.removeItem(window.appInfo.appId + '_authToken');
+      localStorage.removeItem(window.appInfo.appId + '_refreshToken');
+      location.href = `/${window.appInfo.appId}/page/login`;
     }
-  });
+  }
+});
 </script>
 <style>
-  .card_subtitle {
-    font-size: 12px;
-    line-height: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    color: #FFFFFF
-  }
+.jh-userinfo-card-subtitle {
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  color: #FFFFFF
+}
 
+.jh-toolbar {
+  box-shadow: none !important;
+}
+
+.jh-toolbar .v-toolbar__content {
+  padding: 0 !important;
+}
 </style>

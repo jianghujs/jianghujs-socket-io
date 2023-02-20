@@ -1,128 +1,65 @@
 <!-- 左栏聊天列表 -->
 <script type="text/x-template" id="chat-item">
-<v-card
-  class="rounded-0 chatItem ma-0 pt-2"
-  :class="[chatWidgetStyle]"
+<v-list-item
+  class="pa-0 ma-0"
+  :value="$root.getDataId(chatItem)"
+  :key="$root.getDataId(chatItem)"
   @click="clearOfflineMessageCount"
 >
-<div class="d-flex flex-no-wrap justify-space-between">
-  <v-badge
-    bordered right color="red" :content="data_.offlineMessageCount"
-    :value="data_.offlineMessageCount" offset-x="23" offset-y="22">
-    <template>
-      <v-badge
-        bordered
-        bottom
-        :color="isOnline_ ? 'green accent-3' : 'grey lighten-2'"
-        dot
-        offset-x="17"
-        offset-y="17"
-      >
-        <v-avatar size="40px" class="ma-2">
-          <v-img :src="upload + data_.chatAvatar">
-            <template v-slot:placeholder>
-              <v-icon size="50" style="opacity: 0.2">mdi-account-circle</v-icon>
-            </template>
-          </v-img>
-        </v-avatar>
-      </v-badge>
-    </template>
+<!--头像 >>>>>>>>>> -->
+<v-badge :content="chatItem.offlineMessageCount" :value="chatItem.offlineMessageCount" bordered right color="red" offset-x="23" offset-y="22">
+  <v-badge bordered bottom :color="chatItem.isOnline ? 'green accent-3' : 'grey lighten-2'" dot offset-x="17" offset-y="17">
+    <v-list-item-avatar size="40px" class="ma-2">
+      <v-img :src="upload + chatItem.chatAvatar">
+        <template v-slot:placeholder>
+          <v-icon size="50" style="opacity: 0.2">mdi-account-circle</v-icon>
+        </template>
+      </v-img>
+    </v-list-item-avatar>
   </v-badge>
-
-  <div class="d-flex flex-column justify-center align-start" style="overflow: hidden; flex: 1">
-    <v-card-title class="ma-0 pa-0 pr-1 itemTitle" style="width: 100%">
-      <v-row class="ma-0 pa-0">
-        <div style="flex: 1">
-          {{ data_.chatName }}
-        </div>
-      </v-row>
-    </v-card-title>
-    <div class="d-flex align-center" style="width: 100%">
-      <v-card-subtitle
-        class="ma-0 pa-0 subtitle overflow-hidden d-block"
-        :style="{ 'color': '#999999' }"
-        style="width: 90%; text-overflow: ellipsis; flex: 1"
-        v-html="filterXss(data_.fromUsername + '：' + getMessageContent(data_, true))"
-      ></v-card-subtitle>
-      <span
-        style="font-size: 12px; color: #999999"
-        class="pr-2"
-      >{{ parseTimerLabel(data_.messageTimeString) }}</span>
-    </div>
-  </div>
-</div>
-</v-card>
+</v-badge>
+<!--<<<<<<<<<< 头像 -->
+<!--（昵称、群名）、最后消息、最后消息时间 >>>>>>>>>> -->
+<v-list-item-content>
+  <!--昵称、群名-->
+  <v-list-item-title class="itemTitle" v-html="chatItem.chatName"></v-list-item-title>
+  <v-list-item-subtitle class="subtitle overflow-hidden" style="color: #999999;">
+    <!--最后消息-->
+    <span>{{chatItemContent}}</span>
+    <v-spacer></v-spacer>
+    <!--最后消息时间-->
+    <span class="px-2">{{parseTimerLabel(chatItem.messageTimeString)}}</span>
+  </v-list-item-subtitle>
+</v-list-item-content>
+<!--<<<<<<<<<<（昵称、群名）、最后消息、最后消息时间 -->
+</v-list-item>
 </script>
 
 <script>
 Vue.component('chat-item', {
   template: '#chat-item',
   props: {
-    data: {
+    chatItem: {
       type: Object,
       default: () => {
       }
     },
-    dataType: {
-      type: String,
-      default: 'chat'
-    }
   },
   computed: {
-    isRoom() {
-      return this.data.messageType === 'room';
-    },
-    data_() {
-      return this.data;
-    },
-    isOnline_() {
-      return this.data.isOnline;
+    chatItemContent() {
+      return `${this.chatItem.fromUsername}：${getMessageContent(this.chatItem, true)}`.replace(/</g, '&lt;');
     }
   },
   data() {
     return {
-      userInfo: window.userInfo,
       upload: window.appInfo.upload,
-      chatWidgetStyle: {}
     };
   },
   watch: {},
   methods: {
-    clearOfflineMessageCount({justCleanUi = false}) {
-      if (!justCleanUi) {
-        this.$emit('onClearUnread', this.data.chatId);
-      }
-      this.data_.offlineMessageCount = 0;
+    clearOfflineMessageCount() {
+      this.$emit('clean-unread-count', this.chatItem.chatId);
     },
-    margeNewMessage(params) {
-      for (const paramsKey in params) {
-        this.data[paramsKey] = params[paramsKey];
-      }
-    },
-    renderUi() {
-      this.chatWidgetStyle = {
-        willChange: true,
-        active: true
-      };
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.chatWidgetStyle = {
-            willChange: true,
-            active: false
-          };
-          this.$nextTick(() => {
-            this.chatWidgetStyle = {
-              willChange: false,
-              active: false
-            };
-          });
-        }, 300);
-      });
-    },
-    filterXss(content) {
-      return content.replace(/</g, '&lt;');
-    },
-    getMessageContent,
     parseTimerLabel(messageTimeString) {
       const _messageTime = dayjs(messageTimeString);
       const diffSecond = dayjs().diff(_messageTime, 'second');
@@ -209,7 +146,8 @@ Vue.component('chat-item', {
   content: "<br>";
 }
 
-.subtitle span.title {
-  flex: 1;
+.subtitle > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

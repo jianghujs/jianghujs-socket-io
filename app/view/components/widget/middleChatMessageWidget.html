@@ -1,77 +1,79 @@
 <!--聊天对话界面-->
-<script type="text/x-template" id="_chatting-page">
+<script type="text/x-template" id="chatting-page">
 <load-more
   ref="chattingPage" :sessionId="sessionId"
   :handler="getNextChatHistoryList"
   class="chattingPage py-sm-3 px-sm-7 pa-2"
   @onScrollToBottom="newMsgCount = 0">
-<template v-if="sessionId">
-  <template v-if="chatHistoryList && chatHistoryList.length > 0">
-    <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.messageFingerprint">
-      <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }" style="flex:1">
-        <template v-if="item.noticeType">
-          <div class="noticeMsg">{{ item.messageContent }}</div>
-        </template>
-        <template v-else>
-          <v-avatar size="40px" class="ma-2 mt-1">
-            <v-img :src="upload + item.fromUserAvatar">
-              <template v-slot:placeholder>
-                <v-icon size="45" style="opacity: 0.2">mdi-account-circle</v-icon>
-              </template>
-            </v-img>
-          </v-avatar>
-          <v-icon
-            class="msgArrow"
-            :class="{ 'isFromMe': isFromMe(item) }"
-            :color="isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'"
-          >mdi-menu-left</v-icon>
-          <div class="messageItemBox">
-            <div class="username" :class="{ 'isFromMe': isFromMe(item) }">
-              <span>{{ item.fromUsername }}</span>
-              <span
-                class="mr-2 ml-2"
-                style="font-size: 12px; color: #999999"
-              >{{ formatChatTime(item.messageTimeString) }}</span>
-            </div>
-            <div class="messageLine d-flex" :class="{ 'isFromMe': isFromMe(item) }">
-              <text-message
-                v-if="item.messageContentType === 'text'"
-                :content="item.messageContent"
-                :id="item.messageFingerprint"
-              />
-              <image-message
-                v-if="item.messageContentType === 'image'"
-                :progress="item.progress"
-                :content="item.messageContent"
-                :id="item.messageFingerprint"
-                @load-complete="doUiAction('scrollToBottom')"
-              />
-              <file-message
-                v-if="item.messageContentType === 'file'"
-                :progress="item.progress"
-                :content="item.messageContent"
-                :id="item.messageFingerprint"
-              />
-              <template
-                v-if="item.loading || item.progress && item.progress > 0 && item.progress < 100"
-              >
-                <v-progress-circular indeterminate :size="15" :width="3" color="primary"></v-progress-circular>
-              </template>
-              <v-icon
-                color="red"
-                v-else-if="item.error === true"
-                small
-                @click="doUiAction('startResendMsg', item)"
-              >mdi-alert-circle
-              </v-icon>
-              <v-spacer></v-spacer>
-            </div>
+<template v-if="sessionId && chatHistoryList && chatHistoryList.length > 0">
+  <div v-for="(item, index) in chatHistoryListReverse" class="d-flex" :key="item.messageFingerprint">
+    <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }">
+      <!--通知类消息-->
+      <template v-if="item.noticeType">
+        <div class="noticeMsg">{{ item.messageContent }}</div>
+      </template>
+      <!--正常聊天消息-->
+      <template v-else>
+        <!--发送人头像-->
+        <v-avatar size="40px" class="ma-2 mt-1">
+          <v-img :src="upload + item.fromUserAvatar">
+            <template v-slot:placeholder>
+              <v-icon size="45" style="opacity: 0.2">mdi-account-circle</v-icon>
+            </template>
+          </v-img>
+        </v-avatar>
+        <!--箭头图标-->
+        <v-icon class="msgArrow" :color="messageBgColor(item)"
+        >mdi-menu-left
+        </v-icon>
+        <div class="messageItemBox">
+          <div class="username">
+            <!--发送人名称-->
+            <span>{{ item.fromUsername }}</span>
+            <!--发送时间-->
+            <span class="mr-2 ml-2" style="font-size: 12px; color: #999999">{{ formatChatTime(item.messageTimeString) }}</span>
           </div>
-          <v-spacer />
-        </template>
-      </div>
+          <div class="messageLine d-flex">
+            <!--文本消息条-->
+            <text-message
+              v-if="item.messageContentType === 'text'"
+              :content="item.messageContent"
+              :id="item.messageFingerprint"
+            />
+            <!--图片消息条-->
+            <image-message
+              v-if="item.messageContentType === 'image'"
+              :progress="item.progress"
+              :content="item.messageContent"
+              :id="item.messageFingerprint"
+              @load-complete="doUiAction('scrollToBottom')"
+            />
+            <!--文件消息条-->
+            <file-message
+              v-if="item.messageContentType === 'file'"
+              :progress="item.progress"
+              :content="item.messageContent"
+              :id="item.messageFingerprint"
+            />
+            <!--加载中转圈-->
+            <v-progress-circular
+              v-if="item.loading || item.progress && item.progress > 0 && item.progress < 100"
+              indeterminate :size="15" :width="3" color="primary"></v-progress-circular>
+            <!--发送失败图标、点击重新发送-->
+            <v-icon
+              color="red"
+              v-else-if="item.error === true"
+              small
+              @click="doUiAction('startResendMsg', item)"
+            >mdi-alert-circle
+            </v-icon>
+            <v-spacer></v-spacer>
+          </div>
+        </div>
+        <v-spacer />
+      </template>
     </div>
-  </template>
+  </div>
 </template>
 <div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
 </load-more>
@@ -102,7 +104,7 @@ window.registerData(
 
 
 Vue.component('chatting-page', {
-  template: '#_chatting-page',
+  template: '#chatting-page',
   mixins: [window.jianghuUiActionMixins],
   data: () => window.vueData,
   vueComponent: 'chatSession',
@@ -126,7 +128,9 @@ Vue.component('chatting-page', {
     }, 300);
   },
   methods: {
-
+    messageBgColor(item) {
+      return this.isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'
+    },
     onPageScroll(event) {
       if (event.target.scrollTop === 0) {
         this.loadMore();
@@ -157,8 +161,8 @@ Vue.component('chatting-page', {
         });
       }
       // 插入新消息
-      if(insert) {
-        if(!this.chatHistoryList) {
+      if (insert) {
+        if (!this.chatHistoryList) {
           this.chatHistoryList = [];
         }
         if (!msgExist) {
@@ -246,8 +250,8 @@ Vue.component('chatting-page', {
      * @param selectMsg
      */
     async startResendMsg(selectMsg) {
-      this.currentResendMsg = { ...selectMsg };
-      const { messageContentType } = this.currentResendMsg;
+      this.currentResendMsg = {...selectMsg};
+      const {messageContentType} = this.currentResendMsg;
       if (messageContentType === 'file') {
         await window.confirmDialog({
           title: '文件上传失败,请重新上传文件!',
@@ -276,11 +280,11 @@ Vue.component('chatting-page', {
         // 成功后
         // console.log('this.currentResendMsg', this.currentResendMsg);
         this.messageTextareaValue = null;
-        this.doUiAction('scrollToBottom', { mustToBottom: true })
+        this.doUiAction('scrollToBottom', {mustToBottom: true})
       }
       return null;
     },
-    formatChatTime(time){
+    formatChatTime(time) {
       time = this.dayjs(time).format('YYYY-MM-DD HH:mm:ss')
       const date = time.toString();
       const year = date.split('-')[0];
@@ -370,6 +374,7 @@ Vue.component('chatting-page', {
   display: flex;
   align-items: start;
   margin: 10px 0;
+  flex: 1;
 }
 
 .chattingPage .messageItem quote {
@@ -399,10 +404,6 @@ Vue.component('chatting-page', {
   word-break: break-word;
 }
 
-.textContent {
-  word-break: break-word;
-}
-
 .chattingPage .messageItem.isFromMe .messageItemBox {
   align-items: flex-end;
 }
@@ -415,6 +416,7 @@ Vue.component('chatting-page', {
 
 .chattingPage .messageItem.isFromMe .username {
   text-align: right;
+  flex-direction: row-reverse;
 }
 
 .chattingPage .messageItem .v-icon.msgArrow {
@@ -426,19 +428,15 @@ Vue.component('chatting-page', {
   margin-top: 25px;
 }
 
-.chattingPage .messageItem .v-icon.isFromMe {
+.chattingPage .messageItem.isFromMe .v-icon.msgArrow {
   transform: rotate(180deg);
 }
 
-.username.isFromMe {
-  flex-direction: row-reverse;
-}
-
-.messageLine {
+.chattingPage .messageItem .messageLine {
   justify-content: start;
 }
 
-.messageLine.isFromMe {
+.chattingPage .messageItem.isFromMe .messageLine {
   flex-direction: row-reverse;
 }
 
