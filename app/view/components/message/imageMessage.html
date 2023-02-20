@@ -1,12 +1,25 @@
-<script type="text/x-template" id="_ImageMessage">
+<script type="text/x-template" id="_image-message">
   <div class="message imageMsg">
-    <v-img :src="imgSrc"></v-img>
+    <v-img max-width="300" @load="onLoaded" @loadstart="onLoadStart" @error="onLoadError" :src="imgSrc">
+      <template v-slot:placeholder>
+        <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-progress-circular
+            v-if="isLoadStart"
+            indeterminate
+            color="grey lighten-5"
+          ></v-progress-circular>
+          <v-icon v-if="isLoadError">
+            mdi-tooltip-image-outline
+          </v-icon>
+        </v-row>
+      </template>
+    </v-img>
   </div>
 </script>
 
 <script>
-  Vue.component("ImageMessage", {
-    template: "#_ImageMessage",
+  Vue.component("image-message", {
+    template: "#_image-message",
     props: {
       content: String,
       id: String,
@@ -20,6 +33,8 @@
         upload: window.appInfo.upload,
         public: window.appInfo.public,
         progress_: 0,
+        isLoadError: false,
+        isLoadStart: true
       };
     },
     watch: {
@@ -31,9 +46,9 @@
     computed: {
       imgSrc() {
         if (this.contentJsonObj.downloadPath.startsWith("/emotion")) {
-          return this.public + this.contentJsonObj.downloadPath;
+          return this.public + this.contentJsonObj.downloadPath.replace('/\/\//g', '/');
         } else if (this.contentJsonObj.downloadPath.startsWith("/")) {
-          return this.upload + this.contentJsonObj.downloadPath;
+          return this.upload + this.contentJsonObj.downloadPath.replace('/\/\//g', '/');
         }
         return this.contentJsonObj.downloadPath;
       },
@@ -46,7 +61,24 @@
         return { filename: "", downloadPath: "", binarySize: null };
       },
     },
-    methods: {},
+    methods: {
+      onLoaded() {
+        this.isLoadStart = false;
+        this.isLoadError = false;
+        // 渲染完成后处理
+        setTimeout(() => {
+          this.$emit('load-complete');
+        }, 300)
+      },
+      onLoadStart() {
+        this.isLoadStart = true;
+        this.isLoadError = false;
+      },
+      onLoadError() {
+        this.isLoadStart = false;
+        this.isLoadError = true;
+      },
+    },
   });
 </script>
 <style>

@@ -1,5 +1,5 @@
 <script>
-  Vue.component('TextMessage', {
+  Vue.component('text-message', {
     props: [ 'content', 'id' ],
     template:
       '<div class="message textContent" v-html="getContent" :id="id"/>',
@@ -9,13 +9,10 @@
       }
     },
     data() {
-      return {
-        onTouchMove: false
-      };
+      return {};
     },
     mounted() {},
-    methods: {
-    }
+    methods: { }
   });
 </script>
 <style></style>

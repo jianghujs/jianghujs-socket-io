@@ -1,11 +1,10 @@
 <!--聊天对话界面-->
-<script type="text/x-template" id="_ChattingMessagePage">
-<load_more
+<script type="text/x-template" id="_chatting-page">
+<load-more
   ref="chattingPage" :sessionId="sessionId"
   :handler="getNextChatHistoryList"
   class="chattingPage py-sm-3 px-sm-7 pa-2"
-  @onScrollToBottom="newMsgCount = 0"
-  @click="$emit('click', $event)">
+  @onScrollToBottom="newMsgCount = 0">
 <template v-if="sessionId">
   <template v-if="chatHistoryList && chatHistoryList.length > 0">
     <div v-for="(item, index) in chatHistoryListReverse" style="display:flex" :key="item.messageFingerprint">
@@ -35,18 +34,19 @@
               >{{ formatChatTime(item.messageTimeString) }}</span>
             </div>
             <div class="messageLine d-flex" :class="{ 'isFromMe': isFromMe(item) }">
-              <TextMessage
+              <text-message
                 v-if="item.messageContentType === 'text'"
                 :content="item.messageContent"
                 :id="item.messageFingerprint"
               />
-              <ImageMessage
+              <image-message
                 v-if="item.messageContentType === 'image'"
                 :progress="item.progress"
                 :content="item.messageContent"
                 :id="item.messageFingerprint"
+                @load-complete="doUiAction('scrollToBottom')"
               />
-              <FileMessage
+              <file-message
                 v-if="item.messageContentType === 'file'"
                 :progress="item.progress"
                 :content="item.messageContent"
@@ -61,7 +61,7 @@
                 color="red"
                 v-else-if="item.error === true"
                 small
-                @click="doUiAction('reSendMsg', item)"
+                @click="doUiAction('startResendMsg', item)"
               >mdi-alert-circle
               </v-icon>
               <v-spacer></v-spacer>
@@ -74,7 +74,7 @@
   </template>
 </template>
 <div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
-</load_more>
+</load-more>
 </script>
 <script>
 window.registerData(
@@ -101,8 +101,8 @@ window.registerData(
 )
 
 
-Vue.component('ChattingMessagePage', {
-  template: '#_ChattingMessagePage',
+Vue.component('chatting-page', {
+  template: '#_chatting-page',
   mixins: [window.jianghuUiActionMixins],
   data: () => window.vueData,
   vueComponent: 'chatSession',
@@ -142,75 +142,54 @@ Vue.component('ChattingMessagePage', {
     },
     dayjs: window.dayjs,
     // 更新单条消息
-    refreshMessage(params, update = true) {
-      if (!update) return;
+    updateMessageItem({message, insert = true}) {
+      // 合并新消息
+      let msgExist = false;
       if (this.chatHistoryList) {
-        let msgExist = false;
         this.chatHistoryList = this.chatHistoryList.map(v => {
           // 如果消息已经存在，直接更新消息内容
-          if (v.messageFingerprint === params.messageFingerprint) {
+          if (v.messageFingerprint === message.messageFingerprint) {
             // 发送消息，可能不是好友，或其他错误
-            v = {...params};
             msgExist = true;
+            v = {...message};
           }
           return v;
         });
+      }
+      // 插入新消息
+      if(insert) {
+        if(!this.chatHistoryList) {
+          this.chatHistoryList = [];
+        }
         if (!msgExist) {
           // 如果消息不存在，将消息加到最后
-          const isBottom =
-            this.$refs.chattingPage.scrollTop >
-            this.$refs.chattingPage.scrollHeight -
-            this.$refs.chattingPage.offsetHeight -
-            30;
-          this.chatHistoryList.unshift(params);
+          const isBottom = this.getPagePositionIsAtBottom();
+          this.chatHistoryList.unshift(message);
           if (isBottom) {
             this.newMsgCount = 0;
-            this.scrollToBottom();
+            this.doUiAction('scrollToBottom');
           } else {
             this.newMsgCount += 1;
           }
         }
       }
-      if (this.isMobile && !this.mobileLeftHide) {
-        return;
-      }
-      if (!params.loading && !params.error) {
+      // 删除已读
+      if (!message.loading && !message.error) {
         this.doUiAction('delMessageOffline')
       }
     },
-
-    refreshChatItem(item) {
-      if (this.chatHistoryList) {
-        const historyList = _.cloneDeep(this.chatHistoryList)
-        this.chatHistoryList = historyList.map(v => {
-          // 如果消息已经存在，直接更新消息内容
-          if (v.messageFingerprint === item.messageFingerprint) {
-            // 发送消息，可能不是好友，或其他错误
-            v = {...item};
-          }
-          return v;
-        });
-      }
-      this.$forceUpdate();
+    // 判断滚动位置是否最下方
+    getPagePositionIsAtBottom() {
+      return this.$refs.chattingPage.scrollTop >
+        this.$refs.chattingPage.scrollHeight -
+        this.$refs.chattingPage.offsetHeight -
+        30;
     },
+    // 我自己
     isFromMe(item) {
       return item.fromUserId === userInfo.userId;
     },
-    // 格式化时间
-    getChatMenu(item) {
-      const menu = [
-      ];
-      if (item.messageContentType === 'text') {
-        menu.push({title: '复制', method: this.copyMsg});
-      }
-      // 我自己 && 5分钟内 方可撤之
-      if (
-        this.isFromMe(item) &&
-        new Date().getTime() - dayjs(item.messageTimeString).valueOf() <= 300000
-      ) {
-      }
-      return menu;
-    },
+    // 获取历史消息接口
     async getMessageHistoryRequest(lastId, userIdOrRoomId) {
       return (
         await window.jianghuAxios({
@@ -229,6 +208,7 @@ Vue.component('ChattingMessagePage', {
         })
       ).data.appData.resultData;
     },
+    // 获取历史消息，处理加载状态
     async getNextChatHistoryList() {
       const result = await this.getMessageHistoryRequest(this.lastId, this.sessionId);
       return new Promise(resolve => {
@@ -256,31 +236,16 @@ Vue.component('ChattingMessagePage', {
         return 'complete';
       }
     },
-
+    //
     scrollToBottom({mustToBottom}) {
       this.$refs.chattingPage.scrollToBottom({mustToBottom});
     },
-    async copyMsg(item, id) {
-      window.vtoast.success('复制成功');
-    },
-    deleteMsg(item) {
-      this.chatHistoryList = this.chatHistoryList.filter((v, i) => {
-        return v.id !== item.id;
-      });
-      this.$emit('deleteMsg', item);
-      this.$forceUpdate();
-    },
-
-    appendMsg(msg) {
-      this.messageTextareaValue = `${this.messageTextareaValue || ''}${msg || ''}`
-    },
-
 
     /**
      * 重新发送消息，弹窗
      * @param selectMsg
      */
-    async reSendMsg(selectMsg) {
+    async startResendMsg(selectMsg) {
       this.currentResendMsg = { ...selectMsg };
       const { messageContentType } = this.currentResendMsg;
       if (messageContentType === 'file') {
@@ -306,9 +271,7 @@ Vue.component('ChattingMessagePage', {
       }
 
       if (this.currentResendMsg) {
-        await window.socket.emitMsg(
-          this.currentResendMsg,
-        );
+        await window.socket.emitMsg(this.currentResendMsg);
         this.$forceUpdate();
         // 成功后
         // console.log('this.currentResendMsg', this.currentResendMsg);

@@ -1,5 +1,5 @@
 <!-- 左边栏 -->
-<script type="text/x-template" id="_LeftPanel">
+<script type="text/x-template" id="_left-panel">
 <div>
   <v-scroll-x-transition>
     <v-navigation-drawer
@@ -11,34 +11,26 @@
       touchless
     >
       <!--   用户信息   -->
-      <LeftUserWidget />
+      <left-user-widget />
       <v-list class="leftDataList" ref="leftDataList">
         <v-list-item-group
           :value="currentChatSessionId"
           @change="onLeftItemChange"
           color="primary"
-          active-class
-          class="listItem"
+          active-class="activeItem"
         >
           <template v-if="chatList.length">
             <template v-for="(item, index) in chatList">
-              <div
-                :data-index="index"
-                :key="`${index}_${item.chatId}`">
-                <v-list-item
-                  v-if="canRender(index)"
-                  class="pa-0 ma-0"
-                  :value="$root.getDataId(item)"
-                  :class="{ 'activeItem': isActiveItem(item) }"
-                >
-                  <ChatWidget
-                    :isOnline="isOnline(item.chatId)"
-                    @onClearUnread="doUiAction('delMessageOffline')"
-                    :ref="'chatWidget_' + $root.getDataId(item)"
-                    :data="item"
-                  />
-                </v-list-item>
-              </div>
+              <v-list-item
+                class="pa-0 ma-0"
+                :value="$root.getDataId(item)"
+              >
+                <chat-item
+                  @onClearUnread="doUiAction('delMessageOffline')"
+                  :ref="'chatWidget_' + $root.getDataId(item)"
+                  :data="item"
+                />
+              </v-list-item>
             </template>
           </template>
           <template v-else>
@@ -56,14 +48,11 @@
 
 <script>
 window.registerData(
-  {
-    leftListScrollTop: 0,
-    leftListScrollHeight: 0,
-  },
+  {},
   {}
 )
-Vue.component('LeftPanel', {
-  template: '#_LeftPanel',
+Vue.component('left-panel', {
+  template: '#_left-panel',
   mixins: [window.jianghuUiActionMixins],
   data: () => window.vueData,
   vueComponent: 'leftPanel',
@@ -79,28 +68,13 @@ Vue.component('LeftPanel', {
   mounted() {
   },
   async created() {
-    this.initLeftDataListScroll();
     this.getChatSessionList({type: 'created'});
   },
   methods: {
 
-    isActiveItem(item) {
-      if (item.friendDeviceId === undefined) {
-        return this.friendDeviceId == null && this.currentChatSessionId === this.$root.getDataId(item);
-      }
-      return this.friendDeviceId === item.friendDeviceId && this.currentChatSessionId === this.$root.getDataId(item)
-
-    },
-    isRobot(item) {
-      return !!item.friendDeviceType;
-    },
-    canRender(index) {
-      return index * 70 >= this.leftListScrollTop - 210 && index * 70 <= this.leftListScrollTop + this.leftListScrollHeight + 210;
-    },
-
     // 获取会话列表
     async getChatSessionList({type}) {
-      this.chatListBackUps = (
+      this.chatList = (
         await window.jianghuAxios({
           data: {
             appData: {
@@ -113,7 +87,7 @@ Vue.component('LeftPanel', {
       ).data.appData.resultData.rows;
 
       // chatRoomExtend 解析
-      this.chatListBackUps.forEach(item => {
+      this.chatList.forEach(item => {
         try {
           if (item.chatRoomExtend) {
             item.chatRoomExtend = JSON.parse(item.chatRoomExtend);
@@ -126,31 +100,8 @@ Vue.component('LeftPanel', {
       });
       this.doUiAction('reFilterList')
       if (!this.isMobile && !this.currentChatSessionId) {
-        this.currentChatSessionId = this.chatListBackUps[0].chatId;
-      }
-    },
-    updateChatListItem({params}) {
-      // 更新完整数据表
-      let nowIndex = this.chatListBackUps.findIndex(v => {
-        return v.chatId === this.$root.getDataId(params);
-      });
-      if (nowIndex >= 0) {
-        for (const key of Object.keys(params)) {
-          if (params[key]) {
-            this.chatListBackUps[nowIndex][key] = params[key];
-          }
-        }
-      }
-      // 更新当前UI显示的数据表
-      nowIndex = this.chatList.findIndex(v => {
-        return v.chatId === this.$root.getDataId(params);
-      });
-      if (nowIndex >= 0) {
-        for (const key of Object.keys(params)) {
-          if (params[key]) {
-            this.chatList[nowIndex][key] = params[key];
-          }
-        }
+        this.currentChatSessionId = this.chatList[0].chatId;
+        this.currentChatSession = _.cloneDeep(this.chatList[0]);
       }
     },
 
@@ -166,47 +117,10 @@ Vue.component('LeftPanel', {
       });
       if (findNowChatItem) {
         this.currentChatSessionId = findNowChatItem.chatId;
-      }
-      return true;
-    },
-    /**
-     * 当左侧列表开始滑动
-     * @param event
-     */
-    leftListOnScroll(event) {
-      if (this.willRanderLeftListTimer) {
-        clearTimeout(this.willRanderLeftListTimer);
-      }
-      this.willRanderLeftListTimer = setTimeout(() => {
-        this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
-        this.leftListScrollHeight = this.$refs.leftDataList.$el.offsetHeight;
-        console.log(this.leftListScrollHeight);
-      }, 60);
-    },
-    /**
-     * 绑定左侧的上下滑动
-     */
-    initLeftDataListScroll() {
-      try {
-        this.$nextTick(() => {
-          this.leftListScrollTop = this.$refs.leftDataList.$el.scrollTop;
-          this.leftListScrollHeight =
-            this.$refs.leftDataList.$el.offsetHeight;
-          this.$refs.leftDataList.$el.onscroll = this.leftListOnScroll;
-        });
-      } catch (e) {
-        requestAnimationFrame(() => {
-          this.initLeftDataListScroll();
-        });
+        this.currentChatSession = _.cloneDeep(findNowChatItem)
       }
     },
-    /**
-     * 检查用户在线状态
-     * @param chatId
-     */
-    isOnline(chatId) {
-      return false;
-    },
+
   }
 });
 </script>

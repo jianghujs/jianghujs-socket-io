@@ -18,9 +18,9 @@
   </div>
 </template>
 <script>
-Vue.component('load_more', {
+Vue.component('load-more', {
   template: '#loadMore',
-  name: 'load_more',
+  name: 'load-more',
   props: ["sessionId", 'handler'],
   data: () => ({
     loading: false,
@@ -31,12 +31,12 @@ Vue.component('load_more', {
       empty: 'empty',
       complete: 'complete',
     },
-    chatPageScrollHeightBeforeLoad: 0, // 1. 有时候加载更多完成后会导致页面抖动一下，手动给他回位到加载更多之前的位置上，视觉上保证，没有变动， 2.在进行同步之前保存下当前的滚动位置，同步完后，滚动回去
+    scrollHeightBeforeLoad: 0, // 1. 有时候加载更多完成后会导致页面抖动一下，手动给他回位到加载更多之前的位置上，视觉上保证，没有变动， 2.在进行同步之前保存下当前的滚动位置，同步完后，滚动回去
   }),
   watch: {
     sessionId(value) {
       if (value) {
-        this.chatPageScrollHeightBeforeLoad = 0;
+        this.scrollHeightBeforeLoad = 0;
         this.loadState = this.loadStatus.loading;
         this.loadMore();
       }
@@ -47,15 +47,17 @@ Vue.component('load_more', {
   mounted() {
   },
   methods: {
+    // 顶部触发加载更多
     onPageScroll(event) {
       if (event.target.scrollTop === 0) {
         this.loadMore();
       }
     },
+    // 加载更多
     async loadMore() {
       if (this.loadState !== this.loadStatus.finish && this.loadState !== this.loadStatus.empty) {
         this.loadState = this.loadStatus.loading;
-        this.chatPageScrollHeightBeforeLoad = Math.max(this.$refs.loadContainer.scrollHeight, this.chatPageScrollHeightBeforeLoad);
+        this.scrollHeightBeforeLoad = Math.max(this.$refs.loadContainer.scrollHeight, this.scrollHeightBeforeLoad);
         if (!this.loading) {
           this.loading = true;
           this.loadState = await this.handler('loadMore');
@@ -64,10 +66,11 @@ Vue.component('load_more', {
         }
       }
     },
+    // 防止加载数据后的抖动
     fixScrollPositionOnRenderEnd(count) {
       const scrollHeightAfterLoad = this.$refs.loadContainer.scrollHeight;
-      if (scrollHeightAfterLoad > this.chatPageScrollHeightBeforeLoad) {
-        this.$refs.loadContainer.scrollTop = scrollHeightAfterLoad - this.chatPageScrollHeightBeforeLoad;
+      if (scrollHeightAfterLoad > this.scrollHeightBeforeLoad) {
+        this.$refs.loadContainer.scrollTop = scrollHeightAfterLoad - this.scrollHeightBeforeLoad;
       } else {
         if (count < 50) {
           requestAnimationFrame(() => {
@@ -76,8 +79,8 @@ Vue.component('load_more', {
         }
       }
     },
-
-    mustSetScrollTop() {
+    // 必须到最后，防止突发情况，中断滚动
+    mustScrollToBottom() {
       // 手指正在滑动，停止递归定位
       if (window.touchIng) return false;
       requestAnimationFrame(() => {
@@ -87,22 +90,24 @@ Vue.component('load_more', {
             this.$refs.loadContainer.offsetHeight + this.$refs.loadContainer.scrollTop < scrollHeight - 10
           ) {
             this.$refs.loadContainer.scrollTop = scrollHeight;
-            this.mustSetScrollTop();
+            this.mustScrollToBottom();
           }
         } catch (e) {
-          this.mustSetScrollTop();
+          this.mustScrollToBottom();
         }
       });
       return false;
     },
+    // 滚动到最下方
     scrollToBottom({mustToBottom}) {
       this.$emit('onScrollToBottom');
       this.$nextTick(() => {
         requestAnimationFrame(() => {
           try {
             if (mustToBottom) {
-              this.mustSetScrollTop();
+              this.mustScrollToBottom();
             } else {
+              if (window.touchIng) return false;
               if(this.$refs.loadContainer) {
                 this.$refs.loadContainer.scrollTop = this.$refs.loadContainer.scrollHeight;
               }

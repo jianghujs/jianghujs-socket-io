@@ -4,10 +4,10 @@
 {% block vue_template %}
 <v-app id="inspire">
   <!-- 左边栏 -->
-  <LeftPanel ref="leftPanel" />
+  <left-panel ref="leftPanel" />
   <!-- 中间栏目 -->
   <v-main class="chatMain mob-app-main">
-    <ChattingMessagePage :sessionId="currentChatSessionId" ref="chattingPage" />
+    <chatting-page :sessionId="currentChatSessionId" ref="chattingPage" />
   </v-main>
 
   <!-- 消息输入框 -->
@@ -17,7 +17,7 @@
     class="vFooter ma-0 pa-0 mob-app-footer"
     :class="{ 'mobExpandChat': mobExpandChat }"
   >
-    <ChatInputWidget ref="chatInput" />
+    <chat-input-widget ref="chatInput" />
   </v-footer>
 </v-app>
 {% endblock %}
@@ -54,7 +54,8 @@ window.registerData(
     isMobile: window.innerWidth < 500,
     messageTextareaValue: '',
     currentChatSessionId: null,
-    chatListBackUps: [],
+    currentChatSession: null,
+    chatList: [],
     socketClient: window.socket,
     userInfo: window.userInfo,
     dataSyncStatus: '',
@@ -77,12 +78,6 @@ window.registerData(
       }
       return 1;
     },
-    chatList() {
-      return this.chatListBackUps.slice();
-    },
-    currentChatSession() {
-      return this.chatListBackUps.slice().find(item => item.chatId === this.currentChatSessionId);
-    },
     mobileLeftHide() {
       return !this.currentChatSessionId
     },
@@ -94,7 +89,7 @@ window.registerData(
       return true;
     },
     sendMsgActionId() {
-      return this.currentChatSession.messageType === 'room'
+      return this.currentChatSession && this.currentChatSession.messageType === 'room'
         ? 'userSendMessageToRoom'
         : 'userSendMessageToUser';
     }
@@ -118,26 +113,18 @@ new Vue({
     this.doUiAction('setSyncStatusToSyncing');
     this.doUiAction('disableSystemEvent');
     this.doUiAction('initWebSocket');
-    this.doUiAction('getConstantList');
     await this.doUiAction('getChatSessionList');
     this.doUiAction('setSyncStatusToSuccess');
   },
   watch: {
     async currentChatSessionId(v) {
       this.messageTextareaValue = null;
-      this.$forceUpdate();
     },
   },
   methods: {
     getDataId(item) {
       if (item) {
-        if (item.hasOwnProperty('messageType')) {
-          if (item.chatId) {
-            return item.chatId;
-          }
-          return item.messageType === 'room' ? item.toRoomId : (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId);
-        }
-        return item.roomId || item.friendId;
+        return item.chatId || item.toRoomId || (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId) || item.roomId || item.friendId;
       }
       return null;
     },
@@ -167,6 +154,7 @@ new Vue({
             (event.target.localName === 'textarea' || event.target.localName === 'input'));
       };
     },
+
     /** 初始化socket */
     initWebSocket() {
       this.socketClient.init();
@@ -176,25 +164,7 @@ new Vue({
       this.socketClient.addListeners('roomNotice', result => this.doUiAction('onRoomNotice', result));
       this.socketClient.addListeners('roomMessage', result => this.doUiAction('onRoomMessage', result));
     },
-    async getConstantList() {
-      const data = (
-        await window.jianghuAxios({
-          data: {
-            appData: {
-              pageId: 'allPage',
-              actionId: 'getConstantList',
-              whereIn: {
-                constantKey: ['appLinkActionConfig']
-              }
-            }
-          }
-        })
-      ).data.appData.resultData;
-      const {rows: constantList} = data;
-      if (constantList.length) {
-        localStorage.setItem('appLinkActionConfig', constantList[0].constantValue)
-      }
-    },
+
     async getUserInfo() {
       await refreshUserInfo();
     },
@@ -204,10 +174,9 @@ new Vue({
      * @return {Promise<void>}
      */
     async delMessageOffline() {
-      const chatId = this.currentChatSessionId
-      if (this.chatListBackUps) {
-        const clickChatSession = this.chatListBackUps.find(
-          chatSession => chatSession.chatId === chatId
+      if (this.chatList) {
+        const clickChatSession = this.chatList.find(
+          chatSession => chatSession.chatId === this.currentChatSessionId
         );
         if (clickChatSession && clickChatSession.offlineMessageCount) {
           clickChatSession.offlineMessageCount = 0;
@@ -218,7 +187,7 @@ new Vue({
                 actionId: 'delMessageOffline',
                 actionData: {
                   messageType: clickChatSession.messageType,
-                  userIdOrRoomId: `${chatId}`
+                  userIdOrRoomId: this.currentChatSessionId
                 }
               }
             }
@@ -229,41 +198,24 @@ new Vue({
 
     // 过滤和排序列表
     reFilterList() {
-      // chatListBackUps 也要重排
-      if (this.chatListBackUps) {
-        this.chatListBackUps = this.sortChatListBackUps(this.chatListBackUps);
-      }
-    },
-    sortChatListBackUps(chatListBackUps) {
-      return chatListBackUps
-        .map(chatItem => {
-          let maxTime = chatItem.messageTimeString;
-          if (chatItem.topChatOrder && chatItem.topChatOrder.localeCompare(chatItem.messageTimeString) > 0) {
-            maxTime = chatItem.topChatOrder;
-          }
-          chatItem.orderCompare = chatItem.topChatOrder ? 'T' + maxTime : maxTime;
+      // chatList 也要重排
+      if (this.chatList) {
+        this.chatList = this.chatList.map(chatItem => {
+          chatItem.orderCompare = chatItem.messageTimeString;
           return chatItem;
         })
-        .sort((a, b) => {
+        this.chatList.sort((a, b) => {
           return b.orderCompare.localeCompare(a.orderCompare);
         });
+      }
     },
     preventDefault,
-    /** 手动触发系统后退 */
-    windowBack() {
-      this.$nextTick(() => {
-        if (this.isMobile) {
-          window.history.back();
-        }
-      });
-    },
     /**
      * 断线重连监听
      * @param hasDisconnectOrError
      * @param hasDisconnectOrError.hasError
      */
     async onSocketReConnect({hasError}) {
-      console.log('断线重连监听:index', hasError)
       if (hasError) {
         this.doUiAction('setSyncStatusToSyncing')
         await this.doUiAction('getUserInfo');
@@ -274,63 +226,66 @@ new Vue({
 
 
     onUserNotice(result) {
+      this.handleNoticeMessage(result);
       this.renderChatSession(result);
       this.renderNoticeUI(result);
-      this.handleNoticeMessage(result);
     },
     onRoomNotice(result) {
+      this.handleNoticeMessage(result);
       this.renderChatSession(result);
       this.renderNoticeUI(result);
-      this.handleNoticeMessage(result);
     },
     onUserMessage(result) {
-      this.renderChatSession(result);
       this.handleNoticeMessage(result);
+      this.renderChatSession(result);
     },
     onRoomMessage(result) {
-      this.renderChatSession(result);
       this.handleNoticeMessage(result);
+      this.renderChatSession(result);
     },
 
     // 更新左侧列表的聊天内容和顺序
-    renderChatSession(params) {
-      // 撤回的不是最后一条消息，不用重新渲染
-      if (params.messageStatus === 'revoke' && !this.isRevokeLastMessage(params)) {
-        return;
-      }
+    async renderChatSession(params) {
       // 更新chatList 中的数据
       this.doUiAction("updateChatListItem", {params});
       // 消息在左侧列表，并且不是正在聊天中，更新左侧列表对应消息，上下下线的通知不渲染
       if (params.noticeType !== 'errorNotice') {
-        if (this.isExistInChatSession(params)) {
+        if (this.existChatSession(params)) {
           // 重排后再更新会话显示，否则会有取不到会话的情况
           this.reFilterList();
           // 更新未读消息
-          this.updateMessageCount(params)
-          // 重新渲染会话
-          this.$nextTick(() => {
-            this.reRenderSession()
-          });
+          this.updateMessageCount(params);
         } else {
           // 消息不带头像，需要更新聊天会话列表，避免没头像
-          this.doUiAction('getChatSessionList', {type: '消息不带头像，需要更新聊天会话列表，避免没头像'});
+          await this.doUiAction('getChatSessionList', {type: '消息不带头像，需要更新聊天会话列表，避免没头像'});
         }
+      }
+      this.chatList = _.cloneDeep(this.chatList);
+      if (this.getDataId(params) === this.currentChatSessionId) {
+        this.doUiAction('scrollToBottom')
       }
       // 渲染聊天内容
       if (this.$root.getDataId(params) === this.currentChatSessionId) {
-        this.refreshMessage(params)
+        this.doUiAction('updateMessageItem', {
+          message: params
+        });
       }
       return null;
     },
 
-    /**
-     * 是否是撤销最后一条消息
-     * @param params
-     */
-    isRevokeLastMessage(params) {
-      return dayjs(params.messageTimeString).valueOf() > dayjs(this.currentChatSession.messageTimeString).valueOf();
+    updateChatListItem({params}) {
+      // 更新当前UI显示的数据表
+      const nowIndex = this.chatList.findIndex(v => {
+        return v.chatId === this.$root.getDataId(params);
+      });
+      if (nowIndex >= 0) {
+        for (const key of Object.keys(params)) {
+          if (params[key]) {
+            this.chatList[nowIndex][key] = params[key];
+          }
+        }
+      }
     },
-
 
     /**
      * 更新未读消息
@@ -339,7 +294,7 @@ new Vue({
     updateMessageCount(params) {
       //如果不是是自己发的消息，未读+1
       if (params.fromUserId !== this.userInfo.userId) {
-        this.chatListBackUps = this.chatListBackUps.map(v => {
+        this.chatList = this.chatList.map(v => {
           const findSessionByParams = v.chatId === this.$root.getDataId(params);
           if (findSessionByParams) {
             v.offlineMessageCount += 1;
@@ -349,47 +304,19 @@ new Vue({
       }
     },
 
-    /**
-     * 重新渲染会话
-     * @param params
-     */
-    reRenderSession(params) {
-      if (
-        window.$vueComponent.leftPanel.$refs['chatWidget_' + this.$root.getDataId(params)] &&
-        window.$vueComponent.leftPanel.$refs['chatWidget_' + this.$root.getDataId(params)].length
-      ) {
-        window.$vueComponent.leftPanel.$refs[
-        'chatWidget_' + this.$root.getDataId(params)
-          ][0].reRenderSessionBySocketMessage(params);
-      }
-    },
-
-    /**
-     * 渲染聊天内容
-     * @param params
-     */
-    refreshMessage(params) {
-      this.getChattingPage().refreshMessage(params);
-      this.$forceUpdate();
-    },
-
     renderNoticeUI(params) {
-      if (this.isMsgMuted(params)) {
-        return;
-      }
-      // 渲染好友变动
       if (params.hasOwnProperty('noticeType')) {
         if (
           params.noticeType === 'errorNotice' &&
           params.errorCode === 'chat_not_user_friend'
         ) {
-          this.getChattingPage()
-            .refreshMessage({
+          this.doUiAction('updateMessageItem', {
+            message: {
               ...params.errorReasonSupplement,
               loading: false,
               error: true
-            });
-          this.$forceUpdate();
+            }
+          });
         }
       }
     },
@@ -398,7 +325,7 @@ new Vue({
      * 判断消息是否在聊天列表中
      * @param params
      */
-    isExistInChatSession(params) {
+    existChatSession(params) {
       const dataId = this.$root.getDataId(params);
       return this.chatList.some(chat => this.$root.getDataId(chat) === dataId);
     },
@@ -406,7 +333,7 @@ new Vue({
     /** 播放消息提示音 **/
     async playBeep() {
       try {
-        await didaAudio.play();
+        await this.playBeepConfirm();
       } catch (e) {
         if (await window.confirmDialog({
           title: '您的网页无法自动播放消息提示音，需要确认后播放',
@@ -427,13 +354,18 @@ new Vue({
      * @param params
      */
     handleNoticeMessage(params) {
-      // 静音了，不处理
-      if (this.isMsgMuted(params)) {
-        return;
-      }
       // 通知类
       if (params.noticeType) {
-        this.handleNotice(params)
+        if (!!params.messageContent) {
+          // 更新上下线状态改变
+          const excludeNoticeType = ['onlineNotice', 'offlineNotice'];
+          if (excludeNoticeType.includes(params.noticeType)) {
+            this.setOnlineStatus(params);
+            return;
+          }
+          // 显示通知
+          this.showNotify(getMessageContent(params), '通知')
+        }
         return;
       }
       // 消息类，不是自己发送的消息, 不是通知类消息
@@ -443,30 +375,15 @@ new Vue({
     },
 
     /**
-     * 处理通知类消息
-     * @param params
-     */
-    handleNotice(params) {
-      if (!!params.messageContent) {
-
-        // 更新上下线状态改变
-        const excludeNoticeType = ['onlineNotice', 'offlineNotice'];
-        if (excludeNoticeType.includes(params.noticeType)) {
-          this.setOnlineStatus(params);
-          return;
-        }
-        // 显示通知
-        this.showNotify(getMessageContent(params), '通知')
-      }
-    },
-
-
-    /**
      * 用户上下线状态改变
      * @param params
      */
     setOnlineStatus(params) {
-
+      this.chatList.some(item => {
+        if (item.chatId === this.getDataId(params)) {
+          item['isOnline'] = params.noticeType === 'onlineNotice';
+        }
+      })
     },
 
     /**
@@ -483,26 +400,23 @@ new Vue({
       // 未静音，播放消息提示音
       this.playBeep();
     },
-
-    /**
-     * 检查是否消息面打扰
-     * @param msg
-     */
-    isMsgMuted(msg) {
-      if (!msg.toRoomId && msg.fromUserId === this.userInfo.userId) {
-        return false;
+    prepareSendMsgValidata({messageContent, messageContentType}) {
+      // 不在线，不发送
+      if (window.socket && window.socket.online === false) {
+        window.vtoast.fail('离线中...，请稍后尝试发送');
+        throw new Error('离线中...，请稍后尝试发送');
       }
-      const chatId = msg.toRoomId || msg.fromUserId;
-
-      const chatSession = this.chatListBackUps.find(
-        chat => chat.chatId === chatId
-      );
-      if (!chatSession) {
-        return false;
+      // 超过7000个字，不发送
+      if (messageContent.length > 7000 && messageContentType === 'text') {
+        window.vtoast.fail('消息内容长度不得超过7000个文字', false, 'bottom');
+        throw new Error('消息内容长度不得超过7000个文字');
       }
-      return chatSession.muted;
+      // 消息内容为空
+      if (messageContentType === 'text' && !messageContent) {
+        window.vtoast.fail('消息内容为空', false, 'bottom');
+        throw new Error('消息内容为空');
+      }
     },
-
     async sendMsg(
       {
         messageContent = this.messageTextareaValue || '',
@@ -512,21 +426,7 @@ new Vue({
         targetUserId = null
       }
     ) {
-      this.doUiAction('scrollToBottom')
-      // 不在线，不发送
-      if (window.socket && window.socket.online === false) {
-        window.vtoast.fail('离线中...，请稍后尝试发送');
-        return;
-      }
-      // 超过7000个字，不发送
-      if (messageContent.length > 7000 && messageContentType === 'text') {
-        window.vtoast.fail('消息内容长度不得超过7000个文字', false, 'bottom');
-        return;
-      }
-      // 消息内容为空
-      if (messageContentType === 'text' && !messageContent) {
-        return;
-      }
+      this.prepareSendMsgValidata({messageContent, messageContentType});
 
       const socketParams = {
         messageContent,
@@ -544,7 +444,10 @@ new Vue({
         process: 0
       };
       // 先更新一个 loading 消息
-      this.getChattingPage().refreshMessage(tempParams);
+      this.doUiAction('updateMessageItem', {
+        message: tempParams
+      });
+      this.doUiAction('scrollToBottom')
       setTimeout(
         () => {
           if (tempParams.loading === true) {
@@ -561,43 +464,43 @@ new Vue({
           tempParams,
           socketParams
         );
-        if (
-          !uploadResult ||
+        const uploadFail = !uploadResult ||
           !uploadResult.data.appData.resultData.filename ||
           !uploadResult.data.appData.resultData.downloadPath ||
-          !uploadResult.data.appData.resultData.binarySize
-        ) {
-          this.getChattingPage().refreshMessage(
-            {
+          !uploadResult.data.appData.resultData.binarySize;
+        if (uploadFail) {
+          this.doUiAction('updateMessageItem', {
+            message: {
               ...tempParams,
               loading: false,
               error: true
             },
-          );
+            insert: false
+          });
         } else {
-          const { filename, downloadPath, binarySize } = uploadResult.data.appData.resultData;
+          const {filename, downloadPath, binarySize} = uploadResult.data.appData.resultData;
           socketParams.messageContent = JSON.stringify({
             filename,
             downloadPath,
             binarySize
           });
-          await window.socket.emitMsg(
-            socketParams,
-            this.sendMsgActionId
-          );
+          await window.socket.emitMsg({
+            actionData: socketParams,
+            actionId: this.sendMsgActionId
+          });
         }
       } else {
-        await window.socket.emitMsg(
-          socketParams,
-          this.sendMsgActionId
-        );
+        await window.socket.emitMsg({
+          actionData: socketParams,
+          actionId: this.sendMsgActionId
+        });
       }
       this.$forceUpdate();
       // 成功后
       // console.log('socketParams', socketParams);
       this.messageTextareaValue = '';
       window.vtoast.dismiss();
-      this.doUiAction('scrollToBottom', { mustToBottom: true })
+      this.doUiAction('scrollToBottom', {mustToBottom: true})
     },
     /**
      * 获取发送消息socket actionID
@@ -615,35 +518,41 @@ new Vue({
         try {
           // 使用 progress-linear https://vuetifyjs.com/zh-Hans/components/progress-linear/#section-989c8272
           const that = this
-          this.getChattingPage().refreshChatItem({
-            ...tempParams,
-            progress: 1
+          this.doUiAction('updateMessageItem', {
+            message: {
+              ...tempParams,
+              progress: 1
+            },
+            insert: false
           });
-          uploadResult = await window.jianghuAxios.httpUploadByStream({ file, fileDirectory,
+          uploadResult = await window.jianghuAxios.httpUploadByStream({
+            file, fileDirectory,
             onProgress: (total, loaded) => {
               let progress = Number((loaded * 100 / total).toFixed(2))
               if (progress == 100) {
                 progress = 99
               }
-              that.getChattingPage().refreshChatItem({
-                ...tempParams,
-                progress
+              that.doUiAction('updateMessageItem', {
+                message: {
+                  ...tempParams,
+                  progress
+                },
+                insert: false
               });
             }
           })
         } catch (err) {
           console.log(err)
         }
-        this.getChattingPage().refreshChatItem({
-          ...tempParams,
-          progress: 100
+        this.doUiAction('updateMessageItem', {
+          message: {
+            ...tempParams,
+            progress: 100
+          },
+          insert: false
         });
       }
       return uploadResult;
-    },
-
-    getChattingPage() {
-      return this.$refs.chattingPage;
     },
   }
 });
@@ -735,13 +644,6 @@ new Vue({
   line-height: 1.5rem
 }
 
-.leftDataList .v-item-group .listItem {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 70px;
-}
-
 .leftDataList {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -829,13 +731,8 @@ new Vue({
     width: 100% !important;
   }
 
-  .mobExpandChat .emotionContainer {
-    bottom: 68px !important
-  }
-
   .emotionContainer {
     width: 100% !important;
-    bottom: 59px !important;
     height: 223px !important;
   }
 
@@ -866,10 +763,6 @@ new Vue({
   .mob-app-footer {
     left: 0 !important;
     right: 0 !important;
-  }
-
-  .emotionContainer {
-    left: auto !important;
   }
 
   .footer {
@@ -918,6 +811,7 @@ new Vue({
     zoom: 0.9;
     transform: translateX(5px);
   }
+
   .newMsgCount {
     bottom: 139px !important;
   }

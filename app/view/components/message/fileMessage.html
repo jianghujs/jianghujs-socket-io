@@ -1,4 +1,4 @@
-<template id="_FileMessage">
+<template id="_file-message">
   <div class="fileContent" @click="downloadFile(getContentObj.downloadPath, getContentObj.filename)">
     <span class="fileContentFileDesc">
       <span>{{ getContentObj.filename }}</span>
@@ -17,8 +17,8 @@
 </template>
 
 <script>
-  Vue.component('FileMessage', {
-    template: '#_FileMessage',
+  Vue.component('file-message', {
+    template: '#_file-message',
     props: {
       content: String,
       progress: {

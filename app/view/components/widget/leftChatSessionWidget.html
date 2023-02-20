@@ -1,5 +1,5 @@
 <!-- 左栏聊天列表 -->
-<script type="text/x-template" id="_ChatWidget">
+<script type="text/x-template" id="chat-item">
 <v-card
   class="rounded-0 chatItem ma-0 pt-2"
   :class="[chatWidgetStyle]"
@@ -55,17 +55,13 @@
 </script>
 
 <script>
-Vue.component('ChatWidget', {
-  template: '#_ChatWidget',
+Vue.component('chat-item', {
+  template: '#chat-item',
   props: {
     data: {
       type: Object,
       default: () => {
       }
-    },
-    isOnline: {
-      type: Boolean,
-      default: false
     },
     dataType: {
       type: String,
@@ -80,7 +76,7 @@ Vue.component('ChatWidget', {
       return this.data;
     },
     isOnline_() {
-      return this.isOnline;
+      return this.data.isOnline;
     }
   },
   data() {
@@ -102,16 +98,6 @@ Vue.component('ChatWidget', {
       for (const paramsKey in params) {
         this.data[paramsKey] = params[paramsKey];
       }
-    },
-    // 更新接收来的信消息，plusCount：如果当前回话中，不需要增加红点数子
-    reRenderSessionBySocketMessage(params) {
-      if (params.noticeType === 'onlineNotice' || params.noticeType === 'offlineNotice') {
-        this.isOnline_ = params.noticeType === 'onlineNotice';
-        return false;
-      }
-      this.margeNewMessage(params)
-      this.renderUi()
-      return null;
     },
     renderUi() {
       this.chatWidgetStyle = {

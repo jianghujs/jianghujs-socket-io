@@ -1,73 +1,68 @@
-<script type="text/x-template" id="_Emotion">
-<div class="emotionWidget">
-  <div
-    v-if="shown"
-    ref="emotionContainer"
-    role="document"
-    :class="mainClass"
-    @mousedown="preventDefault"
-    @mouseup.stop="stopDefault"
-    class="emotionContainer"
-  >
-    <v-icon class="arrow">mdi-menu-down</v-icon>
-    <div class="emotionGridView">
-      <template
-        v-for="(emoji, index) in (Math.ceil(emotionJson[active].total / (active ? 4 : 8))) * (active ? 4 : 8)"
-      >
-        <v-img
-          v-if="index < emotionJson[active].total"
-          :key="active + '_' + index"
-          :src="public + '/emotion/' + emotionJson[active].dir + '/' + index + '.' + emotionJson[active].ext"
-          :max-height="active ? 80 : 35"
-          :max-width="active ? 80 : 35"
-          class="ma-2"
-          lazy-src="../public/img/login_loading.gif"
-          @mousedown="preventDefault"
-          @mouseup.stop="onEmotionTap(index)"
-        />
-        <div
-          v-else
-          :key="active + '_' + index"
-          :style="{ width: active ? '80px' : '35px', height: active ? '80px' : '35px', margin: '8px' }"
-        >
-          <!--            -->
-        </div>
-      </template>
-    </div>
-    <div class="emotionTabs">
+<script type="text/x-template" id="_emotion">
+<v-menu v-model="isEmotionDialogShown" content-class="emotionMenuDialog" top offset-y :close-on-content-click="false">
+<template v-slot:activator="{on, attrs}">
+  <v-btn class="emotion-open-btn" icon v-bind="attrs" v-on="on">
+    <v-icon>mdi-emoticon-outline</v-icon>
+  </v-btn>
+</template>
+<div
+  ref="emotionContainer"
+  role="document"
+  :class="mainClass"
+  class="emotionContainer"
+>
+  <div class="emotionGridView" v-if="emotionJson">
+    <template
+      v-for="(emoji, index) in (Math.ceil(emotionJson[active].total / (active ? 4 : 8))) * (active ? 4 : 8)"
+    >
       <v-img
-        v-for="(emoji, index) in emotionJson"
-        :key="'emoji_' + emoji + '_' + index"
-        :src="public + '/emotion/' + emoji.dir + '/' + emoji.cover + '.' + emoji.ext"
-        max-height="45"
-        max-width="45"
-        :class="{ 'active': active === index }"
-        class="pa-2 ma-2 emotionTabItem"
+        v-if="index < emotionJson[active].total"
+        :key="active + '_' + index"
+        :src="public + '/emotion/' + emotionJson[active].dir + '/' + index + '.' + emotionJson[active].ext"
+        :max-height="active ? 80 : 35"
+        :max-width="active ? 80 : 35"
+        class="ma-2"
         lazy-src="../public/img/login_loading.gif"
         @mousedown="preventDefault"
-        @mouseup.stop="active = index"
+        @mouseup.stop="onEmotionTap(index)"
       />
-    </div>
+      <div
+        v-else
+        :key="active + '_' + index"
+        :style="{ width: active ? '80px' : '35px', height: active ? '80px' : '35px', margin: '8px' }"
+      >
+      </div>
+    </template>
+  </div>
+  <div class="emotionTabs">
+    <v-img
+      v-for="(emoji, index) in emotionJson"
+      :key="'emoji_' + emoji + '_' + index"
+      :src="public + '/emotion/' + emoji.dir + '/' + emoji.cover + '.' + emoji.ext"
+      max-height="45"
+      max-width="45"
+      :class="{ 'active': active === index }"
+      class="pa-2 ma-2 emotionTabItem"
+      lazy-src="../public/img/login_loading.gif"
+      @mousedown="preventDefault"
+      @mouseup.stop="active = index"
+    />
   </div>
 </div>
+</v-menu>
+
 </script>
 
 <script>
-Vue.component('Emotion', {
-  template: '#_Emotion',
-  model: {
-    prop: 'shown',
-    event: 'close'
-  },
-  props: {
-    shown: Boolean
-  },
+Vue.component('emotion-widget', {
+  template: '#_emotion',
   data() {
     return {
       mainClass: {},
-      emotionJson: [],
+      emotionJson: null,
       active: 0,
-      public: window.appInfo.public
+      public: window.appInfo.public,
+      isEmotionDialogShown: false
     };
   },
   created() {
@@ -80,8 +75,6 @@ Vue.component('Emotion', {
   },
   methods: {
     preventDefault,
-    stopDefault() {
-    },
     async getEmotion() {
       const rows = (
         await window.jianghuAxios({
@@ -104,36 +97,25 @@ Vue.component('Emotion', {
         emotion: this.emotionJson[this.active],
         index
       });
+      if(this.active) {
+        this.isEmotionDialogShown = false;
+      }
     },
-    close() {
-      this.$emit('close');
-    }
   }
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.emotionMenuDialog {
+  transform: translateY(-10px);
+}
 .emotionContainer {
-  position: fixed;
-  left: 285px;
-  bottom: 270px;
   width: 440px;
   height: 300px;
-  transform: scale(0);
-  will-change: transform;
-  transition: all 0.3s;
-  z-index: 999;
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-flow: column;
   align-items: stretch;
 }
-
-.emotionContainer.shown {
-  transform: scale(1);
-}
-
 .emotionContainer .emotionGridView {
   flex: 1;
   overflow-x: hidden;
