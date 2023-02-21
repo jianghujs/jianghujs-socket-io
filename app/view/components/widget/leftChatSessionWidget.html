@@ -26,9 +26,7 @@
   <v-list-item-subtitle class="subtitle overflow-hidden" style="color: #999999;">
     <!--最后消息-->
     <v-row class="ma-0 pa-0 flex-nowrap">
-      <div style="text-overflow: ellipsis; overflow: hidden">
-        <span>{{chatItemContent}}{{chatItemContent}}{{chatItemContent}}</span>
-      </div>
+      <span style="text-overflow: ellipsis; overflow: hidden">{{chatItemContent}}</span>
       <v-spacer></v-spacer>
       <!--最后消息时间-->
       <span class="px-2">{{parseTimerLabel(chatItem.messageTimeString)}}</span>
