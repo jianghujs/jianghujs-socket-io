@@ -62,18 +62,20 @@
       },
     },
     methods: {
+      // 图片加载完成
       onLoaded() {
         this.isLoadStart = false;
         this.isLoadError = false;
-        // 渲染完成后处理
         setTimeout(() => {
           this.$emit('load-complete');
         }, 300)
       },
+      // 图片开始加载
       onLoadStart() {
         this.isLoadStart = true;
         this.isLoadError = false;
       },
+      // 图片加载失败
       onLoadError() {
         this.isLoadStart = false;
         this.isLoadError = true;

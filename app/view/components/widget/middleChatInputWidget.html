@@ -4,6 +4,7 @@
   class="d-flex footer"
   :class="{ 'flex-column': mobExpandChat, 'flex-row-reverse': !mobExpandChat }"
 >
+  <!--聊天输入框工具栏 >>>>>>>>>>> -->
   <v-toolbar flat class="chatToolbar" v-if="!isMobile">
     <emotion-widget
       :class="{ 'mobExpandChat': isMobile && mobExpandChat}"
@@ -17,64 +18,46 @@
     </v-btn>
     <v-spacer />
   </v-toolbar>
+  <!--<<<<<<<<<<<< 聊天输入框工具栏 -->
+  <!--<<<<<<<<<<<< 聊天输入框 -->
   <div
     class="flex-grow-1 d-flex ml-2"
     :class="{ 'mr-2': isMobile, 'mb-2': isMobile, 'mt-2': isMobile }"
   >
-    <v-form
-      :class="{ 'pl-2': isMobile, 'pr-2': isMobile }"
-      v-if="!isMobile"
-      class="text-body-2 mt-0 mr-2 d-block"
-    >
-      <v-textarea
-        v-model="messageTextareaValue"
-        no-resize
-        @paste="onPaste"
-        id="messageTextareaId"
-        :rows="isMobile ? (textareaExpanded ? 3 : 1) : 5"
-        row-height="15"
-        :autoGrow="isMobile"
-        counter="7000"
-        :rules="[textareaRules(7000)]"
-        placeholder="输入聊天信息，按Enter发送"
-        @keydown.enter.exact.prevent
-        @keydown.13.exact="() => {
-            doUiAction('sendMsg', {})
-          }"
-        @keydown.229.exact="() => { }"
-        @keydown.ctrl.enter.exact="newline"
-        dense
-        @click="focusTextArea"
-        class="ma-0"
-        ref="messageTextareaDom"
-      />
-    </v-form>
-  </div>
-
-  <template>
-    <input
-      ref="filePicker"
-      type="file"
-      class="fileInput"
-      @change="onChooseFile"
-      v-show="mobExpandChat"
+    <v-textarea
+      v-model="messageTextareaValue"
+      no-resize
+      @paste="onPaste"
+      id="messageTextareaId"
+      :rows="isMobile ? (textareaExpanded ? 3 : 1) : 5"
+      row-height="15"
+      :autoGrow="isMobile"
+      counter="7000"
+      :rules="[textareaRules(7000)]"
+      placeholder="输入聊天信息，按Enter发送"
+      @keydown.enter.exact.prevent
+      @keydown.13.exact="() => doUiAction('sendMsg', {})"
+      @keydown.229.exact="() => { }"
+      @keydown.ctrl.enter.exact="newline"
+      dense
+      @click="focusTextArea"
+      class="ma-0"
+      ref="messageTextareaDom"
     />
-    <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage" />
-  </template>
+  </div>
+  <!--<<<<<<<<<<<< 聊天输入框 -->
+  <!--文件选择-->
+  <input ref="filePicker" type="file" class="fileInput" @change="onChooseFile"/>
+  <!--图片选择-->
+  <input ref="imagePicker" type="file" class="fileInput" accept="image/*" @change="onChooseImage" />
+  <!--消息发送-->
   <div class="d-flex ma-2 align-center justify-end">
     <template v-if="mobExpandChat">
       <span class="caption" style="color: #BDBDBD">按 Ctrl+Enter 换行，按 Enter 发送</span>
       <div class="mr-2"></div>
     </template>
-    <v-btn
-      depressed
-      color="primary"
-      @mousedown="doUiAction('preventDefault')"
-      @mouseup="doUiAction('sendMsg', {})"
-    >发送
-    </v-btn>
+    <v-btn depressed color="primary" @mousedown="doUiAction('preventDefault')" @mouseup="doUiAction('sendMsg')">发送</v-btn>
   </div>
-
 </div>
 </script>
 
@@ -84,12 +67,9 @@ window.registerData(
     textareaRules: len => v => (v || '').length < len || `消息内容最长${len}个文字`,
   },
   {
+    // 手机端输入框展开
     textareaExpanded() {
-      return (
-        this.mobExpandChat ||
-        (this.messageTextareaValue &&
-          this.messageTextareaValue.length)
-      );
+      return this.mobExpandChat || (this.messageTextareaValue && this.messageTextareaValue.length);
     }
   }
 )
@@ -104,6 +84,17 @@ Vue.component('chat-input-widget', {
     this.initMob();
   },
   methods: {
+    /**
+     * 【doUiAction】fileInputTap
+     * 上传控件触发
+     * @param obj
+     * @param obj.type
+     */
+    async fileInputTap({type}) {
+      const refName = type
+      this.$refs[refName].click();
+    },
+
     // 当点击表情时
     onEmotionTap({emotion: {dir, ext}, index}) {
       if (dir === 'face01') {
@@ -119,18 +110,14 @@ Vue.component('chat-input-widget', {
       }
     },
 
-    /**
-     * 初始化在手机上的事件
-     */
+    // 初始化在手机上的事件
     initMob() {
       if (this.isMobile) {
         // 手机端 打开必定会 启动键盘
         this.registerOnResize();
       }
     },
-    /**
-     * 监听屏幕的高度变化，变相的监听了键盘展开和收起
-     */
+    // 监听屏幕的高度变化，变相的监听了键盘展开和收起
     registerOnResize() {
       const that = this;
       window.onresize = function () {
@@ -145,21 +132,7 @@ Vue.component('chat-input-widget', {
       };
     },
 
-    /**
-     * 上传控件触发
-     * @param obj
-     * @param obj.type
-     */
-    async fileInputTap({type}) {
-      const refName = type
-      this.$refs[refName].click();
-    },
-
-    /**
-     * 获取粘贴板的截图file
-     * @param event
-     * @returns {null}
-     */
+    // 获取粘贴板的截图file
     getFileFromClipboardData(event) {
       let messageContentType = duoxingMessageContentTypeEnum.image;
       const items = event.clipboardData && event.clipboardData.items;
@@ -195,27 +168,14 @@ Vue.component('chat-input-widget', {
     // ctrl+enter 新行
     newline() {
       const messageTextareaDom = document.getElementById('messageTextareaId');
-      const pos = messageTextareaDom.selectionEnd;
+      const position = messageTextareaDom.selectionEnd;
       this.messageTextareaValue =
-        this.messageTextareaValue.slice(0, pos) +
+        this.messageTextareaValue.slice(0, position) +
         '\n' +
-        this.messageTextareaValue.slice(pos);
+        this.messageTextareaValue.slice(position);
 
       this.$nextTick(() => {
         messageTextareaDom.selectionEnd = pos + 1;
-      });
-    },
-    // 保证输入框光标在最后
-    keepTextareaSelectionAtLast() {
-      const messageTextareaDom = document.getElementById('messageTextareaId');
-      requestAnimationFrame(() => {
-        messageTextareaDom.focus();
-        this.mobileMessageTextareaFocus = true
-        if (!this.isMobile) {
-          messageTextareaDom.selectionStart =
-            messageTextareaDom.selectionEnd =
-              this.messageTextareaValue.length;
-        }
       });
     },
 
@@ -224,7 +184,7 @@ Vue.component('chat-input-widget', {
       const file = event.target.files[0]
       this.$refs.filePicker.value = null;
       const messageContentType = duoxingMessageContentTypeEnum.file;
-      window.vtoast.loading({message: '文件上传中', timer: 300000})
+      window.vtoast.loading({message: '文件上传中'})
       await this.doUiAction('sendMsg', {
         messageContent: JSON.stringify({
           filename: file.name,
@@ -239,7 +199,7 @@ Vue.component('chat-input-widget', {
     // 当选择图片
     async onChooseImage(event) {
       const messageContentType = duoxingMessageContentTypeEnum.image;
-      window.vtoast.loading({message: '图片上传中', timer: 300000})
+      window.vtoast.loading({message: '图片上传中'})
       await this.doUiAction('sendMsg', {
         messageContent: JSON.stringify({
           filename: '',
@@ -252,13 +212,7 @@ Vue.component('chat-input-widget', {
       this.$refs.imagePicker.value = null;
     },
 
-    messageTextareaDomBlur() {
-      this.$refs.messageTextareaDom.blur();
-    },
-    /**
-     * 聊天输入框激活
-     * @param event
-     */
+    // 聊天输入框激活
     focusTextArea(event) {
       try {
         this.mobileMessageTextareaFocus = true

@@ -4,22 +4,23 @@
   <v-navigation-drawer
     app
     width="285"
-    class="navigation-drawer mob-app-left"
-    v-show="true"
+    class="jh-navigation-drawer"
+    v-show="!isMobile || (isMobile && !currentChatSessionId)"
     permanent
     touchless
   >
-    <!--   用户信息   -->
+    <!-- 用户信息 -->
     <left-user-widget />
-    <v-list class="leftDataList pa-0 overflow-y-auto overflow-x-hidden" ref="leftDataList">
+    <!-- 聊天列表 >>>>>>>>>> -->
+    <v-list class="jh-chat-list pa-0 overflow-y-auto overflow-x-hidden" ref="leftDataList">
       <v-list-item-group
         :value="currentChatSessionId"
         @change="selectChatItem"
         color="primary"
-        mandatory
-        active-class="activeItem"
+        :mandatory="!isMobile"
+        active-class="jh-active-chat-item"
       >
-        <!--聊天列表 >>>>>>>>>>>-->
+        <!--聊天列表不为空-->
         <template v-if="chatList.length">
           <template v-for="(chatItem, chatIndex) in chatList">
             <chat-item
@@ -28,14 +29,15 @@
             />
           </template>
         </template>
-        <!--<<<<<<<<<< 聊天列表-->
+        <!--聊天列表为加载中-->
         <template v-else>
-          <div style="width: 100%; line-height: 100px; text-align: center;">
+          <div class="jh-chat-list-empty">
             加载中
           </div>
         </template>
       </v-list-item-group>
     </v-list>
+    <!-- <<<<<<<<<< 聊天列表 -->
   </v-navigation-drawer>
 </div>
 </script>
@@ -43,8 +45,10 @@
 
 <script>
 window.registerData(
-  {},
-  {}
+  {
+  },
+  {
+  }
 )
 Vue.component('left-panel', {
   template: '#_left-panel',
@@ -58,7 +62,7 @@ Vue.component('left-panel', {
   mounted() {
   },
   async created() {
-    this.getChatSessionList({type: 'created'});
+    await this.getChatSessionList({type: 'created'});
   },
   methods: {
 
@@ -75,8 +79,22 @@ Vue.component('left-panel', {
           }
         })
       ).data.appData.resultData.rows;
-
-      // chatRoomExtend 解析
+      // chatRoomExtend 转换
+      this.transformChatRoomExtend();
+      // 排序列表
+      this.doUiAction('reFilterList')
+      // 设置默认当前聊天item
+      this.setDefaultCurrentChatItem();
+    },
+    // 设置默认当前聊天item
+    setDefaultCurrentChatItem() {
+      if (!this.isMobile && !this.currentChatSessionId) {
+        this.currentChatSessionId = this.chatList[0].chatId;
+        this.currentChatSession = _.cloneDeep(this.chatList[0]);
+      }
+    },
+    // chatRoomExtend 转换
+    transformChatRoomExtend() {
       this.chatList.forEach(item => {
         try {
           if (item.chatRoomExtend) {
@@ -88,11 +106,6 @@ Vue.component('left-panel', {
           item.chatRoomExtend = {};
         }
       });
-      this.doUiAction('reFilterList')
-      if (!this.isMobile && !this.currentChatSessionId) {
-        this.currentChatSessionId = this.chatList[0].chatId;
-        this.currentChatSession = _.cloneDeep(this.chatList[0]);
-      }
     },
 
     /**
@@ -115,3 +128,10 @@ Vue.component('left-panel', {
   }
 });
 </script>
+<style>
+.jh-chat-list-empty {
+  width: 100%;
+  line-height: 100px;
+  text-align: center;
+}
+</style>

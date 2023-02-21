@@ -1,5 +1,5 @@
 <!-- 用户信息 -->
-<script type="text/x-template" id="_left-user-widget">
+<script type="text/x-template" id="left-user-widget">
 <v-toolbar color="primary" dark class="pa-0 jh-toolbar" height="52" style="flex: none">
 <v-list-item class="pa-0 ma-0">
   <!--头像-->
@@ -56,7 +56,7 @@ window.registerData(
 )
 
 Vue.component('left-user-widget', {
-  template: '#_left-user-widget',
+  template: '#left-user-widget',
   mixins: [window.jianghuUiActionMixins],
   data: () => window.vueData,
   vueComponent: 'leftUser',
@@ -67,6 +67,7 @@ Vue.component('left-user-widget', {
   mounted() {
   },
   methods: {
+    // 用户的系统菜单事件
     async menuClick(e) {
       switch (e) {
         case 10: {

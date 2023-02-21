@@ -120,32 +120,27 @@ Vue.component('chatting-page', {
   },
 
   mounted() {
-    const that = this;
-    setTimeout(() => {
-      window.document.querySelector('.chattingPage').onscroll = function () {
-        that.newMsgCount = 0;
-      };
-    }, 300);
+    this.bindScrollEvent();
   },
   methods: {
-    messageBgColor(item) {
-      return this.isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'
-    },
-    onPageScroll(event) {
-      if (event.target.scrollTop === 0) {
-        this.loadMore();
-      }
-    },
-    // 断线重连监听
+    // ---- doUiAction方法 >>>>>>>>>>> -------------------
+    /**
+     * 【doUiAction】onSocketReConnect
+     * 断线重连
+     * @param result
+     */
     async onSocketReConnect({hasError}) {
-      console.log("断线重连监听:middleChatMessageWidget", hasError)
       if (hasError) {
         this.getNextChatHistoryList();
         this.doUiAction('delMessageOffline')
       }
     },
     dayjs: window.dayjs,
-    // 更新单条消息
+    /**
+     * 【doUiAction】
+     * 更新最新消息
+     * @param result
+     */
     updateMessageItem({message, insert = true}) {
       // 合并新消息
       let msgExist = false;
@@ -161,25 +156,73 @@ Vue.component('chatting-page', {
         });
       }
       // 插入新消息
-      if (insert) {
-        if (!this.chatHistoryList) {
-          this.chatHistoryList = [];
-        }
-        if (!msgExist) {
-          // 如果消息不存在，将消息加到最后
-          const isBottom = this.getPagePositionIsAtBottom();
-          this.chatHistoryList.unshift(message);
-          if (isBottom) {
-            this.newMsgCount = 0;
-            this.doUiAction('scrollToBottom');
-          } else {
-            this.newMsgCount += 1;
-          }
-        }
+      if (insert && !msgExist) {
+        this.insertNewMessage(message)
       }
       // 删除已读
       if (!message.loading && !message.error) {
         this.doUiAction('delMessageOffline')
+      }
+    },
+    /**
+     * 【doUiAction】
+     * 聊天消息窗口，滚动到最下方
+     * @param result
+     */
+    scrollToBottom({mustToBottom}) {
+      this.$refs.chattingPage.scrollPageToBottom({mustToBottom});
+    },
+
+    /**
+     * 【doUiAction】
+     * 重新发送消息，弹窗
+     * @param selectMsg
+     */
+    async startResendMsg(selectMsg) {
+      this.currentResendMsg = {...selectMsg};
+      const {messageContentType} = this.currentResendMsg;
+      if (messageContentType === 'file') {
+        await window.confirmDialog({
+          title: '文件上传失败,请重新上传文件!',
+          confirmColor: 'primary',
+          cancelBtn: false
+        })
+        return;
+      }
+      if (await window.confirmDialog({
+        title: '该消息发送失败，是否重发？',
+        confirmColor: 'primary'
+      })) {
+        this.doReSendMsg();
+      }
+    },
+    // ---- <<<<<<<<<< doUiAction方法 -------------------
+    // ---- 组件内部方法>>>>>>>>>>>> -------------------
+    // 聊天内容窗口，绑定滚动事件
+    bindScrollEvent() {
+      const that = this;
+      setTimeout(() => {
+        window.document.querySelector('.chattingPage').onscroll = function () {
+          that.newMsgCount = 0;
+        };
+      }, 300);
+    },
+    // 获取消息条背景颜色
+    messageBgColor(item) {
+      return this.isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'
+    },
+    // 插入新消息
+    insertNewMessage(message) {
+      if (!this.chatHistoryList) {
+        this.chatHistoryList = [];
+      }
+      const isBottom = this.getPagePositionIsAtBottom();
+      this.chatHistoryList.unshift(message);
+      if (isBottom) {
+        this.newMsgCount = 0;
+        this.doUiAction('scrollToBottom');
+      } else {
+        this.newMsgCount += 1;
       }
     },
     // 判断滚动位置是否最下方
@@ -229,6 +272,7 @@ Vue.component('chatting-page', {
         })
       })
     },
+    // 设置加载更多状态
     setLoadState(result) {
       if (result.rows.length === 0) {
         return 'empty';
@@ -240,34 +284,7 @@ Vue.component('chatting-page', {
         return 'complete';
       }
     },
-    //
-    scrollToBottom({mustToBottom}) {
-      this.$refs.chattingPage.scrollToBottom({mustToBottom});
-    },
-
-    /**
-     * 重新发送消息，弹窗
-     * @param selectMsg
-     */
-    async startResendMsg(selectMsg) {
-      this.currentResendMsg = {...selectMsg};
-      const {messageContentType} = this.currentResendMsg;
-      if (messageContentType === 'file') {
-        await window.confirmDialog({
-          title: '文件上传失败,请重新上传文件!',
-          confirmColor: 'primary',
-          cancelBtn: false
-        })
-        return;
-      }
-      if (await window.confirmDialog({
-        title: '该消息发送失败，是否重发？',
-        confirmColor: 'primary'
-      })) {
-        this.doReSendMsg();
-      }
-    },
-    /** 重新发送消息 */
+    // 重新发送消息
     async doReSendMsg() {
       if (window.socket && !window.socket.online) {
         window.vtoast.fail('离线中...，请稍后尝试发送');
@@ -284,6 +301,7 @@ Vue.component('chatting-page', {
       }
       return null;
     },
+    // 聊天消息发送时间转换
     formatChatTime(time) {
       time = this.dayjs(time).format('YYYY-MM-DD HH:mm:ss')
       const date = time.toString();
@@ -331,6 +349,7 @@ Vue.component('chatting-page', {
       }
       return year + '/' + month + '/' + d1.getDate()
     },
+    // ---- <<<<<<<<<<<<<组件内部方法-------------------
   }
 });
 </script>
@@ -345,12 +364,10 @@ Vue.component('chatting-page', {
 }
 
 .chattingPage {
-  margin-top: 0.1%;
   background: #f5f7fa;
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 99.8%;
   position: relative;
   -webkit-overflow-scrolling: touch;
   padding-top: 40px !important;

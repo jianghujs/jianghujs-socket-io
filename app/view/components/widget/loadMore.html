@@ -50,7 +50,9 @@ Vue.component('load-more', {
     // 顶部触发加载更多
     onPageScroll(event) {
       if (event.target.scrollTop === 0) {
-        this.loadMore();
+        if(this.sessionId) {
+          this.loadMore();
+        }
       }
     },
     // 加载更多
@@ -99,7 +101,7 @@ Vue.component('load-more', {
       return false;
     },
     // 滚动到最下方
-    scrollToBottom({mustToBottom}) {
+    scrollPageToBottom({mustToBottom}) {
       this.$emit('onScrollToBottom');
       this.$nextTick(() => {
         requestAnimationFrame(() => {

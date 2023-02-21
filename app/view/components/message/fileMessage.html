@@ -1,13 +1,13 @@
 <template id="_file-message">
-  <div class="fileContent" @click="downloadFile(getContentObj.downloadPath, getContentObj.filename)">
+  <div class="fileContent" @click="downloadFile">
     <span class="fileContentFileDesc">
       <span>{{ getContentObj.filename }}</span>
       <span>
         {{ getContentObj.binarySize }}
-        <v-icon class="fileContentFileIcon" size="16" v-if="progress_ === 100">mdi-folder-download</v-icon>
-        <div v-if="progress_ > 0 && progress_ < 100">
-          <span class="downloadType">{{this.progress_type == 'download' ? "正在下载:": "正在上传:"}}</span>
-          <v-progress-linear color="light-blue" height="5" v-model="progress_"
+        <v-icon class="fileContentFileIcon" size="16" v-if="_progress === 100">mdi-folder-download</v-icon>
+        <div v-if="_progress > 0 && _progress < 100">
+          <span class="downloadType">{{this._progress_type == 'download' ? "正在下载:": "正在上传:"}}</span>
+          <v-progress-linear color="light-blue" height="5" v-model="_progress"
             :buffer-value="100" striped>
           </v-progress-linear>
         </div>
@@ -32,8 +32,8 @@
         clicked: false,
         upload: window.appInfo.upload,
         public: window.appInfo.public,
-        progress_: this.progress,
-        progress_type: 'upload' // upload | download
+        _progress: this.progress,
+        _progress_type: 'upload' // upload | download
       };
     },
     computed: {
@@ -50,24 +50,22 @@
       progress: {
         deep: true,
         handler(v) {
-          this.progress_ = v
+          this._progress = v
         }
       }
     },
     created() {
     },
     methods: {
-      downloadFile(downloadPath, filename) {
-        this.downloadFileImpl(downloadPath, filename);
-      },
-      async downloadFileImpl(downloadPath, filename) {
-        if (this.progress && (this.progress > 0 || this.progress < 100)) {
-          window.vtoast.show({ message: '文件正在下载中...' });
+      async downloadFile() {
+        const {downloadPath, filename} = this.getContentObj;
+        if (this._progress && (this._progress > 0 || this._progress < 100)) {
+          window.vtoast.show({message: '文件正在下载中...'});
         }
         this.$forceUpdate();
-        this.progress_type = 'download'
+        this._progress_type = 'download'
         try {
-          this.progress_ = 1
+          this._progress = 1
           const buffer = await window.jianghuAxios.httpDownloadByStream({
             downloadPath,
             filename,
@@ -76,18 +74,18 @@
               if (progress == 100) {
                 progress = 99
               }
-              this.progress_ = progress
+              this._progress = progress
             }
           });
-          this.progress_ = 100
-          window.jianghuAxios.downloadBufferToChrome({ buffer, filename });
+          this._progress = 100
+          window.jianghuAxios.downloadBufferToChrome({buffer, filename});
           window.vtoast.success('文件下载成功');
         } catch (err) {
           console.log('download file error: ', err)
-          this.progress_ = 100
+          this._progress = 100
           window.vtoast.fail('文件下载失败，请重试');
         }
-      }
+      },
     }
   });
 </script>

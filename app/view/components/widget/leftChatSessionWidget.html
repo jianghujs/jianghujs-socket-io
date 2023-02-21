@@ -1,7 +1,7 @@
 <!-- 左栏聊天列表 -->
 <script type="text/x-template" id="chat-item">
 <v-list-item
-  class="pa-0 ma-0"
+  class="py-2 px-0 ma-0 jh-chat-item"
   :value="$root.getDataId(chatItem)"
   :key="$root.getDataId(chatItem)"
   @click="clearOfflineMessageCount"
@@ -46,6 +46,7 @@ Vue.component('chat-item', {
     },
   },
   computed: {
+    // 聊天内容安全处理
     chatItemContent() {
       return `${this.chatItem.fromUsername}：${getMessageContent(this.chatItem, true)}`.replace(/</g, '&lt;');
     }
@@ -57,9 +58,11 @@ Vue.component('chat-item', {
   },
   watch: {},
   methods: {
+    // 当点击聊天列表item时，清空当前item的历史未读消息
     clearOfflineMessageCount() {
       this.$emit('clean-unread-count', this.chatItem.chatId);
     },
+    // 转换消息发送时间格式
     parseTimerLabel(messageTimeString) {
       const _messageTime = dayjs(messageTimeString);
       const diffSecond = dayjs().diff(_messageTime, 'second');
@@ -84,23 +87,8 @@ Vue.component('chat-item', {
 });
 </script>
 <style scoped>
-.chatItem {
-  height: 70px;
-  width: 100%;
-  box-shadow: none !important;
-  background-color: transparent;
-}
-
-.chatItem.willChange {
-  will-change: auto;
-}
-
-.chatItem.active {
-  animation: chatBgAnim 0.3s infinite;
-  -webkit-animation: chatBgAnim 0.3s infinite;
-  /* Safari 和 Chrome */
-  animation-iteration-count: 1;
-  -webkit-animation-iteration-count: 1;
+.jh-chat-item {
+  border-bottom: 1px solid #f1f1f1;
 }
 
 @keyframes chatBgAnim {
@@ -128,7 +116,8 @@ Vue.component('chat-item', {
 
 .itemTitle {
   font-size: 14px;
-  line-height: 1.5rem;
+  line-height: 1.5!important;
+  font-weight: 600;
 }
 
 .subtitle {

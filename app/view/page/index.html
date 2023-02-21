@@ -6,7 +6,12 @@
   <!-- 左边栏 -->
   <left-panel ref="leftPanel" />
   <!-- 中间栏目 -->
-  <v-main class="chatMain mob-app-main">
+  <v-main class="jh-chat-main mob-app-main">
+    <v-app-bar height="52" color="primary" class="elevation-0" dark prominent>
+      <v-app-bar-nav-icon v-if="isMobile" @click.stop="currentChatSessionId = null">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-app-bar-nav-icon>
+    </v-app-bar>
     <chatting-page :sessionId="currentChatSessionId" ref="chattingPage" />
   </v-main>
 
@@ -66,31 +71,27 @@ window.registerData(
     mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
   },
   {
+    // socket链接状态信息
     socketStatus() {
-
-      const label = ['连接成功', '连接中...', '连接断开'][this.isSocketOnline || 0];
-      const color = ['green accent-3', 'amber darken-1', 'deep-orange accent-3'][this.isSocketOnline || 0];
-      return {label, color};
-    },
-    isSocketOnline() {
+      let socketStatusIndex = 1;
       if (this.socketClient && this.socketClient.online === false) {
-        return 2;
+        socketStatusIndex = 2;
       }
       if (this.socketClient && this.socketClient.online === true) {
-        return 0;
+        socketStatusIndex = 0;
       }
-      return 1;
+      const label = ['连接成功', '连接中...', '连接断开'][socketStatusIndex];
+      const color = ['green accent-3', 'amber darken-1', 'deep-orange accent-3'][socketStatusIndex];
+      return {label, color};
     },
-    mobileLeftHide() {
-      return !this.currentChatSessionId
-    },
-    // 指示移动端时是否展开消息输入框
+    // 是否展开消息输入框
     mobExpandChat() {
-      if (this.$vuetify.breakpoint.xs) {
+      if (this.isMobile) {
         return this.mobileMessageTextareaFocus;
       }
       return true;
     },
+    // 消息发送actionID
     sendMsgActionId() {
       return this.currentChatSession && this.currentChatSession.messageType === 'room'
         ? 'userSendMessageToRoom'
@@ -125,12 +126,17 @@ new Vue({
     },
   },
   methods: {
+    // (聊天列表、好友、群组、机器人)获取itemId
     getDataId(item) {
       if (item) {
         return item.chatId || item.toRoomId || (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId) || item.roomId || item.friendId;
       }
       return null;
     },
+    /**
+     * 【doUiAction】setSyncStatusToSyncing
+     * resource同步中
+     */
     setSyncStatusToSyncing() {
       this.dataSyncStatus = {
         color: 'amber darken-1',
@@ -140,6 +146,10 @@ new Vue({
         ing: true
       };
     },
+    /**
+     * 【doUiAction】setSyncStatusToSuccess
+     * resource同步成功
+     */
     setSyncStatusToSuccess() {
       this.dataSyncStatus = {
         color: 'green accent-3',
@@ -148,7 +158,10 @@ new Vue({
       console.log('setSyncStatusToSuccess', this.dataSyncStatus)
       window.sync.ing = false;
     },
-    // ✅禁止系统菜单和文字选中
+    /**
+     * 【doUiAction】disableSystemEvent
+     * 禁止系统菜单和文字选中
+     */
     disableSystemEvent() {
       document.oncontextmenu = function () {
         event.returnValue =
@@ -163,8 +176,10 @@ new Vue({
             (event.target.localName === 'textarea' || event.target.localName === 'input'));
       };
     },
-
-    /** 初始化socket */
+    /**
+     * 【doUiAction】initWebSocket
+     * 初始化socket
+     */
     initWebSocket() {
       this.socketClient.init();
       this.socketClient.addListeners('reConnect', result => this.doUiAction('onSocketReConnect', result));
@@ -173,14 +188,17 @@ new Vue({
       this.socketClient.addListeners('roomNotice', result => this.doUiAction('onRoomNotice', result));
       this.socketClient.addListeners('roomMessage', result => this.doUiAction('onRoomMessage', result));
     },
-
+    /**
+     * 【doUiAction】getUserInfo
+     * 更新用户信息
+     */
     async getUserInfo() {
       await refreshUserInfo();
     },
 
     /**
+     * 【doUiAction】delMessageOffline
      * 已读
-     * @return {Promise<void>}
      */
     async delMessageOffline() {
       if (this.chatList) {
@@ -202,8 +220,10 @@ new Vue({
         }
       }
     },
-
-    // 过滤和排序列表
+    /**
+     * 【doUiAction】reFilterList
+     * 过滤和排序列表
+     */
     reFilterList() {
       // chatList 也要重排
       if (this.chatList) {
@@ -216,8 +236,13 @@ new Vue({
         });
       }
     },
+    /**
+     * 【doUiAction】preventDefault
+     * 禁用默认行为
+     */
     preventDefault,
     /**
+     * 【doUiAction】onSocketReConnect
      * 断线重连监听
      * @param hasDisconnectOrError
      * @param hasDisconnectOrError.hasError
@@ -230,25 +255,65 @@ new Vue({
         this.doUiAction('setSyncStatusToSuccess')
       }
     },
-
-
+    // ----------------------------------------
+    // ---- 接收消息方法 >>>>>>> ----------------
+    // ----------------------------------------
+    /**
+     * 【doUiAction】onUserNotice
+     * 用户通知处理
+     * @param result
+     */
     onUserNotice(result) {
       this.handleNoticeMessage(result);
       this.renderChatSession(result);
       this.renderNoticeUI(result);
     },
+    /**
+     * 【doUiAction】onRoomNotice
+     * 房间通知处理
+     * @param result
+     */
     onRoomNotice(result) {
       this.handleNoticeMessage(result);
       this.renderChatSession(result);
       this.renderNoticeUI(result);
     },
+    /**
+     * 【doUiAction】onUserMessage
+     * 用户消息处理
+     * @param result
+     */
     onUserMessage(result) {
       this.handleNoticeMessage(result);
       this.renderChatSession(result);
     },
+    /**
+     * 【doUiAction】onRoomMessage
+     * 房间消息处理
+     * @param result
+     */
     onRoomMessage(result) {
       this.handleNoticeMessage(result);
       this.renderChatSession(result);
+    },
+
+    /**
+     * 【doUiAction】updateChatListItem
+     * 更新chatList中的数据
+     * @param result
+     */
+    updateChatListItem({params}) {
+      // 更新当前UI显示的数据表
+      const nowIndex = this.chatList.findIndex(v => {
+        return v.chatId === this.$root.getDataId(params);
+      });
+      if (nowIndex >= 0) {
+        for (const key of Object.keys(params)) {
+          if (params[key]) {
+            this.chatList[nowIndex][key] = params[key];
+          }
+        }
+      }
     },
 
     // 更新左侧列表的聊天内容和顺序
@@ -280,24 +345,7 @@ new Vue({
       return null;
     },
 
-    updateChatListItem({params}) {
-      // 更新当前UI显示的数据表
-      const nowIndex = this.chatList.findIndex(v => {
-        return v.chatId === this.$root.getDataId(params);
-      });
-      if (nowIndex >= 0) {
-        for (const key of Object.keys(params)) {
-          if (params[key]) {
-            this.chatList[nowIndex][key] = params[key];
-          }
-        }
-      }
-    },
-
-    /**
-     * 更新未读消息
-     * @param params
-     */
+    // 更新未读消息
     updateMessageCount(params) {
       //如果不是是自己发的消息，未读+1
       if (params.fromUserId !== this.userInfo.userId) {
@@ -310,7 +358,7 @@ new Vue({
         });
       }
     },
-
+    // 渲染通知消息UI
     renderNoticeUI(params) {
       if (params.hasOwnProperty('noticeType')) {
         if (
@@ -328,38 +376,32 @@ new Vue({
       }
     },
 
-    /**
-     * 判断消息是否在聊天列表中
-     * @param params
-     */
+    // 判断消息是否在聊天列表中
     existChatSession(params) {
       const dataId = this.$root.getDataId(params);
       return this.chatList.some(chat => this.$root.getDataId(chat) === dataId);
     },
 
-    /** 播放消息提示音 **/
+    // 播放消息提示音
     async playBeep() {
       try {
-        await this.playBeepConfirm();
+        await this.doPlayBeep();
       } catch (e) {
         if (await window.confirmDialog({
           title: '您的网页无法自动播放消息提示音，需要确认后播放',
           titleClass: 'text-body-1'
         })) {
-          this.playBeepConfirm();
+          this.doPlayBeep();
         }
       }
     },
 
-    /** 确认消息提示音 */
-    playBeepConfirm() {
+    // 确认消息提示音
+    doPlayBeep() {
       didaAudio.play();
     },
 
-    /**
-     * 通知处理
-     * @param params
-     */
+    // 通知处理
     handleNoticeMessage(params) {
       // 通知类
       if (params.noticeType) {
@@ -381,10 +423,7 @@ new Vue({
       }
     },
 
-    /**
-     * 用户上下线状态改变
-     * @param params
-     */
+    // 用户上下线状态改变
     setOnlineStatus(params) {
       this.chatList.some(item => {
         if (item.chatId === this.getDataId(params)) {
@@ -393,11 +432,7 @@ new Vue({
       })
     },
 
-    /**
-     * 消息提醒
-     * @param msg
-     * @param title
-     */
+    // 消息提醒
     showNotify(msg, title) {
       // 显示通知
       window.vtoast.showAndNotify({
@@ -407,6 +442,14 @@ new Vue({
       // 未静音，播放消息提示音
       this.playBeep();
     },
+    // ----------------------------------------
+    // ---- <<<<<<< 接收消息方法 ----------------
+    // ----------------------------------------
+
+    // ----------------------------------------
+    // ---- 发送消息方法 >>>>>>> ----------------
+    // ----------------------------------------
+    // 验证发送消息
     prepareSendMsgValidata({messageContent, messageContentType}) {
       // 不在线，不发送
       if (window.socket && window.socket.online === false) {
@@ -424,6 +467,7 @@ new Vue({
         throw new Error('消息内容为空');
       }
     },
+    // 发送消息
     async sendMsg(
       {
         messageContent = this.messageTextareaValue || '',
@@ -454,7 +498,25 @@ new Vue({
       this.doUiAction('updateMessageItem', {
         message: tempParams
       });
-      this.doUiAction('scrollToBottom')
+      this.doUiAction('scrollToBottom');
+      this.setSendTimeout({file, tempParams});
+
+      if (file) {
+        await this.sendFileMsg({file, tempParams, socketParams});
+      } else {
+        await this.sendTextMsg({socketParams})
+      }
+      this.onSendSuccess();
+    },
+    // 消息发送成功后
+    onSendSuccess() {
+      this.$forceUpdate();
+      this.messageTextareaValue = '';
+      window.vtoast.dismiss();
+      this.doUiAction('scrollToBottom', {mustToBottom: true})
+    },
+    // 设定默认发送超时处理
+    setSendTimeout({file, tempParams}) {
       setTimeout(
         () => {
           if (tempParams.loading === true) {
@@ -464,60 +526,45 @@ new Vue({
         },
         file ? 5000000 : 10000
       );
-
-      if (file) {
-        const uploadResult = await this.uploadFileMsg(
-          file,
-          tempParams,
-          socketParams
-        );
-        const uploadFail = !uploadResult ||
-          !uploadResult.data.appData.resultData.filename ||
-          !uploadResult.data.appData.resultData.downloadPath ||
-          !uploadResult.data.appData.resultData.binarySize;
-        if (uploadFail) {
-          this.doUiAction('updateMessageItem', {
-            message: {
-              ...tempParams,
-              loading: false,
-              error: true
-            },
-            insert: false
-          });
-        } else {
-          const {filename, downloadPath, binarySize} = uploadResult.data.appData.resultData;
-          socketParams.messageContent = JSON.stringify({
-            filename,
-            downloadPath,
-            binarySize
-          });
-          await window.socket.emitMsg({
-            actionData: socketParams,
-            actionId: this.sendMsgActionId
-          });
-        }
+    },
+    // 发送普通消息
+    async sendTextMsg({socketParams}) {
+      await window.socket.emitMsg({
+        actionData: socketParams,
+        actionId: this.sendMsgActionId
+      });
+    },
+    // 发送文件消息
+    async sendFileMsg({file, tempParams, socketParams}) {
+      const uploadResult = await this.uploadFileInMessage(file, tempParams);
+      const uploadFail = !uploadResult ||
+        !uploadResult.data.appData.resultData.filename ||
+        !uploadResult.data.appData.resultData.downloadPath ||
+        !uploadResult.data.appData.resultData.binarySize;
+      if (uploadFail) {
+        this.doUiAction('updateMessageItem', {
+          message: {
+            ...tempParams,
+            loading: false,
+            error: true
+          },
+          insert: false
+        });
       } else {
+        const {filename, downloadPath, binarySize} = uploadResult.data.appData.resultData;
+        socketParams.messageContent = JSON.stringify({
+          filename,
+          downloadPath,
+          binarySize
+        });
         await window.socket.emitMsg({
           actionData: socketParams,
           actionId: this.sendMsgActionId
         });
       }
-      this.$forceUpdate();
-      // 成功后
-      // console.log('socketParams', socketParams);
-      this.messageTextareaValue = '';
-      window.vtoast.dismiss();
-      this.doUiAction('scrollToBottom', {mustToBottom: true})
     },
-    /**
-     * 获取发送消息socket actionID
-     * @param forwardType
-     */
-    async uploadFileMsg(
-      file,
-      tempParams,
-      socketParams
-    ) {
+    // 上传文件图片消息
+    async uploadFileInMessage(file, tempParams) {
       let uploadResult;
       const fileDirectory = `${this.userInfo.userId || 'chatFile'}/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}/`;
       // 文件流
@@ -525,6 +572,7 @@ new Vue({
         try {
           // 使用 progress-linear https://vuetifyjs.com/zh-Hans/components/progress-linear/#section-989c8272
           const that = this
+          // 更新发送文件进度条
           this.doUiAction('updateMessageItem', {
             message: {
               ...tempParams,
@@ -539,6 +587,7 @@ new Vue({
               if (progress == 100) {
                 progress = 99
               }
+              // 更新发送文件进度条
               that.doUiAction('updateMessageItem', {
                 message: {
                   ...tempParams,
@@ -551,6 +600,7 @@ new Vue({
         } catch (err) {
           console.log(err)
         }
+        // 更新发送文件进度条
         this.doUiAction('updateMessageItem', {
           message: {
             ...tempParams,
@@ -561,6 +611,9 @@ new Vue({
       }
       return uploadResult;
     },
+    // ----------------------------------------
+    // ---- <<<<<<< 发送消息方法 ----------------
+    // ----------------------------------------
   }
 });
 </script>
@@ -569,21 +622,32 @@ new Vue({
   top: 60px !important;
 }
 
-.navigation-drawer .v-navigation-drawer__content {
+.jh-navigation-drawer .v-navigation-drawer__content {
   display: flex;
   flex-direction: column;
+  overflow: hidden !important;
 }
 
 
-.chatMain {
+.jh-chat-main {
   box-sizing: border-box;
   height: 100vh;
   background: #f5f7fa;
 }
-
-.navigation-drawer {
+.jh-chat-main .v-main__wrap {
+  display: flex;
+  flex-direction: column;
+}
+.jh-chat-main .v-main__wrap .v-toolbar {
+  max-height: 52px;
+}
+.jh-chat-main .v-main__wrap .v-toolbar__content {
+  padding: 0 16px!important;
+}
+.jh-navigation-drawer {
   max-height: 100vh !important;
   overflow: hidden !important;
+  width: 285px!important;
 }
 
 
@@ -594,11 +658,6 @@ new Vue({
 
 .vFooter .chatToolbar .v-toolbar__content {
   height: 50px !important;
-}
-
-.v-navigation-drawer__content {
-  overflow: hidden !important;
-
 }
 
 .text-body-2 {
@@ -645,31 +704,31 @@ new Vue({
   line-height: 1.5rem
 }
 
-.leftDataList {
+.jh-chat-list {
   flex: 1;
   -webkit-overflow-scrolling: touch;
 }
 
-.leftDataList::-webkit-scrollbar {
+.jh-chat-list::-webkit-scrollbar {
   width: 5px;
 }
 
-.leftDataList::-webkit-scrollbar-track {
+.jh-chat-list::-webkit-scrollbar-track {
   width: 5px;
   background-color: #F1F1F1;
 }
 
-.leftDataList::-webkit-scrollbar-thumb {
+.jh-chat-list::-webkit-scrollbar-thumb {
   width: 3px;
   background-color: #E1E1E1;
   border-radius: 3px;
 }
 
-.leftDataList .activeItem .chatItem {
+.jh-chat-list .jh-active-chat-item .chatItem {
   background-color: var(--primaryColorA80) !important;
 }
 
-.leftDataList .activeItem {
+.jh-chat-list .jh-active-chat-item {
   background-color: #ffffff !important;
   position: relative;
   overflow: hidden;
@@ -720,14 +779,14 @@ new Vue({
 
 
 @media screen and (max-width: 600px) {
-  .leftDataList {
+  .jh-navigation-drawer {
+    width: 100vw!important;
+  }
+
+  .jh-chat-list {
     height: calc(100vh - 180px) !important;
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;
-  }
-
-  .mob-app-left {
-    width: 100% !important;
   }
 
   .emotionContainer {
