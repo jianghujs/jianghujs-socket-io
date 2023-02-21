@@ -91,52 +91,10 @@ Vue.component('chat-item', {
   border-bottom: 1px solid #f1f1f1;
 }
 
-@keyframes chatBgAnim {
-  from {
-    background-color: #40c4ff;
-  }
-
-  to {
-    background-color: transparent;
-  }
-}
-
-@-webkit-keyframes chatBgAnim
-
-  /*Safari and Chrome*/
-{
-  from {
-    background-color: #40c4ff;
-  }
-
-  to {
-    background-color: transparent;
-  }
-}
-
 .itemTitle {
   font-size: 14px;
   line-height: 1.5!important;
   font-weight: 600;
 }
 
-.subtitle {
-  display: flex;
-  font-size: 12px;
-  white-space: nowrap;
-  color: #999999;
-}
-
-.subtitle > br {
-  content: "";
-}
-
-.subtitle > br::after {
-  content: "<br>";
-}
-
-.subtitle > span:first-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 </style>
