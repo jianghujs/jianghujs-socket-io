@@ -25,10 +25,14 @@
   <v-list-item-title class="itemTitle" v-html="chatItem.chatName"></v-list-item-title>
   <v-list-item-subtitle class="subtitle overflow-hidden" style="color: #999999;">
     <!--最后消息-->
-    <span>{{chatItemContent}}</span>
-    <v-spacer></v-spacer>
-    <!--最后消息时间-->
-    <span class="px-2">{{parseTimerLabel(chatItem.messageTimeString)}}</span>
+    <v-row class="ma-0 pa-0 flex-nowrap">
+      <div style="text-overflow: ellipsis; overflow: hidden">
+        <span>{{chatItemContent}}{{chatItemContent}}{{chatItemContent}}</span>
+      </div>
+      <v-spacer></v-spacer>
+      <!--最后消息时间-->
+      <span class="px-2">{{parseTimerLabel(chatItem.messageTimeString)}}</span>
+    </v-row>
   </v-list-item-subtitle>
 </v-list-item-content>
 <!--<<<<<<<<<<（昵称、群名）、最后消息、最后消息时间 -->

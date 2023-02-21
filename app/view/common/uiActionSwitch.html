@@ -57,7 +57,7 @@ async function doUiActionSwitch(uiActionId, uiActionObj = {}) {
       break;
     // ✅获取聊天列表
     case 'getChatSessionList':
-      leftPanel && await leftPanel.getChatSessionList(uiActionObj);
+      await leftPanel.getChatSessionList(uiActionObj);
       break;
     // ✅消息已读
     case 'delMessageOffline':
