@@ -1,6 +1,6 @@
 <!--uiActionSwitch.html >>>>>>>>>>>>> -->
 <script>
-async function doUiActionSwitch(uiActionId, uiActionObj = {}) {
+window.doUiActionSwitch = async (uiActionId, uiActionObj = {}) => {
   const root = window.$vueComponent.root;
   const chatSession = window.$vueComponent.chatSession;
   const leftPanel = window.$vueComponent.leftPanel;
@@ -88,7 +88,7 @@ async function doUiActionSwitch(uiActionId, uiActionObj = {}) {
       await chatSession.updateMessageItem(uiActionObj);
       break;
     default:
-      console.error('doUiAction 异常; actionId找不到', { pageId: window.appInfo.pageId, uiActionId })
+      console.error('doUiAction 异常; actionId找不到', {pageId: window.appInfo.pageId, uiActionId})
       break;
   }
 }
