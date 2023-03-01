@@ -12,7 +12,7 @@ module.exports = appInfo => {
   const appId = 'jianghujs_demo_socket_io';
 
   return {
-    jiangHuConfig: {
+    jianghuConfig: {
       enableSocket: true,
       ignoreListOfResourceRequestLog: [
         'allPage.getConstantList', 'allPage.httpUploadByStream', 'allPage.httpUploadByBase64', 'allPage.httpDownloadByBase64',
@@ -23,7 +23,9 @@ module.exports = appInfo => {
       // Tip: 兼容配置, 下一个大版本删除
       compatibleConfig: {
         resourceRequestLogRecordUserId: true
-      }
+      },
+      enableUploadStaticFileCache: true,
+      enableUploadStaticFileAuthorization: false,
     },
     // duoxing应用配置
     duoxingConfig: {
@@ -56,10 +58,6 @@ module.exports = appInfo => {
         { prefix: `/${appId}/public/`, dir: path.join(appInfo.baseDir, 'app/public') },
         { prefix: `/${appId}/public/`, dir: path.join(eggJianghuDir, 'app/public') },
       ],
-    },
-    jianghuConfig: {
-      enableUploadStaticFileCache: true,
-      enableUploadStaticFileAuthorization: false,
     },
 
     view: {
