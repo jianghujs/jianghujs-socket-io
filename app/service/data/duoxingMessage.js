@@ -2,7 +2,6 @@
 
 // ========================================常用 require start===========================================
 const Service = require('egg').Service;
-const { duoxingChatMessageTypeEnum, noticeTypeEnum } = require('../../constant/constant');
 // ========================================常用 require end=============================================
 const _ = require('lodash');
 
@@ -15,19 +14,19 @@ class DuoxingMessageService extends Service {
       .insert(params)
       .then((result) => result[0]);
 
-    const { fromUserId, toUserId, toRoomId, messageType, noticeType } = params;
-    if (messageType === duoxingChatMessageTypeEnum.user) {
+    const { fromUserId, toUserId, messageType } = params;
+    if (messageType === 'user') {
       // 如果可能为第一条消息，则初始化双方的会话
       if (mayFirst) {
         await this.checkAndInitSession(
           [ toUserId ],
-          duoxingChatMessageTypeEnum.user,
+          'user',
           fromUserId,
           messageHistoryId
         );
         await this.checkAndInitSession(
           [ fromUserId ],
-          duoxingChatMessageTypeEnum.user,
+          'user',
           toUserId,
           messageHistoryId
         );
@@ -35,7 +34,7 @@ class DuoxingMessageService extends Service {
       // 对方的会话
       await this.updateSingleChatSession(
         toUserId,
-        duoxingChatMessageTypeEnum.user,
+        'user',
         fromUserId,
         messageHistoryId,
         true
@@ -43,7 +42,7 @@ class DuoxingMessageService extends Service {
       // 自己的会话
       await this.updateSingleChatSession(
         fromUserId,
-        duoxingChatMessageTypeEnum.user,
+        'user',
         toUserId,
         messageHistoryId,
         false
@@ -61,26 +60,11 @@ class DuoxingMessageService extends Service {
     }
 
     return jianghuKnex('duoxing_message_history')
-      .where({ messageType: duoxingChatMessageTypeEnum.user })
+      .where({ messageType: 'user' })
       .where(function () {
         this.where({ toUserId: userId }).orWhere({ fromUserId: userId });
       })
       .groupByRaw("fromUserId, toUserId")
-      .max({ id: "id" })
-      .select();
-  }
-
-  async getRoomTopChatIdList(roomIdList, useTable = false) {
-    const { jianghuKnex } = this.app;
-
-    if (!this.viewName) {
-      useTable = true;
-    }
-
-    return jianghuKnex('duoxing_message_history')
-      .where({ messageType: duoxingChatMessageTypeEnum.room })
-      .whereIn("toRoomId", roomIdList)
-      .groupBy("toRoomId")
       .max({ id: "id" })
       .select();
   }
@@ -133,20 +117,6 @@ class DuoxingMessageService extends Service {
       k.increment('unreadCount', 1);
     }
     return k.update({ lastMessageHistoryId });
-  }
-
-  // 群组对话：对群里面所有用户的会话更新最新会话，并 +1 未读
-  async updateChatSessionByRoomId(roomId, excludeUserId, lastMessageHistoryId, addUnreadCount) {
-    const { jianghuKnex } = this.app;
-
-    const k = jianghuKnex('duoxing_chat_session', this.ctx)
-      .where({ chatId: roomId, type: duoxingChatMessageTypeEnum.room })
-      .whereNot({ userId: excludeUserId });
-    if (addUnreadCount) {
-      k.increment('unreadCount', 1);
-    }
-    const result = await k.update({ lastMessageHistoryId });
-    return result;
   }
 }
 

@@ -93,9 +93,7 @@ window.registerData(
     },
     // 消息发送actionID
     sendMsgActionId() {
-      return this.currentChatSession && this.currentChatSession.messageType === 'room'
-        ? 'userSendMessageToRoom'
-        : 'userSendMessageToUser';
+      return 'userSendMessageToUser';
     }
   }
 )
@@ -128,7 +126,7 @@ new Vue({
     // (聊天列表、好友、群组、机器人)获取itemId
     getDataId(item) {
       if (item) {
-        return item.chatId || item.toRoomId || (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId) || item.roomId || item.friendId;
+        return item.chatId || (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId) || item.friendId;
       }
       return null;
     },
@@ -184,8 +182,6 @@ new Vue({
       this.socketClient.addListeners('reConnect', result => this.doUiAction('onSocketReConnect', result));
       this.socketClient.addListeners('userNotice', result => this.doUiAction('onUserNotice', result));
       this.socketClient.addListeners('userMessage', result => this.doUiAction('onUserMessage', result));
-      this.socketClient.addListeners('roomNotice', result => this.doUiAction('onRoomNotice', result));
-      this.socketClient.addListeners('roomMessage', result => this.doUiAction('onRoomMessage', result));
     },
     /**
      * 【doUiAction】getUserInfo
@@ -211,7 +207,7 @@ new Vue({
                 actionId: 'delMessageOffline',
                 actionData: {
                   messageType: clickChatSession.messageType,
-                  userIdOrRoomId: this.currentChatSessionId
+                  chatUserId: this.currentChatSessionId
                 }
               }
             }
@@ -268,16 +264,6 @@ new Vue({
       this.renderNoticeUI(result);
     },
     /**
-     * 【doUiAction】onRoomNotice
-     * 房间通知处理
-     * @param result
-     */
-    onRoomNotice(result) {
-      this.handleNoticeMessage(result);
-      this.renderChatSession(result);
-      this.renderNoticeUI(result);
-    },
-    /**
      * 【doUiAction】onUserMessage
      * 用户消息处理
      * @param result
@@ -286,16 +272,6 @@ new Vue({
       this.handleNoticeMessage(result);
       this.renderChatSession(result);
     },
-    /**
-     * 【doUiAction】onRoomMessage
-     * 房间消息处理
-     * @param result
-     */
-    onRoomMessage(result) {
-      this.handleNoticeMessage(result);
-      this.renderChatSession(result);
-    },
-
     /**
      * 【doUiAction】updateChatListItem
      * 更新chatList中的数据
@@ -482,7 +458,6 @@ new Vue({
         messageContent,
         messageContentType,
         toUserId: targetUserId || this.currentChatSessionId,
-        toRoomId: targetUserId || this.currentChatSessionId,
         messageFingerprint
       };
       const tempParams = {

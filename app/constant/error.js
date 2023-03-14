@@ -55,14 +55,9 @@ const errorInfoEnum = Object.freeze({
 
   // =============================chat error: 聊天错误===========================================
   chat_user_not_exist: { errorCode: "chat_user_not_exist", errorReason: "用户不存在" },
-  chat_room_not_found: { errorCode: "chat_room_not_found", errorReason: "群组不存在" },
-  chat_already_group_user: { errorCode: "chat_already_group_user", errorReason: "已经是群成员" },
-  chat_owner_cannot_exit: { errorCode: "chat_owner_cannot_exit", errorReason: "群主不能直接退出" },
   chat_already_friend: { errorCode: "chat_already_friend", errorReason: "已经是好友关系" },
   chat_not_user_friend: { errorCode: "chat_not_user_friend", errorReason: "不是好友关系" },
   chat_already_reject: { errorCode: "chat_already_reject", errorReason: "已经拒绝了" },
-  chat_group_not_found: { errorCode: "chat_group_not_found", errorReason: "群不存在" },
-  chat_user_not_in_group: { errorCode: "chat_user_not_in_group", errorReason: "用户不在群组内" },
   chat_user_is_baned_in_group: {
     errorCode: "chat_user_is_baned_in_group",
     errorReason: "用户被禁言",

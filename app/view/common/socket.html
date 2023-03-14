@@ -9,9 +9,7 @@ class SocketContainer {
                 pageId = 'socket',
                 resource = {
                   userNotice: [],
-                  roomNotice: [],
-                  userMessage: [],
-                  roomMessage: [],
+                  userMessage: []
                 }
               }) {
     // socket 使用状态
@@ -326,9 +324,7 @@ window.socket = new SocketContainer({
   resource: {
     reConnect: [],
     userNotice: [],
-    roomNotice: [],
     userMessage: [],
-    roomMessage: [],
     toggleChatSession: [],
     delMessageOffline: [],
   }

@@ -107,7 +107,6 @@ const webOptions = (key, value) => {
   }
 }
 
-
 const getMessageContent = (data, notice = false) => {
   if (data.messageStatus === 'revoke') {
     return '撤回消息';
@@ -130,18 +129,6 @@ const getMessageContent = (data, notice = false) => {
       return data.messageContent;
   }
 }
-
-const duoxingMessageContentTypeEnum = Object.freeze({
-  text: 'text',
-  atText: 'atText',
-  image: 'image',
-  file: 'file',
-  notice: 'notice',
-  audio: 'audio',
-  video: 'video',
-  userCard: 'userCard',
-  revoke: 'revoke'
-})
 
 const uuid = (t = 21) => {
   let e = ''

@@ -1,6 +1,5 @@
 'use strict';
 const _ = require('lodash');
-const { duoxingChatMessageTypeEnum, duoxingFriendStatusEnum } = require('../constant/constant');
 
 // 定时计算会话现状到 _chat_session 表中
 module.exports = app => {
@@ -20,42 +19,33 @@ module.exports = app => {
       const service = app.createAnonymousContext().service;
 
       const allUserIdList = (await jianghuKnex('view01_user').select('userId')).map(item => item.userId);
-      const allUserRoomRoleList = await jianghuKnex('view01_user_room_role').select();
 
       for (const userId of allUserIdList) {
-        const roomIdList = allUserRoomRoleList.filter(x => x.userId === userId).map(x => x.roomId);
-        const friendIdList = (await jianghuKnex('duoxing_user_friend').where({ userId, friendStatus: duoxingFriendStatusEnum.isFriend }).select('friendId')).map(item => item.friendId);
+        const friendIdList = (await jianghuKnex('duoxing_user_friend').where({ userId, friendStatus: 'isFriend' }).select('friendId')).map(item => item.friendId);
 
         const userHistoryIdList = await service.data.duoxingMessage.getUserTopChatIdList(userId);
-        const roomHistoryIdList = await service.data.duoxingMessage.getRoomTopChatIdList(roomIdList);
 
-        const historyIdList = userHistoryIdList.concat(roomHistoryIdList).map(item => item.id);
+        const historyIdList = userHistoryIdList.map(item => item.id);
 
         let historyListTmp = await jianghuKnex('duoxing_message_history').whereIn('id', historyIdList).select();
 
         historyListTmp = _.orderBy(historyListTmp, [ 'messageTimeString' ], [ 'asc' ]);
 
         // 过滤掉重复的session; 注意上面 查询是 messageTimeString asc; 这样在 这个代码逻辑中 保持 最新的消息覆盖老的消息
-        const computeKey = (fromUserId, toUserId, toRoomId, messageType) => {
+        const computeKey = (fromUserId, toUserId, messageType) => {
           if (messageType === 'user') {
             return fromUserId !== userId ? fromUserId : toUserId;
           }
-          if (messageType === 'room') {
-            return toRoomId;
-          }
           return null;
         };
-        const userToHistoryMap = Object.fromEntries(historyListTmp.map(x => [ computeKey(x.fromUserId, x.toUserId, x.toRoomId, x.messageType), x ]));
+        const userToHistoryMap = Object.fromEntries(historyListTmp.map(x => [ computeKey(x.fromUserId, x.toUserId, x.messageType), x ]));
         const chatSessionList = [];
         for (const key in userToHistoryMap) {
           const chatHistory = userToHistoryMap[key];
           chatHistory.chatId = key;
-          if (chatHistory.type === duoxingChatMessageTypeEnum.user) {
+          if (chatHistory.type === 'user') {
             chatHistory.chatAvatar = chatHistory.chatUserAvatar;
             chatHistory.chatName = chatHistory.chatUsername;
-          } else if (chatHistory.type === duoxingChatMessageTypeEnum.room) {
-            chatHistory.chatAvatar = chatHistory.chatRoomAvatar;
-            chatHistory.chatName = chatHistory.chatRoomName;
           } else {
             continue;
           }
@@ -72,15 +62,15 @@ module.exports = app => {
         for (const chatId in userToHistoryMap) {
           const realChatSession = userToHistoryMap[chatId];
           const oldChatSession = oldChatSessionList.find(x => x.chatId === realChatSession.chatId && x.type === realChatSession.messageType);
-          const isFriendOrIsInRoom = roomIdList.findIndex(roomId => roomId === chatId) > -1 || friendIdList.findIndex(friendId => friendId === chatId) > -1;
+          const isFriend = friendIdList.findIndex(friendId => friendId === chatId) > -1;
 
           // 若是不是好友关系/群组关系 则 删除会话
-          if (!isFriendOrIsInRoom && oldChatSession) {
+          if (!isFriend && oldChatSession) {
             deleteChatSessionIdSet.add(oldChatSession.id);
           }
 
           // 若是好友且会话不存在，则添加会话
-          if (isFriendOrIsInRoom && !oldChatSession) {
+          if (isFriend && !oldChatSession) {
             addChatSessionList.push({
               userId,
               type: realChatSession.messageType,

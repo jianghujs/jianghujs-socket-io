@@ -127,20 +127,6 @@
       "operationAt": null
     },
     {
-      "id": 128,
-      "pageId": "index",
-      "uiActionType": "ui",
-      "uiActionId": "onRoomMessage",
-      "desc": "✅接收群消息后回调",
-      "uiActionHook": null,
-      "uiActionConfig": "{\"main\": [{\"function\": \"onRoomMessage\"}]}",
-      "appDataSchema": null,
-      "operation": "insert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
-    },
-    {
       "id": 132,
       "pageId": "index",
       "uiActionType": "ui",
@@ -162,20 +148,6 @@
       "desc": "✅接收到用户通知后回调",
       "uiActionHook": null,
       "uiActionConfig": "{\"main\": [{\"function\": \"onUserNotice\"}]}",
-      "appDataSchema": null,
-      "operation": "insert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
-    },
-    {
-      "id": 134,
-      "pageId": "index",
-      "uiActionType": "ui",
-      "uiActionId": "onRoomNotice",
-      "desc": "✅接收到群组通知后回调",
-      "uiActionHook": null,
-      "uiActionConfig": "{\"main\": [{\"function\": \"onRoomNotice\"}]}",
       "appDataSchema": null,
       "operation": "insert",
       "operationByUserId": null,

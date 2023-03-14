@@ -4,9 +4,8 @@
 const Service = require('egg').Service;
 const { BizError, errorInfoEnum } = require('../constant/error');
 const { resourcePath } = require('../constant/constant');
-const { noticeTypeEnum, socketForward, duoxingChatMessageTypeEnum, duoxingMessageContentTypeEnum, duoxingRoomRoleInfoEnum, duoxingSocketStatusEnum, duoxingFriendStatusEnum, deviceTypeEnum } = require('../constant/constant');
+const { socketForward } = require('../constant/constant');
 const validateUtil = require('@jianghujs/jianghu/app/common/validateUtil');
-const idGenerateUtil = require('@jianghujs/jianghu/app/common/idGenerateUtil');
 // ========================================常用 require end=============================================
 const _ = require('lodash');
 const dayjs = require('dayjs');
@@ -29,29 +28,18 @@ const appDataSchema = Object.freeze({
       messageContentType: { type: 'string' },
       messageFingerprint: { type: 'string' }
     }
-  },
-  userSendMessageToRoom: {
-    type: 'object',
-    additionalProperties: true,
-    required: [ 'toRoomId', 'messageContent', 'messageContentType', 'messageFingerprint' ],
-    properties: {
-      toRoomId: { type: 'string' },
-      messageContent: { type: 'string' },
-      messageContentType: { type: 'string' },
-      messageFingerprint: { type: 'string' }
-    }
   }
 });
 
 function getTargetDeviceTypeByMessageContentType(messageContentType) {
-  if (messageContentType === duoxingMessageContentTypeEnum.databotRequest || messageContentType === duoxingMessageContentTypeEnum.databotResponse) {
-    return deviceTypeEnum.bot_databot;
+  if (messageContentType === 'databotRequest' || messageContentType === 'databotResponse') {
+    return 'bot_databot';
   }
-  if (messageContentType === duoxingMessageContentTypeEnum.xiaochengxuRequest || messageContentType === duoxingMessageContentTypeEnum.xiaochengxuResponse) {
-    return deviceTypeEnum.bot_xiaochengxu;
+  if (messageContentType === 'xiaochengxuRequest' || messageContentType === 'xiaochengxuResponse') {
+    return 'bot_xiaochengxu';
   }
-  if (messageContentType === duoxingMessageContentTypeEnum.chatbotRequest || messageContentType === duoxingMessageContentTypeEnum.chatbotResponse) {
-    return deviceTypeEnum.bot_chatbot;
+  if (messageContentType === 'chatbotRequest' || messageContentType === 'chatbotResponse') {
+    return 'bot_chatbot';
   }
   return 'unknow_device';
 }
@@ -84,7 +72,7 @@ class DuoxingSocketService extends Service {
     // 添加当前 socketId 到 socketIO.sockets.userSocketIdMap; userSocketIdMap逻辑 请查阅 /app/controller/resource.js
     // socketIO.sockets.appendSocketIdToUserSocketIdMap(userId, socketId);
     // const afterAppendUserSocketIdList = socketIO.sockets.getSocketIdListByUserId(userId);
-    await jianghuKnex('_user_session', this.ctx).where({ userId, deviceId, deviceType }).update({ socketStatus: duoxingSocketStatusEnum.online });
+    await jianghuKnex('_user_session', this.ctx).where({ userId, deviceId, deviceType }).update({ socketStatus: 'online' });
 
     // 通过发送在线消息, 告知好友--> 我上线了
     this.socketEmitToFriendId(fromUserId, fromUsername, username, userId, deviceId);
@@ -99,11 +87,11 @@ class DuoxingSocketService extends Service {
       socketIO,
       config: { appId }
     } = this.app;
-    const currentUserOnlineSocketCount = (await jianghuKnex('_user_session').where({ userId, deviceId, socketStatus: duoxingSocketStatusEnum.online }).count())[0]["count(*)"];
+    const currentUserOnlineSocketCount = (await jianghuKnex('_user_session').where({ userId, deviceId, socketStatus: 'online' }).count())[0]["count(*)"];
     if (currentUserOnlineSocketCount === 1) {
       const friendList = await jianghuKnex('duoxing_user_friend').where({userId}).select();
-      const noticeType = noticeTypeEnum.onlineNotice;
-      const messageContentType = duoxingMessageContentTypeEnum.notice;
+      const noticeType = 'onlineNotice';
+      const messageContentType = 'notice';
       for (const friend of friendList) {
         const {friendId} = friend;
         const appData = {
@@ -136,15 +124,15 @@ class DuoxingSocketService extends Service {
     const fromUserId = userId;
     const fromUsername = username;
 
-    await jianghuKnex('_user_session', this.ctx).where({ userId, deviceId, deviceType }).jhUpdate({ socketStatus: duoxingSocketStatusEnum.offline });
+    await jianghuKnex('_user_session', this.ctx).where({ userId, deviceId, deviceType }).jhUpdate({ socketStatus: 'offline' });
 
-    const currentUserOnlineSocketCount = (await jianghuKnex('_user_session').where({ userId, deviceId, socketStatus: duoxingSocketStatusEnum.online }).count())[0]['count(*)'];
+    const currentUserOnlineSocketCount = (await jianghuKnex('_user_session').where({ userId, deviceId, socketStatus: 'online' }).count())[0]['count(*)'];
 
     // 通过发送在线消息, 告知好友--> 我下线了
     if (currentUserOnlineSocketCount === 0) {
       const friendList = await jianghuKnex('duoxing_user_friend').where({ userId }).select('friendId');
-      const noticeType = noticeTypeEnum.offlineNotice;
-      const messageContentType = duoxingMessageContentTypeEnum.notice;
+      const noticeType = 'offlineNotice';
+      const messageContentType = 'notice';
       for (const friend of friendList) {
         const { friendId } = friend;
         const appData = {
@@ -190,10 +178,10 @@ class DuoxingSocketService extends Service {
     const { toUserId, messageContent, messageContentType, messageFingerprint } = actionData;
     const date = new Date();
     const messageTimeString = dayjs(date).format();
-    const messageType = duoxingChatMessageTypeEnum.user;
+    const messageType = 'user';
 
     // 校验 fromUserId-toUserId 是否是好友关系
-    const userFriend = await jianghuKnex('duoxing_user_friend').where({ userId: toUserId, friendId: userId, friendStatus: duoxingFriendStatusEnum.isFriend }).first();
+    const userFriend = await jianghuKnex('duoxing_user_friend').where({ userId: toUserId, friendId: userId, friendStatus: 'isFriend' }).first();
     if (!userFriend && userId !== toUserId) {
       throw new BizError({
         ...errorInfoEnum.chat_not_user_friend,
@@ -252,90 +240,6 @@ class DuoxingSocketService extends Service {
     return {};
   }
 
-  async userSendMessageToRoom() {
-    const { actionData } = this.ctx.request.body.appData;
-    validateUtil.validate(appDataSchema.userSendMessageToRoom, actionData);
-    const {
-      knex,
-      jianghuKnex,
-      socketIO,
-      config: { appId }
-    } = this.app;
-    const { userInfo } = this.ctx;
-    const { user } = userInfo;
-
-    const { userId, username, userAvatar } = user;
-    const fromUserId = userId;
-    const fromUsername = username;
-    const fromUserAvatar = userAvatar;
-    const { toRoomId, messageContent, messageContentType, messageFingerprint } = actionData;
-
-    // 发群消息，验证下群是否存在，顺便拿下群名称
-    // const room = await knex('room').where({ roomId: toRoomId }).first();
-    const room = await jianghuKnex('room').where({ roomId: toRoomId }).first();
-    if (!room) {
-      return errorInfoEnum.chat_room_not_found;
-    }
-    const { roomName } = room;
-
-    const date = new Date();
-    const messageTimeString = dayjs(date).format();
-
-    // 查询群成员
-    // const roomUserList = await knex('view01_user_room_role').where({ roomId: toRoomId }).select();
-    const roomUserList = await jianghuKnex('view01_user_room_role').where({ roomId: toRoomId }).select();
-
-    // 验证当前用户是否在群; 用户是否被禁言
-    const currentRoomUser = roomUserList.find(roomUser => userId === roomUser.userId);
-    if (!currentRoomUser) {
-      throw new BizError("您不是群成员");
-    }
-
-    const messageType = duoxingChatMessageTypeEnum.room;
-    // 历史消息落库
-    this.ctx.service.data.duoxingMessage.insertWithChatSessionUpdate(
-      {
-        fromUserId,
-        toRoomId,
-        messageContent,
-        messageContentType,
-        messageType,
-        messageFingerprint,
-        messageTimeString
-      },
-      true
-    );
-
-
-    // 发送在线消息
-    for (const roomUser of roomUserList) {
-      const { userId: roomUserId, username: roomUsername, roleId, roleName } = roomUser;
-      const appData = {
-        appId,
-        pageId: 'socket',
-        actionId: 'roomMessage',
-        actionData: {
-          fromUserId,
-          fromUsername,
-          fromUserAvatar,
-          toRoomId,
-          roomName,
-          messageContent,
-          messageType,
-          messageContentType,
-          messageFingerprint,
-          messageTimeString,
-          messageStatus: 'active'
-        }
-      };
-      const socketBody = socketForward.bodyBuild({ appData });
-      await this.socketEmit({ userId: roomUserId, socketBody, socketIO, knex });
-    }
-
-
-    return {};
-  }
-
   /**
    * @param socketId.socketId
    * @param userId.userId
@@ -356,7 +260,7 @@ class DuoxingSocketService extends Service {
     const { jianghuKnex, socketIO } = this.app;
 
     let emitCount = 0;
-    const currentUserOnlineSocketList = await jianghuKnex('_user_session').where({ userId, socketStatus: duoxingSocketStatusEnum.online }).select();
+    const currentUserOnlineSocketList = await jianghuKnex('_user_session').where({ userId, socketStatus: 'online' }).select();
 
     for (const { userId, deviceId } of currentUserOnlineSocketList) {
       socketIO.to(`${deviceId}::${userId}`).emit(resourcePath, socketBody);

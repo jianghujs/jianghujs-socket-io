@@ -39,10 +39,6 @@ window.doUiActionSwitch = async (uiActionId, uiActionObj = {}) => {
     case 'sendMsg':
       await root.sendMsg(uiActionObj);
       break;
-    // ✅接收群消息后回调
-    case 'onRoomMessage':
-      await root.onRoomMessage(uiActionObj);
-      break;
     // ✅接收到用户消息后回调
     case 'onUserMessage':
       await root.onUserMessage(uiActionObj);
@@ -50,10 +46,6 @@ window.doUiActionSwitch = async (uiActionId, uiActionObj = {}) => {
     // ✅接收到用户通知后回调
     case 'onUserNotice':
       await root.onUserNotice(uiActionObj);
-      break;
-    // ✅接收到群组通知后回调
-    case 'onRoomNotice':
-      await root.onRoomNotice(uiActionObj);
       break;
     // ✅获取聊天列表
     case 'getChatSessionList':

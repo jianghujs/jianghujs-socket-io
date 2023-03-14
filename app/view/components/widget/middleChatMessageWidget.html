@@ -237,7 +237,7 @@ Vue.component('chatting-page', {
       return item.fromUserId === userInfo.userId;
     },
     // 获取历史消息接口
-    async getMessageHistoryRequest(lastId, userIdOrRoomId) {
+    async getMessageHistoryRequest(lastId, chatUserId) {
       return (
         await window.jianghuAxios({
           data: {
@@ -247,8 +247,8 @@ Vue.component('chatting-page', {
               actionData: {
                 lastId,
                 pageSize: 15,
-                messageType: this.isRoom ? 'room' : 'user',
-                userIdOrRoomId: userIdOrRoomId
+                messageType: 'user',
+                chatUserId: chatUserId
               }
             }
           }

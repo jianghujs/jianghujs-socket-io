@@ -131,18 +131,6 @@
       "operationByUserId": null,
       "operationByUser": null,
       "operationAt": null
-    },
-    {
-      "id": 52,
-      "pageId": "roomNoticeManagement",
-      "pageName": "房间通知",
-      "pageFile": null,
-      "pageType": "showInMenu",
-      "sort": "3",
-      "operation": "insert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
     }
   ]
 }

@@ -307,23 +307,6 @@
       "operationAt": "2022-03-12T21:42:15+08:00"
     },
     {
-      "id": 370,
-      "accessControlTable": null,
-      "resourceHook": null,
-      "pageId": "chat",
-      "actionId": "revokeMessage",
-      "desc": "✅ 撤回消息",
-      "resourceType": "service",
-      "appDataSchema": "{}",
-      "resourceData": "{ \"service\": \"duoxingMessage\", \"serviceFunction\": \"revokeMessage\" }",
-      "requestDemo": "",
-      "responseDemo": "",
-      "operation": "update",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": "2022-03-12T21:07:46+08:00"
-    },
-    {
       "id": 371,
       "accessControlTable": null,
       "resourceHook": null,
@@ -390,23 +373,6 @@
       "operationByUserId": null,
       "operationByUser": null,
       "operationAt": "2022-03-12T21:08:02+08:00"
-    },
-    {
-      "id": 504,
-      "accessControlTable": null,
-      "resourceHook": null,
-      "pageId": "socket",
-      "actionId": "userSendMessageToRoom",
-      "desc": "✅ socket 发送群聊天信息",
-      "resourceType": "service",
-      "appDataSchema": "{}",
-      "resourceData": "{ \"service\": \"duoxingSocket\", \"serviceFunction\": \"userSendMessageToRoom\" }",
-      "requestDemo": "",
-      "responseDemo": "",
-      "operation": "update",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": "2022-03-12T20:28:15+08:00"
     }
   ]
 }

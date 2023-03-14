@@ -16,9 +16,9 @@ module.exports = appInfo => {
       enableSocket: true,
       ignoreListOfResourceRequestLog: [
         'allPage.getConstantList', 'allPage.httpUploadByStream', 'allPage.httpUploadByBase64', 'allPage.httpDownloadByBase64',
-        'socket.disconnect', 'socket.connect', 'index.pingRecord', 'chat.getRoomInfo', 'chat.getGroupInfo',
-        'allPage.getUserRoomRoleList', 'allPage.getUserGroupRoleList', 'allPage.userInfo', 'chat.getMessageHistory', 'index.getSrsToken',
-        'index.srsRtcRequest', 'index.cleanCurrentUserRoomSession', 'index.cleanCurrentUserGroupSession',
+        'socket.disconnect', 'socket.connect', 'index.pingRecord', 'chat.getGroupInfo',
+        'allPage.getUserGroupRoleList', 'allPage.userInfo', 'chat.getMessageHistory', 'index.getSrsToken',
+        'index.srsRtcRequest', 'index.cleanCurrentUserGroupSession',
       ],
       // Tip: 兼容配置, 下一个大版本删除
       compatibleConfig: {
@@ -31,7 +31,6 @@ module.exports = appInfo => {
     duoxingConfig: {
       defaultAvatar: {
         user: "/userAvatar/default.jpg",
-        room: "/roomAvatar/default.jpg",
       },
       enableSyncChatSession: true,
       syncChatSessionInterval: "5m", // 5m 30s
