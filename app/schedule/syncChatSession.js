@@ -53,7 +53,7 @@ module.exports = app => {
         }
 
         // 对比修复数据
-        const oldChatSessionList = await jianghuKnex('duoxing_chat_session').where({ userId }).orderBy('topChatOrder', 'desc')
+        const oldChatSessionList = await jianghuKnex('duoxing_chat_session').where({ userId })
           .orderBy('lastMessageHistoryId', 'asc')
           .select();
         const deleteChatSessionIdSet = new Set();

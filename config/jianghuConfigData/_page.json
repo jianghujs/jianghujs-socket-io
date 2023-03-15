@@ -107,30 +107,6 @@
       "operationByUserId": null,
       "operationByUser": null,
       "operationAt": null
-    },
-    {
-      "id": 46,
-      "pageId": "friendManagement",
-      "pageName": "好友管理",
-      "pageFile": null,
-      "pageType": "showInMenu",
-      "sort": "2",
-      "operation": "update",
-      "operationByUserId": "vscode",
-      "operationByUser": "vscode",
-      "operationAt": "2022-08-01T13:10:01+08:00"
-    },
-    {
-      "id": 48,
-      "pageId": "friendManagementOfOneUser",
-      "pageName": "好友管理",
-      "pageFile": null,
-      "pageType": "dynamicInMenu",
-      "sort": "2",
-      "operation": "jhInsert",
-      "operationByUserId": null,
-      "operationByUser": null,
-      "operationAt": null
     }
   ]
 }

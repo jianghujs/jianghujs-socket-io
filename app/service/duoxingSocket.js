@@ -7,7 +7,6 @@ const { resourcePath } = require('../constant/constant');
 const { socketForward } = require('../constant/constant');
 const validateUtil = require('@jianghujs/jianghu/app/common/validateUtil');
 // ========================================常用 require end=============================================
-const _ = require('lodash');
 const dayjs = require('dayjs');
 const appDataSchema = Object.freeze({
   connect: {
@@ -112,14 +111,12 @@ class DuoxingSocketService extends Service {
   }
 
   async disconnect() {
-    const { actionData } = this.ctx.request.body.appData;
     const {
-      knex,
       jianghuKnex,
       config: { appId }
     } = this.app;
     const { jianghuSocket } = this.ctx;
-    const { userId, username, socketId, deviceId, deviceType } = jianghuSocket.data;
+    const { userId, username, deviceId, deviceType } = jianghuSocket.data;
 
     const fromUserId = userId;
     const fromUsername = username;
@@ -160,9 +157,7 @@ class DuoxingSocketService extends Service {
     const { actionData } = this.ctx.request.body.appData;
     validateUtil.validate(appDataSchema.userSendMessageToUser, actionData);
     const {
-      knex,
       jianghuKnex,
-      socketIO,
       config: { appId }
     } = this.app;
     const { userInfo } = this.ctx;

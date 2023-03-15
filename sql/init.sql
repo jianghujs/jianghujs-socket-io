@@ -126,8 +126,6 @@ INSERT INTO `_page` (`id`, `pageId`, `pageName`, `pageFile`, `pageType`, `sort`,
 INSERT INTO `_page` (`id`, `pageId`, `pageName`, `pageFile`, `pageType`, `sort`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (35, 'noticeManagement', '通知管理', NULL, 'showInMenu', '4', 'insert', NULL, NULL, NULL);
 INSERT INTO `_page` (`id`, `pageId`, `pageName`, `pageFile`, `pageType`, `sort`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (36, 'recordHistoryManagement', '数据历史', NULL, 'showInMenu', '5', 'insert', NULL, NULL, NULL);
 INSERT INTO `_page` (`id`, `pageId`, `pageName`, `pageFile`, `pageType`, `sort`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (37, 'liveChat', '语音聊天', NULL, '', '', 'insert', NULL, NULL, NULL);
-INSERT INTO `_page` (`id`, `pageId`, `pageName`, `pageFile`, `pageType`, `sort`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (46, 'friendManagement', '好友管理', NULL, 'showInMenu', '2', 'update', 'vscode', 'vscode', '2022-08-01T13:10:01+08:00');
-INSERT INTO `_page` (`id`, `pageId`, `pageName`, `pageFile`, `pageType`, `sort`, `operation`, `operationByUserId`, `operationByUser`, `operationAt`) VALUES (48, 'friendManagementOfOneUser', '好友管理', NULL, 'dynamicInMenu', '2', 'jhInsert', NULL, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -495,7 +493,6 @@ CREATE TABLE `duoxing_chat_session` (
   `type` varchar(255) DEFAULT NULL COMMENT '类型',
   `chatId` varchar(255) DEFAULT NULL COMMENT '聊天ID',
   `lastMessageHistoryId` int(11) DEFAULT NULL COMMENT '最近一条历史消息id',
-  `topChatOrder` varchar(255) NOT NULL DEFAULT '' COMMENT '置顶顺序',
   `muted` int(11) DEFAULT '0' COMMENT '免打扰',
   `unreadCount` int(11) NOT NULL DEFAULT '0' COMMENT '未读数',
   `operation` varchar(255) DEFAULT 'insert' COMMENT '操作; insert, update, jhInsert, jhUpdate, jhDelete jhRestore',
@@ -504,66 +501,66 @@ CREATE TABLE `duoxing_chat_session` (
   `operationAt` varchar(255) DEFAULT NULL COMMENT '操作时间; E.g: 2021-05-28T10:24:54+08:00 ',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `_chat_session_chatId_type_userId_index` (`chatId`,`type`,`userId`),
-  KEY `_userId_topChatOrder_lastMessageHistoryId_index` (`userId`,`topChatOrder`,`lastMessageHistoryId`) USING BTREE
+  KEY `_userId_lastMessageHistoryId_index` (`userId`,`lastMessageHistoryId`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=8194 DEFAULT CHARSET=utf8mb4 COMMENT='聊天会话';
 
 -- ----------------------------
 -- Records of duoxing_chat_session
 -- ----------------------------
 BEGIN;
-INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,topChatOrder,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
-	 ('W00001','user','admin01',12803,'',0,0,'update','admin01','admin01','2023-03-14T19:45:14+08:00'),
-	 ('W00002','user','admin01',12795,'',0,2,'update','admin01','admin01','2023-03-14T14:33:44+08:00'),
-	 ('admin01','user','G00003',14060,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('admin01','user','H00002',14993,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00001','user','G00002',14106,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00001','user','W00001',15028,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00001','user','G00003',14992,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00002','user','G00001',14106,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00002','user','W00001',15045,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00003','user','admin01',14060,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00');
-INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,topChatOrder,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
-	 ('G00003','user','G00001',14992,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('H00002','user','W00001',14956,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('H00002','user','admin01',14993,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('W00001','user','G00002',15045,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('W00001','user','G00001',15028,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('W00001','user','H00002',14956,'',0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
-	 ('G00002','user','G00003',21158,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('G00003','user','H00001',20808,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('G00003','user','G00004',21157,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('G00003','user','G00002',21158,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00');
-INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,topChatOrder,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
-	 ('G00004','user','G00003',21157,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('H00002','user','H00001',20824,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('md-doc-management','user','W00001',21241,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('md-editor-course','user','W00001',21231,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('md-meeting-minutes','user','W00001',21230,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('md-shepherd-xiaochengxu','user','admin01',21112,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('md-shepherd-xiaochengxu','user','W00001',21227,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00001','user','xiaochengxu-shigong01',21229,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00001','user','W00002',21228,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00001','user','H00001',21226,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00');
-INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,topChatOrder,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
-	 ('W00001','user','md-shepherd-xiaochengxu',21227,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00001','user','md-meeting-minutes',21230,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00001','user','md-editor-course',21231,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00001','user','md-doc-management',21241,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('W00002','user','W00001',21228,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('xiaochengxu-shigong01','user','W00001',21229,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('xiaochengxu-shigong01','user','admin01',21114,'',0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
-	 ('H00001','user','H00002',20824,'',0,0,'insert',NULL,NULL,'2022-08-03T17:27:00+08:00'),
-	 ('admin01','user','xiaochengxu01',15069,'',0,0,'update','admin01','admin01','2022-09-28T15:18:38+08:00'),
-	 ('xiaochengxu01','user','admin01',15069,'',0,10,'update','admin01','admin01','2022-09-28T15:18:38+08:00');
-INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,topChatOrder,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
-	 ('G00002','user','admin01',21625,'',0,14,'update','admin01','admin01','2022-09-19T12:02:22+08:00'),
-	 ('admin01','user','G00002',21625,'',0,0,'update','admin01','admin01','2022-09-19T12:02:22+08:00'),
-	 ('admin01','user','G00004',21533,'',0,0,'update','admin01','admin01','2022-09-12T10:21:36+08:00'),
-	 ('G00004','user','admin01',21533,'',0,1,'update','admin01','admin01','2022-09-12T10:21:36+08:00'),
-	 ('X00001','user','admin01',21547,'',0,24,'update','admin01','admin01','2022-09-13T16:07:48+08:00'),
-	 ('admin01','user','X00001',21547,'',0,0,'update','admin01','admin01','2022-09-13T16:07:48+08:00'),
-	 ('admin01','user','W00002',12795,'',0,0,'update','admin01','admin01','2023-03-14T14:33:44+08:00'),
-	 ('admin01','user','W00001',12803,'',0,0,'update','admin01','admin01','2023-03-14T19:45:14+08:00');
+INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
+	 ('admin01','user','G00003',14060,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('admin01','user','H00002',14993,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00001','user','G00002',14106,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00001','user','W00001',15028,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00001','user','G00003',14992,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00002','user','G00001',14106,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00002','user','W00001',15045,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00003','user','admin01',14060,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00003','user','G00001',14992,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('H00002','user','W00001',14956,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00');
+INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
+	 ('H00002','user','admin01',14993,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('W00001','user','G00002',15045,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('W00001','user','G00001',15028,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('W00001','user','H00002',14956,0,0,'insert',NULL,NULL,'2022-09-26T09:57:37+08:00'),
+	 ('G00002','user','G00003',21158,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('G00003','user','H00001',20808,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('G00003','user','G00004',21157,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('G00003','user','G00002',21158,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('G00004','user','G00003',21157,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('H00002','user','H00001',20824,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00');
+INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
+	 ('md-doc-management','user','W00001',21241,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('md-editor-course','user','W00001',21231,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('md-meeting-minutes','user','W00001',21230,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('md-shepherd-xiaochengxu','user','admin01',21112,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('md-shepherd-xiaochengxu','user','W00001',21227,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00001','user','xiaochengxu-shigong01',21229,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00001','user','W00002',21228,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00001','user','H00001',21226,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00001','user','md-shepherd-xiaochengxu',21227,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00001','user','md-meeting-minutes',21230,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00');
+INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
+	 ('W00001','user','md-editor-course',21231,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00001','user','md-doc-management',21241,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('W00002','user','W00001',21228,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('xiaochengxu-shigong01','user','W00001',21229,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('xiaochengxu-shigong01','user','admin01',21114,0,0,'insert',NULL,NULL,'2022-08-02T15:13:18+08:00'),
+	 ('H00001','user','H00002',20824,0,0,'insert',NULL,NULL,'2022-08-03T17:27:00+08:00'),
+	 ('admin01','user','xiaochengxu01',15069,0,0,'update','admin01','admin01','2022-09-28T15:18:38+08:00'),
+	 ('xiaochengxu01','user','admin01',15069,0,10,'update','admin01','admin01','2022-09-28T15:18:38+08:00'),
+	 ('G00002','user','admin01',21625,0,14,'update','admin01','admin01','2022-09-19T12:02:22+08:00'),
+	 ('admin01','user','G00002',21625,0,0,'update','admin01','admin01','2022-09-19T12:02:22+08:00');
+INSERT INTO duoxing_chat_session (userId,`type`,chatId,lastMessageHistoryId,muted,unreadCount,operation,operationByUserId,operationByUser,operationAt) VALUES
+	 ('admin01','user','G00004',21533,0,0,'update','admin01','admin01','2022-09-12T10:21:36+08:00'),
+	 ('G00004','user','admin01',21533,0,1,'update','admin01','admin01','2022-09-12T10:21:36+08:00'),
+	 ('X00001','user','admin01',21547,0,24,'update','admin01','admin01','2022-09-13T16:07:48+08:00'),
+	 ('admin01','user','X00001',21547,0,0,'update','admin01','admin01','2022-09-13T16:07:48+08:00'),
+	 ('admin01','user','W00002',12785,0,0,'insert',NULL,NULL,'2023-03-14T22:12:06+08:00'),
+	 ('admin01','user','W00001',12792,0,0,'insert',NULL,NULL,'2023-03-14T22:12:06+08:00'),
+	 ('W00001','user','admin01',12792,0,0,'insert',NULL,NULL,'2023-03-14T22:12:07+08:00'),
+	 ('W00002','user','admin01',12785,0,0,'insert',NULL,NULL,'2023-03-14T22:12:07+08:00');
 COMMIT;
 
 -- ----------------------------
@@ -850,7 +847,6 @@ select
     `duoxing_chat_session`.`type` AS `type`,
     `duoxing_chat_session`.`chatId` AS `chatId`,
     `duoxing_chat_session`.`lastMessageHistoryId` AS `lastMessageHistoryId`,
-    `duoxing_chat_session`.`topChatOrder` AS `topChatOrder`,
     `duoxing_chat_session`.`muted` AS `muted`,
     `duoxing_chat_session`.`unreadCount` AS `unreadCount`,
     `_user`.`username` AS `chatUsername`,
@@ -890,40 +886,10 @@ left join `_user` `touser` on
     ((`touser`.`userId` = `dmh`.`toUserId`)));
 
 -- ----------------------------
--- View structure for view01_duoxing_user_friend
--- ----------------------------
-DROP VIEW IF EXISTS `view01_duoxing_user_friend`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_duoxing_user_friend` AS select `duoxing_user_friend`.`id` AS `id`,`duoxing_user_friend`.`userId` AS `userId`,`user`.`username` AS `username`,`user`.`userAvatar` AS `userAvatar`,`duoxing_user_friend`.`friendId` AS `friendId`,`friend`.`username` AS `friendUsername`,`friend`.`userAvatar` AS `friendUserAvatar`,`duoxing_user_friend`.`friendStatus` AS `friendStatus`,`duoxing_user_friend`.`requestTime` AS `requestTime`,`duoxing_user_friend`.`requestRemark` AS `requestRemark`,`duoxing_user_friend`.`responseTime` AS `responseTime`,`duoxing_user_friend`.`rejectTimes` AS `rejectTimes`,count((`_user_session`.`socketStatus` = 'online')) AS `socketOnlineCount`,`friend`.`userStatus` AS `friendUserStatus`,`duoxing_user_friend`.`operation` AS `operation`,`duoxing_user_friend`.`operationByUserId` AS `operationByUserId`,`duoxing_user_friend`.`operationByUser` AS `operationByUser`,`duoxing_user_friend`.`operationAt` AS `operationAt` from (((`duoxing_user_friend` left join `_user` `friend` on((`duoxing_user_friend`.`friendId` = `friend`.`userId`))) left join `_user` `user` on((`duoxing_user_friend`.`userId` = `user`.`userId`))) left join `_user_session` on((`duoxing_user_friend`.`friendId` = `_user_session`.`userId`))) group by `duoxing_user_friend`.`userId`,`duoxing_user_friend`.`friendId`;
-
--- ----------------------------
--- View structure for view01_duoxing_user_friend_management
--- ----------------------------
-DROP VIEW IF EXISTS `view01_duoxing_user_friend_management`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_duoxing_user_friend_management` AS select `duoxing_user_friend`.`id` AS `id`,`duoxing_user_friend`.`userId` AS `userId`,`user`.`username` AS `username`,`user`.`userAvatar` AS `userAvatar`,`duoxing_user_friend`.`friendId` AS `friendId`,`friend`.`username` AS `friendUsername`,`friend`.`userAvatar` AS `friendUserAvatar`,`duoxing_user_friend`.`operation` AS `operation`,`duoxing_user_friend`.`operationByUserId` AS `operationByUserId`,`duoxing_user_friend`.`operationByUser` AS `operationByUser`,`duoxing_user_friend`.`operationAt` AS `operationAt` from ((`duoxing_user_friend` join `_user` `user` on((`duoxing_user_friend`.`userId` = `user`.`userId`))) join `_user` `friend` on((`duoxing_user_friend`.`friendId` = `friend`.`userId`)));
-
--- ----------------------------
--- View structure for view01_group_info
--- ----------------------------
-DROP VIEW IF EXISTS `view01_group_info`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_group_info` AS select `g`.`groupId` AS `groupId`,`g`.`groupName` AS `groupName`,`g`.`groupAvatar` AS `groupAvatar`,`g`.`groupDesc` AS `groupDesc`,`g`.`groupExtend` AS `groupExtend`,count(`ugr`.`userId`) AS `groupUserCount` from (`_group` `g` left join `_user_group_role` `ugr` on((`g`.`groupId` = `ugr`.`groupId`))) group by `g`.`groupId`;
-
--- ----------------------------
 -- View structure for view01_user
 -- ----------------------------
 DROP VIEW IF EXISTS `view01_user`;
 CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_user` AS select `_user`.`id` AS `id`,`_user`.`userId` AS `userId`,`_user`.`username` AS `username`,`_user`.`userAvatar` AS `userAvatar`,`_user`.`contactNumber` AS `contactNumber`,`_user`.`gender` AS `gender`,`_user`.`birthday` AS `birthday`,`_user`.`signature` AS `signature`,`_user`.`email` AS `email`,`_user`.`userType` AS `userType`,`_user`.`userStatus` AS `userStatus`,`_user`.`config` AS `config` from `_user`;
-
--- ----------------------------
--- View structure for view01_user_group_role
--- ----------------------------
-DROP VIEW IF EXISTS `view01_user_group_role`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_user_group_role` AS select `_user_group_role`.`id` AS `id`,`_user_group_role`.`userId` AS `userId`,`_user_group_role`.`groupId` AS `groupId`,`_user_group_role`.`roleId` AS `roleId`,`_user`.`username` AS `username`,`_user`.`userAvatar` AS `userAvatar`,`_role`.`roleName` AS `roleName`,`_group`.`groupName` AS `groupName`,`_group`.`groupAvatar` AS `groupAvatar`,`_user_group_role`.`operation` AS `operation`,`_user_group_role`.`operationByUserId` AS `operationByUserId`,`_user_group_role`.`operationByUser` AS `operationByUser`,`_user_group_role`.`operationAt` AS `operationAt` from (((`_user_group_role` join `_user` on((`_user_group_role`.`userId` = `_user`.`userId`))) join `_group` on((`_user_group_role`.`groupId` = `_group`.`groupId`))) join `_role` on((`_user_group_role`.`roleId` = `_role`.`roleId`)));
-
--- ----------------------------
--- View structure for view01_user_total_friend
--- ----------------------------
-DROP VIEW IF EXISTS `view01_user_total_friend`;
-CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `view01_user_total_friend` AS select `_user`.`id` AS `id`,`_user`.`userId` AS `userId`,`_user`.`username` AS `username`,count(1) AS `friendCount`,`_user`.`userAvatar` AS `userAvatar`,`_user`.`contactNumber` AS `contactNumber`,`_user`.`gender` AS `gender`,`_user`.`birthday` AS `birthday`,`_user`.`signature` AS `signature`,`_user`.`email` AS `email`,`_user`.`userType` AS `userType`,`_user`.`userStatus` AS `userStatus`,`_user`.`config` AS `config` from (`_user` left join `duoxing_user_friend` on(((`_user`.`userId` = `duoxing_user_friend`.`userId`) and (`duoxing_user_friend`.`friendStatus` = 'isFriend')))) group by `_user`.`userId`;
 
 -- ----------------------------
 -- View structure for _view01_user

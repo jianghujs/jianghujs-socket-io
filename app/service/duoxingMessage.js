@@ -23,18 +23,7 @@ const appDataSchema = Object.freeze({
       messageType: { type: "string" },
       chatUserId: { type: "string" },
     },
-  },
-  toggleChatSession: {
-    type: "object",
-    additionalProperties: true,
-    required: ["chatId", "type"],
-    properties: {
-      chatId: { type: "string" },
-      type: { type: "string" },
-      top: { type: "boolean" },
-      muted: { type: "boolean" },
-    },
-  },
+  }
 });
 
 class DuoxingChatService extends Service {
@@ -48,7 +37,7 @@ class DuoxingChatService extends Service {
     const { userId } = this.ctx.userInfo;
 
     // 获取会话
-    const chatSessionList = await jianghuKnex('view01_duoxing_chat_session').where({ userId }).orderBy("topChatOrder", "desc").orderBy("lastMessageHistoryId", "desc").select();
+    const chatSessionList = await jianghuKnex('view01_duoxing_chat_session').where({ userId }).orderBy("lastMessageHistoryId", "desc").select();
     if (!chatSessionList || !chatSessionList.length) {
       return { rows: [] };
     }
@@ -81,10 +70,9 @@ class DuoxingChatService extends Service {
   }
 
   async getMessageHistory() {
-    const { jianghuKnex, knex, config, _cache } = this.app;
-    const { appId } = config;
+    const { knex } = this.app;
     const { actionData } = this.ctx.request.body.appData;
-    const { userId, username } = this.ctx.userInfo;
+    const { userId } = this.ctx.userInfo;
     validateUtil.validate(appDataSchema.getMessageHistory, actionData);
 
     const { messageType, chatUserId } = actionData;
@@ -112,10 +100,10 @@ class DuoxingChatService extends Service {
 
   // 消息已读，清空未读数
   async delMessageOffline() {
-    const { jianghuKnex, knex, config } = this.app;
+    const { knex, config } = this.app;
     const { appId } = config;
     const { actionData } = this.ctx.request.body.appData;
-    const { userId, username } = this.ctx.userInfo;
+    const { userId } = this.ctx.userInfo;
     validateUtil.validate(appDataSchema.delMessageOffline, actionData);
 
     const { messageType, chatUserId } = actionData;
