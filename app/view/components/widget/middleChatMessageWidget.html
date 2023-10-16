@@ -1,0 +1,355 @@
+<!--聊天对话界面-->
+<script type="text/x-template" id="chatting-page">
+<load-more
+  ref="chattingPage" :sessionId="sessionId"
+  :handler="getNextChatHistoryList"
+  class="chattingPage py-sm-3 px-sm-7 pa-2"
+  @onScrollToBottom="newMsgCount = 0">
+<template v-if="sessionId && chatHistoryList && chatHistoryList.length > 0">
+  <div v-for="(item, index) in chatHistoryListReverse" class="d-flex" :key="item.messageFingerprint">
+    <div class="messageItem" :class="{ 'isFromMe': isFromMe(item) }">
+      <!--通知类消息-->
+      <template v-if="item.noticeType">
+        <div class="noticeMsg">{{ item.messageContent }}</div>
+      </template>
+      <!--正常聊天消息-->
+      <template v-else>
+        <!--发送人头像-->
+        <v-avatar size="40px" class="ma-2 mt-1">
+          <v-img :src="upload + item.fromUserAvatar">
+            <template v-slot:placeholder>
+              <v-icon size="45" style="opacity: 0.2">mdi-account-circle</v-icon>
+            </template>
+          </v-img>
+        </v-avatar>
+        <!--箭头图标-->
+        <v-icon class="msgArrow" :color="messageBgColor(item)"
+        >mdi-menu-left
+        </v-icon>
+        <div class="messageItemBox">
+          <div class="username">
+            <!--发送人名称-->
+            <span>{{ item.fromUsername }}</span>
+            <!--发送时间-->
+            <span class="mr-2 ml-2" style="font-size: 12px; color: #999999">{{ formatChatTime(item.messageTimeString) }}</span>
+          </div>
+          <div class="messageLine d-flex">
+            <!--文本消息条-->
+            <text-message
+              v-if="item.messageContentType === 'text'"
+              :content="item.messageContent"
+              :id="item.messageFingerprint"
+            />
+            <!--图片消息条-->
+            <image-message
+              v-if="item.messageContentType === 'image'"
+              :progress="item.progress"
+              :content="item.messageContent"
+              :id="item.messageFingerprint"
+              @load-complete="doUiAction('scrollToBottom')"
+            />
+            <!--文件消息条-->
+            <file-message
+              v-if="item.messageContentType === 'file'"
+              :progress="item.progress"
+              :content="item.messageContent"
+              :id="item.messageFingerprint"
+            />
+            <!--加载中转圈-->
+            <v-progress-circular
+              v-if="item.loading || item.progress && item.progress > 0 && item.progress < 100"
+              indeterminate :size="15" :width="3" color="primary"></v-progress-circular>
+            <!--发送失败图标、点击重新发送-->
+            <v-icon
+              color="red"
+              v-else-if="item.error === true"
+              small
+              @click="doUiAction('startResendMsg', item)"
+            >mdi-alert-circle
+            </v-icon>
+            <v-spacer></v-spacer>
+          </div>
+        </div>
+        <v-spacer />
+      </template>
+    </div>
+  </div>
+</template>
+<div class="newMsgCount" v-if="newMsgCount" @click="scrollToBottom()">有{{ newMsgCount }}条新消息</div>
+</load-more>
+</script>
+<script>
+window.registerData(
+  {
+    noticeType: [],
+    chatHistoryList: null,
+    newMsgCount: 0,
+    upload: window.appInfo.upload,
+    public: window.appInfo.public,
+  },
+  {
+    chatHistoryListReverse() {
+      return this.chatHistoryList
+        ? this.chatHistoryList.slice().reverse()
+        : [];
+    },
+    lastId() {
+      if (_.isEmpty(this.chatHistoryList)) {
+        return 0;
+      }
+      return this.chatHistoryList.slice(-1)[0].id;
+    },
+  }
+)
+
+
+Vue.component('chatting-page', {
+  template: '#chatting-page',
+  mixins: [window.jianghuUiActionMixins],
+  data: () => window.vueData,
+  vueComponent: 'chatSession',
+  computed: window.vueComputed,
+  props: ["sessionId"],
+  watch: {
+    sessionId(value) {
+      this.chatHistoryList = [];
+    }
+  },
+  created() {
+    this.doUiAction('delMessageOffline')
+  },
+
+  mounted() {
+    this.bindScrollEvent();
+  },
+  methods: {
+    // ---- doUiAction方法 >>>>>>>>>>> -------------------
+    /**
+     * 【doUiAction】onSocketReConnect
+     * 断线重连
+     * @param result
+     */
+    async onSocketReConnect({hasError}) {
+      if (hasError) {
+        this.getNextChatHistoryList();
+        this.doUiAction('delMessageOffline')
+      }
+    },
+    dayjs: window.dayjs,
+    /**
+     * 【doUiAction】
+     * 更新最新消息
+     * @param result
+     */
+    updateMessageItem({message, insert = true}) {
+      // 合并新消息
+      let msgExist = false;
+      if (this.chatHistoryList) {
+        this.chatHistoryList = this.chatHistoryList.map(v => {
+          // 如果消息已经存在，直接更新消息内容
+          if (v.messageFingerprint === message.messageFingerprint) {
+            // 发送消息，可能不是好友，或其他错误
+            msgExist = true;
+            v = {...message};
+          }
+          return v;
+        });
+      }
+      // 插入新消息
+      if (insert && !msgExist) {
+        this.insertNewMessage(message)
+      }
+      // 删除已读
+      if (!message.loading && !message.error) {
+        this.doUiAction('delMessageOffline')
+      }
+    },
+    /**
+     * 【doUiAction】
+     * 聊天消息窗口，滚动到最下方
+     * @param result
+     */
+    scrollToBottom({mustToBottom}) {
+      this.$refs.chattingPage.scrollPageToBottom({mustToBottom});
+    },
+
+    /**
+     * 【doUiAction】
+     * 重新发送消息，弹窗
+     * @param selectMsg
+     */
+    async startResendMsg(selectMsg) {
+      this.currentResendMsg = {...selectMsg};
+      const {messageContentType} = this.currentResendMsg;
+      if (messageContentType === 'file') {
+        await window.confirmDialog({
+          title: '文件上传失败,请重新上传文件!',
+          confirmColor: 'primary',
+          cancelBtn: false
+        })
+        return;
+      }
+      if (await window.confirmDialog({
+        title: '该消息发送失败，是否重发？',
+        confirmColor: 'primary'
+      })) {
+        this.doReSendMsg();
+      }
+    },
+    // ---- <<<<<<<<<< doUiAction方法 -------------------
+    // ---- 组件内部方法>>>>>>>>>>>> -------------------
+    // 聊天内容窗口，绑定滚动事件
+    bindScrollEvent() {
+      const that = this;
+      setTimeout(() => {
+        window.document.querySelector('.chattingPage').onscroll = function () {
+          that.newMsgCount = 0;
+        };
+      }, 300);
+    },
+    // 获取消息条背景颜色
+    messageBgColor(item) {
+      return this.isFromMe(item) && (item.messageContentType === 'text' || item.messageContentType === 'audio') ? '#cceaff' : 'white'
+    },
+    // 插入新消息
+    insertNewMessage(message) {
+      if (!this.chatHistoryList) {
+        this.chatHistoryList = [];
+      }
+      const isBottom = this.getPagePositionIsAtBottom();
+      this.chatHistoryList.unshift(message);
+      if (isBottom) {
+        this.newMsgCount = 0;
+        this.doUiAction('scrollToBottom');
+      } else {
+        this.newMsgCount += 1;
+      }
+    },
+    // 判断滚动位置是否最下方
+    getPagePositionIsAtBottom() {
+      return this.$refs.chattingPage.scrollTop >
+        this.$refs.chattingPage.scrollHeight -
+        this.$refs.chattingPage.offsetHeight -
+        30;
+    },
+    // 我自己
+    isFromMe(item) {
+      return item.fromUserId === userInfo.userId;
+    },
+    // 获取历史消息接口
+    async getMessageHistoryRequest(lastId, userIdOrRoomId) {
+      return (
+        await window.jianghuAxios({
+          data: {
+            appData: {
+              pageId: 'chat',
+              actionId: 'getMessageHistory',
+              actionData: {
+                lastId,
+                pageSize: 15,
+                messageType: this.isRoom ? 'room' : 'user',
+                userIdOrRoomId: userIdOrRoomId
+              }
+            }
+          }
+        })
+      ).data.appData.resultData;
+    },
+    // 获取历史消息，处理加载状态
+    async getNextChatHistoryList() {
+      const result = await this.getMessageHistoryRequest(this.lastId, this.sessionId);
+      return new Promise(resolve => {
+        setTimeout(() => {
+          if (this.lastId !== 0) {
+            this.chatHistoryList.push(...result.rows);
+          } else {
+            // 第一次加载，滚动到最后
+            this.chatHistoryList = result.rows;
+            this.doUiAction('scrollToBottom', {mustToBottom: true});
+          }
+          let loadState = this.setLoadState(result);
+          resolve(loadState);
+        })
+      })
+    },
+    // 设置加载更多状态
+    setLoadState(result) {
+      if (result.rows.length === 0) {
+        return 'empty';
+      }
+      if (result.rows.length > 0 && result.rows.length < 15) {
+        return 'finish';
+      }
+      if (result.rows.length === 15) {
+        return 'complete';
+      }
+    },
+    // 重新发送消息
+    async doReSendMsg() {
+      if (window.socket && !window.socket.online) {
+        window.vtoast.fail('离线中...，请稍后尝试发送');
+        return false;
+      }
+
+      if (this.currentResendMsg) {
+        await window.socket.emitMsg(this.currentResendMsg);
+        this.$forceUpdate();
+        // 成功后
+        // console.log('this.currentResendMsg', this.currentResendMsg);
+        this.messageTextareaValue = null;
+        this.doUiAction('scrollToBottom', {mustToBottom: true})
+      }
+      return null;
+    },
+    // 聊天消息发送时间转换
+    formatChatTime(time) {
+      time = this.dayjs(time).format('YYYY-MM-DD HH:mm:ss')
+      const date = time.toString();
+      const year = date.split('-')[0];
+      const month = date.split('-')[1];
+      const day = date.split('-')[2];
+      const d1 = new Date(year + '/' + month + '/' + day.split(' ')[0]);
+      const d3 = new Date(date.replace(/-/g, '/'));
+      const dd = new Date();
+      const y = dd.getFullYear();
+      const m = dd.getMonth() + 1;
+      const d = dd.getDate();
+      const d2 = new Date(y + '/' + m + '/' + d);
+      const iday = parseInt(d2 - d1) / 1000 / 60 / 60 / 24;
+      let hours = d3.getHours();
+      let minutes = d3.getMinutes();
+      if (minutes < 10) {
+        minutes = '0' + minutes;
+      }
+      if (hours < 10) {
+        hours = '0' + hours;
+      }
+      if (iday === 0) {
+        if (hours >= 12) {
+          return '下午 ' + hours + ':' + minutes;
+        }
+        return '上午 ' + hours + ':' + minutes;
+
+      } else if (iday === 1) {
+        let dt = '';
+        if (hours >= 12) {
+          dt = '下午 ' + hours + ':' + minutes;
+        } else {
+          dt = '上午 ' + hours + ':' + minutes;
+        }
+        return '昨天 ' + dt;
+      } else if (iday === 2) {
+        let dt = '';
+        if (hours >= 12) {
+          dt = '下午 ' + hours + ':' + minutes;
+        } else {
+          dt = '上午 ' + hours + ':' + minutes;
+        }
+        return '前天 ' + dt;
+      }
+      return year + '/' + month + '/' + d1.getDate()
+    },
+    // ---- <<<<<<<<<<<<<组件内部方法-------------------
+  }
+});
+</script>

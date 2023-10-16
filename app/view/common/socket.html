@@ -1,0 +1,337 @@
+<script>
+
+// 对 socket 进行包装
+class SocketContainer {
+
+  constructor({
+                path,
+                socketPrefix = '',
+                pageId = 'socket',
+                resource = {
+                  userNotice: [],
+                  roomNotice: [],
+                  userMessage: [],
+                  roomMessage: [],
+                }
+              }) {
+    // socket 使用状态
+    this.socketStatus = 'off';
+    // socket.io path
+    this.path = path;
+    // pageId
+    this.pageId = pageId;
+    // socket prefix
+    this.socketPrefix = socketPrefix;
+    // socket client
+    this.client = null;
+    // 在线状态
+    this.online = null;
+    // 连接状态
+    this.hasDisconnectOrError = false;
+    // auth token
+    this.authToken = localStorage.getItem(window.appInfo.appId + '_authToken');
+    // user id
+    this.userId = localStorage.getItem(`${window.appInfo.appId}_userId`);
+    // device id
+    this.deviceId = localStorage.getItem(`${window.appInfo.appId}_deviceId`);
+
+    // user id
+    this.userId = localStorage.getItem(`${window.appInfo.appId}_userId`);
+    // 数据过来之后做的 resource 请求处理器列表
+    this.resource = {
+      // 自带 resource
+      reConnect: [() => {
+        this.checkSocketThreeTimes(0);
+      }],
+      // 自定义 resouce
+      ...resource
+    };
+    // 保存 packageId 回调，用于 promise 实现
+    this.packageListeners = {};
+  }
+
+  // 增加 resource 的处理器
+  addListeners(event, callback) {
+    console.log(this.resource, event)
+    this.resource[event].push(callback);
+  }
+
+  // 删除 resource 的处理器
+  removeListeners(event, callback) {
+    try {
+      const index = this.resource[event].findIndex(
+          item => item.name === callback.name
+      );
+      this.resource[event].splice(index, 1);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 增加 packegeId 回调
+  addPackageIdListeners(packageId, callback) {
+    this.packageListeners[packageId] = {packageId, callback};
+  }
+
+  // 删除 packegeId 回调
+  removePackageIdListeners(packageId) {
+    delete this.packageListeners[packageId]
+  }
+
+  // 特殊 resouce：连接成功，需要调用 reConnect 的处理器
+  onReConnect(hasError) {
+    this.resource.reConnect.map(fun => fun({hasError}))
+  }
+
+  // 初始化 socket 连接并开始数据交互
+  async init() {
+    // 连接并发送认证请求
+    const packageId = `${Date.now()}_${_.random(1000000, 9999999)}`;
+    const socketId = `${this.socketPrefix}${this.deviceId}::${this.userId}`;
+    const requestBody = {
+      packageId,
+      packageType: 'socketRequest',
+      deviceId: this.deviceId,
+      status: null,
+      timestamp: new Date().toISOString(),
+      appData: {
+        appId: window.appInfo.appId,
+        pageId: this.pageId,
+        actionId: 'connect',
+        authToken: this.authToken,
+        actionData: {
+          socketId
+        }
+      }
+    };
+    try {
+      this.client = io('/', {
+        path: this.path,
+        auth: requestBody,
+        closeOnBeforeunload: true,
+        transports: ['websocket'],
+        forceNew: true,
+        timeout: 5000,
+        secure: false // 是否支持SSL/TLS
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    // 回调处理
+    this.registerMessageHandler();
+    this.checkSocketWhenInitEnd();
+    this.socketStatus = 'on';
+  }
+
+  checkSocketThreeTimes(count, time = 1500) {
+    // APP调用，当从后台切换到前台
+    // socket会自动重连，如果4.5秒没有重连成功，手动重连
+    if (!window.socket.client.connected) {
+      if (count >= 3) {
+        this.client.disconnect();
+        this.client.connect();
+        return;
+      }
+      setTimeout(() => {
+        this.checkSocketThreeTimes(++count)
+      }, time)
+    }
+  }
+
+  // 设置socket 回调
+  registerMessageHandler() {
+    const that = this;
+    this.client.on('resource', async message => {
+      console.log(`==== [${this.pageId} channel.resource]`, JSON.stringify(message));
+      const {appId, pageId, actionId} = message.appData;
+      // 认证成功
+      if (pageId === this.pageId && actionId === 'connect') {
+        // 每次掉线都会重新走一遍认证过程
+        // 设置在线标识
+        that.online = true;
+        that.onReConnect(that.hasDisconnectOrError)
+      } else {
+        // 处理 resource 和 packageId 回调
+        that.notifyResourceListeners(message.appData);
+        that.handlePackageIdListeners(message);
+      }
+    });
+    this.client.on('connect', message => {
+      console.log(`==== [${this.pageId} channel.onConnect]`, message);
+    });
+    this.client.on('connect_timeout', message => {
+      console.log(`==== [${this.pageId} channel.connect_timeout]`, message);
+      this.hasDisconnectOrError = true;
+      this.online = false;
+    });
+    this.client.on('connect_error', message => {
+      console.log(`==== [${this.pageId} channel.onError]`, message);
+      this.hasDisconnectOrError = true;
+      this.online = false;
+    });
+    this.client.on('disconnect', message => {
+      console.log(`==== [${this.pageId} channel.disconnect]`, message);
+      this.online = false;
+      this.hasDisconnectOrError = true;
+    });
+    this.client.on('reconnect', message => {
+      this.hasDisconnectOrError = true;
+      console.log(`==== [${this.pageId} channel.onReconnect]`, message);
+    });
+    this.client.on('reconnect_attempt', message => {
+      console.log(`==== [${this.pageId} channel.onReconnectAttempt]`, message);
+    });
+    this.client.on('reconnect_failed', message => {
+      console.log(`==== [${this.pageId} channel.onReconnectFailed]`, message);
+    });
+    this.client.on('reconnect_error', message => {
+      console.log(`==== [${this.pageId} channel.onReconnectError]`, message);
+    });
+    this.client.on('ping', message => {
+      // 心跳请求
+      // callback_onIMPing
+      console.log(`==== [${this.pageId} channel.onPing]`, message);
+    });
+    this.client.on('pong', message => {
+      // 心跳响应
+      // callback_onIMPong
+      console.log(`==== [${this.pageId} channel.onPong]`, message);
+    });
+  }
+
+  // socket消息 分发
+  notifyResourceListeners(appData) {
+    const {actionData, resultData, actionId} = appData;
+    // 调用 resource 对应处理器
+    try {
+      if (this.resource[actionId]) {
+        this.resource[actionId].forEach(fun => {
+          fun(actionData || resultData);
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    const {errorCode, errorReason} = appData;
+    if (errorCode) {
+      window.vtoast.fail({message: errorReason});
+    }
+  }
+
+  handlePackageIdListeners(message) {
+    // resolve 掉 pacakgeId 回调
+    if (this.packageListeners[message.packageId]) {
+      const {callback} = this.packageListeners[message.packageId];
+      callback(message);
+    }
+  }
+
+  // 正常消息发送
+  emitMsg({actionData, actionId, packageType = 'socketForward'}) {
+    const packageId = `${Date.now()}_${_.random(1000000, 9999999)}`;
+    const requestBody = {
+      packageId,
+      packageType,
+      deviceId: this.deviceId,
+      status: null,
+      timestamp: new Date().toISOString(),
+      appData: {
+        appId: window.appInfo.appId,
+        pageId: this.pageId,
+        actionId,
+        authToken: socket.authToken,
+        actionData
+      }
+    };
+    this.client.emit('resource', requestBody);
+    // window.logSocketOut(window.appInfo.appId, this.pageId, actionId, packageId, params);
+
+    if (packageType === 'socketRequest') {
+      return new Promise((resolve, reject) => {
+        let success = false;
+        socket.addPackageIdListeners(packageId, responseBody => {
+          success = true;
+          console.log('packageIdListeners responseBody', responseBody);
+          socket.removePackageIdListeners(packageId);
+          resolve({data: responseBody});
+        })
+        setTimeout(() => {
+          if (!success) {
+            socket.removePackageIdListeners(packageId);
+            reject(new Error('请求超时'));
+          }
+        }, 60000);
+      })
+    }
+    return {};
+  }
+
+  // 支持回调的消息回调
+  emit(path = 'resource', body) {
+    const data = body.data;
+    if (!data.appData) {
+      data.appData = {};
+    }
+    // body 的 数据 优先级更高
+    const packageId = `${Date.now()}_${_.random(1000000, 9999999)}`;
+    if (!data.packageId) {
+      data.packageId = packageId;
+    }
+    if (!data.packageType) {
+      data.packageType = 'socketForward';
+    }
+    const {appId, userAgent} = window.appInfo;
+    if (!data.appData.appId) {
+      data.appData.appId = appId;
+    }
+    if (!data.appData.userAgent) {
+      data.appData.userAgent = userAgent;
+    }
+    const authToken = localStorage.getItem(`${window.appInfo.appId}_authToken`);
+    if (!data.appData.authToken) {
+      data.appData.authToken = authToken;
+    }
+    this.client.emit(path, data);
+
+    if (data.packageType === 'socketRequest') {
+      return new Promise((resolve, reject) => {
+        let success = false;
+        socket.addPackageIdListeners(data.packageId, responseBody => {
+          success = true;
+          console.log('packageIdListeners responseBody', responseBody);
+          socket.removePackageIdListeners(data.packageId);
+          resolve({data: responseBody});
+        })
+        setTimeout(() => {
+          if (!success) {
+            socket.removePackageIdListeners(data.packageId);
+            reject(new Error('请求超时'));
+          }
+        }, 60000);
+      })
+    }
+    return {};
+  }
+
+  // web端，当init结束，先检查下是否连接成功，9秒后还没有成功，就手动重连
+  checkSocketWhenInitEnd() {
+    // web 上，进行定时的检查
+    // socket 初始化后，9秒内如果未连接成功，则重新连接
+  }
+}
+
+// 聊天 socket
+window.socket = new SocketContainer({
+  path: `/${window.appInfo.appId}/socket.io`,
+  resource: {
+    reConnect: [],
+    userNotice: [],
+    roomNotice: [],
+    userMessage: [],
+    roomMessage: [],
+    toggleChatSession: [],
+    delMessageOffline: [],
+  }
+})
+
+</script>

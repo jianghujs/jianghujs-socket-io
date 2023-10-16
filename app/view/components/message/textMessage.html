@@ -1,0 +1,17 @@
+<script>
+  Vue.component('text-message', {
+    props: [ 'content', 'id' ],
+    template:
+      '<div class="message textContent" v-html="getContent" :id="id"/>',
+    computed: {
+      getContent() {
+        return this.content ? getTextContent(this.content.replace(/</g, '&lt;'), '<br>') : "";
+      }
+    },
+    data() {
+      return {};
+    },
+    mounted() {},
+    methods: { }
+  });
+</script>

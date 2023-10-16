@@ -1,0 +1,91 @@
+<template id="_file-message">
+  <div class="fileContent" @click="downloadFile">
+    <span class="fileContentFileDesc">
+      <span>{{ getContentObj.filename }}</span>
+      <span>
+        {{ getContentObj.binarySize }}
+        <v-icon class="fileContentFileIcon" size="16" v-if="_progress === 100">mdi-folder-download</v-icon>
+        <div v-if="_progress > 0 && _progress < 100">
+          <span class="downloadType">{{this._progress_type == 'download' ? "正在下载:": "正在上传:"}}</span>
+          <v-progress-linear color="light-blue" height="5" v-model="_progress"
+            :buffer-value="100" striped>
+          </v-progress-linear>
+        </div>
+      </span>
+    </span>
+  </div>
+</template>
+
+<script>
+  Vue.component('file-message', {
+    template: '#_file-message',
+    props: {
+      content: String,
+      progress: {
+        type: Number,
+        default: 0
+      },
+      id: String
+    },
+    data() {
+      return {
+        clicked: false,
+        upload: window.appInfo.upload,
+        public: window.appInfo.public,
+        _progress: this.progress,
+        _progress_type: 'upload' // upload | download
+      };
+    },
+    computed: {
+      getContentObj() {
+        try {
+          return JSON.parse(this.content);
+        } catch (err) {
+          // 什么都不用做
+        }
+        return { filename: '', downloadPath: '', binarySize: null };
+      }
+    },
+    watch: {
+      progress: {
+        deep: true,
+        handler(v) {
+          this._progress = v
+        }
+      }
+    },
+    created() {
+    },
+    methods: {
+      async downloadFile() {
+        const {downloadPath, filename} = this.getContentObj;
+        if (this._progress && (this._progress > 0 || this._progress < 100)) {
+          window.vtoast.show({message: '文件正在下载中...'});
+        }
+        this.$forceUpdate();
+        this._progress_type = 'download'
+        try {
+          this._progress = 1
+          const buffer = await window.jianghuAxios.httpDownloadByStream({
+            downloadPath,
+            filename,
+            onProgress: (total, loaded) => {
+              let progress = Number((loaded * 100 / total).toFixed(2));
+              if (progress == 100) {
+                progress = 99
+              }
+              this._progress = progress
+            }
+          });
+          this._progress = 100
+          window.jianghuAxios.downloadBufferToChrome({buffer, filename});
+          window.vtoast.success('文件下载成功');
+        } catch (err) {
+          console.log('download file error: ', err)
+          this._progress = 100
+          window.vtoast.fail('文件下载失败，请重试');
+        }
+      },
+    }
+  });
+</script>

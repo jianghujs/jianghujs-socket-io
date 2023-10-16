@@ -1,0 +1,148 @@
+{
+  "RECORDS": [
+    {
+      "id": 1,
+      "pageId": "xiaochengxu",
+      "pageName": "小程序",
+      "pageFile": null,
+      "pageType": "",
+      "sort": "",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 2,
+      "pageId": "help",
+      "pageName": "帮助",
+      "pageFile": "helpV3",
+      "pageType": "dynamicInMenu",
+      "sort": "11",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 3,
+      "pageId": "login",
+      "pageName": "登陆",
+      "pageFile": "loginV3",
+      "pageType": "",
+      "sort": "",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 6,
+      "pageId": "manual",
+      "pageName": "操作手册",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "0",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 31,
+      "pageId": "index",
+      "pageName": "聊天",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "1",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 32,
+      "pageId": "userManagement",
+      "pageName": "用户管理",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "2",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 35,
+      "pageId": "noticeManagement",
+      "pageName": "通知管理",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "4",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 36,
+      "pageId": "recordHistoryManagement",
+      "pageName": "数据历史",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "5",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 37,
+      "pageId": "liveChat",
+      "pageName": "语音聊天",
+      "pageFile": null,
+      "pageType": "",
+      "sort": "",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 46,
+      "pageId": "friendManagement",
+      "pageName": "好友管理",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "2",
+      "operation": "update",
+      "operationByUserId": "vscode",
+      "operationByUser": "vscode",
+      "operationAt": "2022-08-01T13:10:01+08:00"
+    },
+    {
+      "id": 48,
+      "pageId": "friendManagementOfOneUser",
+      "pageName": "好友管理",
+      "pageFile": null,
+      "pageType": "dynamicInMenu",
+      "sort": "2",
+      "operation": "jhInsert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    },
+    {
+      "id": 52,
+      "pageId": "roomNoticeManagement",
+      "pageName": "房间通知",
+      "pageFile": null,
+      "pageType": "showInMenu",
+      "sort": "3",
+      "operation": "insert",
+      "operationByUserId": null,
+      "operationByUser": null,
+      "operationAt": null
+    }
+  ]
+}

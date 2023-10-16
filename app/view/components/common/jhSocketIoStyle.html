@@ -1,0 +1,472 @@
+<style>
+.v-snack--top {
+  top: 60px !important;
+}
+
+.jh-navigation-drawer .v-navigation-drawer__content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+
+
+.jh-chat-main {
+  box-sizing: border-box;
+  height: 100vh;
+  background: #f5f7fa;
+}
+
+.jh-chat-main .v-main__wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.jh-chat-main .v-main__wrap .v-toolbar {
+  max-height: 52px;
+}
+
+.jh-chat-main .v-main__wrap .v-toolbar__content {
+  padding: 0 16px !important;
+}
+
+.jh-navigation-drawer {
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  width: 285px !important;
+}
+
+
+.vFooter .chatToolbar {
+  height: 50px !important;
+  flex: 1;
+}
+
+.vFooter .chatToolbar .v-toolbar__content {
+  height: 50px !important;
+}
+
+.text-body-2 {
+  width: 100%;
+  height: 100%;
+}
+
+.text-body-2 .v-input {
+  font-size: 14px;
+}
+
+.text-body-2 .v-text-field {
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+}
+
+.text-body-2 .v-text-field.error--text {
+  border: 2px solid #ff5252;
+  border-radius: 4px;
+}
+
+.fileInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: -10000px;
+}
+
+.footer {
+  width: 100%;
+  border-top: 1px solid #cccccc;
+  height: 100%;
+  background-color: #fff;
+}
+
+.v-input__slot::before,
+.v-input__slot::after {
+  content: none !important;
+}
+
+.nickname {
+  font-size: 14px;
+  line-height: 1.5rem
+}
+
+.jh-chat-list {
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.jh-chat-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.jh-chat-list::-webkit-scrollbar-track {
+  width: 5px;
+  background-color: #F1F1F1;
+}
+
+.jh-chat-list::-webkit-scrollbar-thumb {
+  width: 3px;
+  background-color: #E1E1E1;
+  border-radius: 3px;
+}
+
+.jh-chat-list .jh-active-chat-item .chatItem {
+  background-color: var(--primaryColorA80) !important;
+}
+
+.jh-chat-list .jh-active-chat-item {
+  background-color: #ffffff !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.message {
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #FFFFFF;
+  font-size: 14px;
+  padding: 10px;
+  align-content: start;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.message .progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.flex-row-around {
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+
+.v-badge__badge {
+  z-index: 3;
+}
+
+
+.playIcon::before {
+  content: "\F1591";
+  display: inline-block;
+  font: normal normal normal 24px/1 "Material Design Icons";
+  font-size: 18px;
+  text-rendering: auto;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+  color: green;
+  transform: translate(5px, 2px);
+}
+
+/* middleChatMessageWidget.html */
+.noticeMsg {
+  width: 100%;
+  line-height: 50px;
+  font-size: 13px;
+  color: #999999;
+  text-align: center;
+}
+
+.chattingPage {
+  background: #f5f7fa;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 40px !important;
+}
+
+.chattingPage::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chattingPage::-webkit-scrollbar-thumb {
+  width: 3px;
+  background: #e1e1e1;
+}
+
+.chattingPage::-webkit-scrollbar-track {
+  width: 5px;
+  background: #f1f1f1;
+}
+
+.chattingPage .messageItem {
+  display: flex;
+  align-items: start;
+  margin: 10px 0;
+  flex: 1;
+}
+
+.chattingPage .messageItem quote {
+  padding: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  background: #f0f6f6;
+  display: block;
+  font-style: italic;
+}
+
+.chattingPage .messageItem.isFromMe quote {
+  padding: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  background: #e6f8f7;
+  display: block;
+  font-style: italic;
+}
+
+.chattingPage .messageItem.isFromMe {
+  flex-direction: row-reverse;
+}
+
+.chattingPage .messageItem.isFromMe .message {
+  background: #cceaff;
+  word-break: break-word;
+}
+
+.chattingPage .messageItem.isFromMe .messageItemBox {
+  align-items: flex-end;
+}
+
+.messageItemBox {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
+
+.chattingPage .messageItem.isFromMe .username {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+.chattingPage .messageItem .v-icon.msgArrow {
+  padding: 0;
+  width: 4px;
+  height: 4px;
+  line-height: 4px;
+  text-align: center;
+  margin-top: 25px;
+}
+
+.chattingPage .messageItem.isFromMe .v-icon.msgArrow {
+  transform: rotate(180deg);
+}
+
+.chattingPage .messageItem .messageLine {
+  justify-content: start;
+}
+
+.chattingPage .messageItem.isFromMe .messageLine {
+  flex-direction: row-reverse;
+}
+
+.username {
+  display: flex;
+  color: #666666;
+  font-size: 12px;
+}
+
+.newMsgCount {
+  position: fixed;
+  bottom: 289px;
+  left: 50%;
+  background-color: #cccccc;
+  transform: translateX(-50%);
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+/* loadMore.html */
+.emptyChatDetail {
+  width: 100%;
+  text-align: center;
+  line-height: 100px;
+  color: #999999;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: loadingShown 0.3s infinite;
+  /* Safari 和 Chrome */
+  animation-iteration-count: 1;
+  overflow: hidden;
+}
+
+.emptyChatDetail img {
+  width: 20px;
+  height: 20px;
+  transform: translateY(5px);
+}
+/* leftUserWidget.html */
+.jh-userinfo-card-subtitle {
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  color: #FFFFFF
+}
+
+.jh-toolbar {
+  box-shadow: none !important;
+}
+
+.jh-toolbar .v-toolbar__content {
+  padding: 0 !important;
+}
+/* leftPanelWidget.html */
+.jh-chat-list-empty {
+  width: 100%;
+  line-height: 100px;
+  text-align: center;
+}
+/* leftChatSessionWidget.html */
+.jh-chat-item {
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.itemTitle {
+  font-size: 14px;
+  line-height: 1.5!important;
+  font-weight: 600;
+}
+/* imageMessage.html */
+.message.imageMsg {
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0;
+}
+/* fileMessage.html */
+.fileContent {
+  overflow: hidden;
+  border-radius: 5px;
+  background: #2b2b2b;
+  color: white;
+  font-size: 12px;
+  padding: 10px;
+  align-content: start;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.fileContent .fileContentFileDesc span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block;
+}
+
+.fileContent .fileContentFileDesc {
+  padding-right: 20px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.fileContent .fileContentFileIcon {
+  color: white;
+  font-size: 45px;
+}
+/* 手机兼容处理 */
+@media screen and (max-width: 600px) {
+  .jh-navigation-drawer {
+    width: 100vw !important;
+  }
+
+  .jh-chat-list {
+    height: calc(100vh - 180px) !important;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+
+  .emotionContainer {
+    width: 100% !important;
+    height: 223px !important;
+  }
+
+  .mobExpandChat .emotionContainer .arrow {
+    right: 58px !important;
+  }
+
+  .emotionContainer .arrow {
+    left: auto !important;
+    right: 42px !important;
+  }
+
+  .fileContent {
+    max-width: 230px !important;
+    overflow: hidden !important;
+  }
+
+  .fileContentFileDesc {
+    display: inline-block !important;
+    font-size: 12px !important;
+  }
+
+  .mob-app-main {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .mob-app-footer {
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  .footer {
+    border: 0 !important;
+  }
+
+  .text-body-2 textarea::-webkit-scrollbar,
+  .text-body-2 textarea::-webkit-scrollbar-track,
+  .text-body-2 textarea::-webkit-scrollbar-thumb {
+    width: 0 !important;
+  }
+
+  .text-body-2 textarea {
+    padding: 7px 5px 0 !important;
+    height: 70px !important;
+    line-height: 1.6 !important;
+    overflow: auto !important;
+  }
+
+  .text-body-2 .v-text-field {
+    max-height: 100%;
+  }
+
+  .v-input--dense > .v-input__control > .v-input__slot {
+    margin-bottom: 0 !important;
+  }
+
+  .v-application .v-input {
+    font-size: 12px !important;
+  }
+
+  .v-application .text-body-2 {
+    border: 1px solid #EEEEEE !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+  }
+
+  .v-application .error--text .theme--light.v-counter {
+    transform: translateX(-3px);
+  }
+
+  .v-application .error--text .v-messages__message {
+    zoom: 0.9;
+    transform: translateX(5px);
+  }
+
+  .newMsgCount {
+    bottom: 139px !important;
+  }
+}
+</style>

@@ -1,0 +1,85 @@
+<script type="text/x-template" id="_image-message">
+  <div class="message imageMsg">
+    <v-img max-width="300" @load="onLoaded" @loadstart="onLoadStart" @error="onLoadError" :src="imgSrc">
+      <template v-slot:placeholder>
+        <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-progress-circular
+            v-if="isLoadStart"
+            indeterminate
+            color="grey lighten-5"
+          ></v-progress-circular>
+          <v-icon v-if="isLoadError">
+            mdi-tooltip-image-outline
+          </v-icon>
+        </v-row>
+      </template>
+    </v-img>
+  </div>
+</script>
+
+<script>
+  Vue.component("image-message", {
+    template: "#_image-message",
+    props: {
+      content: String,
+      id: String,
+      progress: {
+        type: Number,
+        default: 0,
+      },
+    },
+    data() {
+      return {
+        upload: window.appInfo.upload,
+        public: window.appInfo.public,
+        progress_: 0,
+        isLoadError: false,
+        isLoadStart: true
+      };
+    },
+    watch: {
+      progress(v) {
+        console.log("===== progress", v);
+        this.progress_ = v;
+      },
+    },
+    computed: {
+      imgSrc() {
+        if (this.contentJsonObj.downloadPath.startsWith("/emotion")) {
+          return this.public + this.contentJsonObj.downloadPath.replace('/\/\//g', '/');
+        } else if (this.contentJsonObj.downloadPath.startsWith("/")) {
+          return this.upload + this.contentJsonObj.downloadPath.replace('/\/\//g', '/');
+        }
+        return this.contentJsonObj.downloadPath;
+      },
+      contentJsonObj() {
+        try {
+          return JSON.parse(this.content);
+        } catch (err) {
+          // 什么都不用做
+        }
+        return { filename: "", downloadPath: "", binarySize: null };
+      },
+    },
+    methods: {
+      // 图片加载完成
+      onLoaded() {
+        this.isLoadStart = false;
+        this.isLoadError = false;
+        setTimeout(() => {
+          this.$emit('load-complete');
+        }, 300)
+      },
+      // 图片开始加载
+      onLoadStart() {
+        this.isLoadStart = true;
+        this.isLoadError = false;
+      },
+      // 图片加载失败
+      onLoadError() {
+        this.isLoadStart = false;
+        this.isLoadError = true;
+      },
+    },
+  });
+</script>

@@ -1,0 +1,619 @@
+{% extends 'template/duoxingTemplate.html'%}
+
+<!-- vue template 代码块 -->
+{% block vue_template %}
+<v-app id="inspire">
+  <!-- 左边栏 -->
+  <left-panel ref="leftPanel" />
+  <!-- 中间栏目 -->
+  <v-main class="jh-chat-main mob-app-main">
+    <v-app-bar height="52" color="primary" class="elevation-0" dark prominent>
+      <v-app-bar-nav-icon v-if="isMobile" @click.stop="currentChatSessionId = null">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-app-bar-nav-icon>
+    </v-app-bar>
+    <chatting-page :sessionId="currentChatSessionId" ref="chattingPage" />
+  </v-main>
+
+  <!-- 消息输入框 -->
+  <v-footer
+    app inset fixed color="transparent"
+    :height="isMobile ? (textareaExpanded ? 106 : 53) : 274"
+    class="vFooter ma-0 pa-0 mob-app-footer"
+    :class="{ 'mobExpandChat': mobExpandChat }"
+  >
+    <chat-input-widget ref="chatInput" />
+  </v-footer>
+</v-app>
+{% endblock %}
+
+<!-- vue script 代码块 -->
+<!-- 注意：本项目的 vue 为每个页面使用一个 vue 实例 -->
+{% block vue_body %}
+
+<!--加载聊天列表相关组件 >>>>>>>>>>>> -->
+{% include 'components/widget/leftUserWidget.html' %}
+{% include 'components/widget/leftChatSessionWidget.html' %}
+{% include 'components/widget/leftPanelWidget.html' %}
+<!--<<<<<<<<<<<< 加载聊天列表相关组件 -->
+
+<!--加载聊天详情相关组件 >>>>>>>>>>>> -->
+{% include 'components/widget/middleChatInputWidget.html' %}
+{% include 'components/widget/middleChatMessageWidget.html' %}
+{% include 'components/widget/loadMore.html' %}
+<!--<<<<<<<<<<<< 加载聊天详情相关组件 -->
+
+<!--加载消息条相关组件 >>>>>>>>>>>> -->
+{% include 'components/message/imageMessage.html' %}
+{% include 'components/message/fileMessage.html' %}
+{% include 'components/message/textMessage.html' %}
+<!--<<<<<<<<<<<< 加载消息条相关组件 -->
+
+<!--加载发信息相关组件 >>>>>>>>>>>> -->
+{% include 'components/common/emotion.html' %}
+<!--<<<<<<<<<<<< 加载发信息相关组件 -->
+
+<script type="module">
+window.registerData(
+  {
+    isMobile: window.innerWidth < 500,
+    messageTextareaValue: '',
+    currentChatSessionId: null,
+    currentChatSession: null,
+    chatList: [],
+    socketClient: window.socket,
+    userInfo: window.userInfo,
+    dataSyncStatus: {
+      color: 'amber darken-1',
+      label: '同步中...'
+    },
+    currentResendMsg: {},
+    mobileMessageTextareaFocus: false // 移动端适配使用的消息输入框焦点状态
+  },
+  {
+    // socket链接状态信息
+    socketStatus() {
+      let socketStatusIndex = 1;
+      if (this.socketClient && this.socketClient.online === false) {
+        socketStatusIndex = 2;
+      }
+      if (this.socketClient && this.socketClient.online === true) {
+        socketStatusIndex = 0;
+      }
+      const label = ['连接成功', '连接中...', '连接断开'][socketStatusIndex];
+      const color = ['green accent-3', 'amber darken-1', 'deep-orange accent-3'][socketStatusIndex];
+      return {label, color};
+    },
+    // 是否展开消息输入框
+    mobExpandChat() {
+      if (this.isMobile) {
+        return this.mobileMessageTextareaFocus;
+      }
+      return true;
+    },
+    // 消息发送actionID
+    sendMsgActionId() {
+      return this.currentChatSession && this.currentChatSession.messageType === 'room'
+        ? 'userSendMessageToRoom'
+        : 'userSendMessageToUser';
+    }
+  }
+)
+
+const didaAudio = new Audio(
+  '/<$ ctx.app.config.appId $>/public/audio/dida.wav'
+);
+new Vue({
+  el: '#app',
+  template: '#app-template',
+  vuetify: new Vuetify(),
+  mixins: [window.jianghuUiActionMixins],
+  data: () => window.vueData,
+  vueComponent: 'root',
+  computed: window.vueComputed,
+  components: {},
+  async created() {
+    // 手机端，除了输入框，其他地方禁止系统菜单
+    this.doUiAction('setSyncStatusToSyncing');
+    this.doUiAction('disableSystemEvent');
+    this.doUiAction('initWebSocket');
+    this.doUiAction('setSyncStatusToSuccess');
+  },
+  watch: {
+    async currentChatSessionId(v) {
+      this.messageTextareaValue = null;
+    },
+  },
+  methods: {
+    // (聊天列表、好友、群组、机器人)获取itemId
+    getDataId(item) {
+      if (item) {
+        return item.chatId || item.toRoomId || (item.fromUserId === this.userInfo.userId ? item.toUserId : item.fromUserId) || item.roomId || item.friendId;
+      }
+      return null;
+    },
+    /**
+     * 【doUiAction】setSyncStatusToSyncing
+     * resource同步中
+     */
+    setSyncStatusToSyncing() {
+      this.dataSyncStatus = {
+        color: 'amber darken-1',
+        label: '同步中...'
+      }
+      window.sync = {
+        ing: true
+      };
+    },
+    /**
+     * 【doUiAction】setSyncStatusToSuccess
+     * resource同步成功
+     */
+    setSyncStatusToSuccess() {
+      this.dataSyncStatus = {
+        color: 'green accent-3',
+        label: '同步成功'
+      }
+      console.log('setSyncStatusToSuccess', this.dataSyncStatus)
+      window.sync.ing = false;
+    },
+    /**
+     * 【doUiAction】disableSystemEvent
+     * 禁止系统菜单和文字选中
+     */
+    disableSystemEvent() {
+      document.oncontextmenu = function () {
+        event.returnValue =
+          !this.isMobile ||
+          (this.isMobile &&
+            (event.target.localName === 'textarea' || event.target.localName === 'input'));
+      };
+      document.onselectstart = function () {
+        event.returnValue =
+          !this.isMobile ||
+          (this.isMobile &&
+            (event.target.localName === 'textarea' || event.target.localName === 'input'));
+      };
+    },
+    /**
+     * 【doUiAction】initWebSocket
+     * 初始化socket
+     */
+    initWebSocket() {
+      this.socketClient.init();
+      this.socketClient.addListeners('reConnect', result => this.doUiAction('onSocketReConnect', result));
+      this.socketClient.addListeners('userNotice', result => this.doUiAction('onUserNotice', result));
+      this.socketClient.addListeners('userMessage', result => this.doUiAction('onUserMessage', result));
+      this.socketClient.addListeners('roomNotice', result => this.doUiAction('onRoomNotice', result));
+      this.socketClient.addListeners('roomMessage', result => this.doUiAction('onRoomMessage', result));
+    },
+    /**
+     * 【doUiAction】getUserInfo
+     * 更新用户信息
+     */
+    async getUserInfo() {
+      await refreshUserInfo();
+    },
+
+    /**
+     * 【doUiAction】delMessageOffline
+     * 已读
+     */
+    async delMessageOffline() {
+      if (this.chatList) {
+        const clickChatSession = this.chatList.find(chatSession => chatSession.chatId === this.currentChatSessionId);
+        if (clickChatSession && clickChatSession.offlineMessageCount) {
+          clickChatSession.offlineMessageCount = 0;
+          await window.jianghuAxios({
+            data: {
+              appData: {
+                pageId: 'chat',
+                actionId: 'delMessageOffline',
+                actionData: {
+                  messageType: clickChatSession.messageType,
+                  userIdOrRoomId: this.currentChatSessionId
+                }
+              }
+            }
+          });
+        }
+      }
+    },
+    /**
+     * 【doUiAction】reFilterList
+     * 过滤和排序列表
+     */
+    reFilterList() {
+      // chatList 也要重排
+      if (this.chatList) {
+        this.chatList = this.chatList.map(chatItem => {
+          chatItem.orderCompare = chatItem.messageTimeString;
+          return chatItem;
+        })
+        this.chatList.sort((a, b) => {
+          return b.orderCompare.localeCompare(a.orderCompare);
+        });
+      }
+    },
+    /**
+     * 【doUiAction】preventDefault
+     * 禁用默认行为
+     */
+    preventDefault,
+    /**
+     * 【doUiAction】onSocketReConnect
+     * 断线重连监听
+     * @param hasDisconnectOrError
+     * @param hasDisconnectOrError.hasError
+     */
+    async onSocketReConnect({hasError}) {
+      if (hasError) {
+        this.doUiAction('setSyncStatusToSyncing')
+        await this.doUiAction('getUserInfo');
+        await this.doUiAction('getChatSessionList', {type: 'onSocketReConnect'});
+        this.doUiAction('setSyncStatusToSuccess')
+      }
+    },
+    // ----------------------------------------
+    // ---- 接收消息方法 >>>>>>> ----------------
+    // ----------------------------------------
+    /**
+     * 【doUiAction】onUserNotice
+     * 用户通知处理
+     * @param result
+     */
+    onUserNotice(result) {
+      this.handleNoticeMessage(result);
+      this.renderChatSession(result);
+      this.renderNoticeUI(result);
+    },
+    /**
+     * 【doUiAction】onRoomNotice
+     * 房间通知处理
+     * @param result
+     */
+    onRoomNotice(result) {
+      this.handleNoticeMessage(result);
+      this.renderChatSession(result);
+      this.renderNoticeUI(result);
+    },
+    /**
+     * 【doUiAction】onUserMessage
+     * 用户消息处理
+     * @param result
+     */
+    onUserMessage(result) {
+      this.handleNoticeMessage(result);
+      this.renderChatSession(result);
+    },
+    /**
+     * 【doUiAction】onRoomMessage
+     * 房间消息处理
+     * @param result
+     */
+    onRoomMessage(result) {
+      this.handleNoticeMessage(result);
+      this.renderChatSession(result);
+    },
+
+    /**
+     * 【doUiAction】updateChatListItem
+     * 更新chatList中的数据
+     * @param result
+     */
+    updateChatListItem({params}) {
+      // 更新当前UI显示的数据表
+      const nowIndex = this.chatList.findIndex(v => {
+        return v.chatId === this.$root.getDataId(params);
+      });
+      if (nowIndex >= 0) {
+        for (const key of Object.keys(params)) {
+          if (params[key]) {
+            this.chatList[nowIndex][key] = params[key];
+          }
+        }
+      }
+    },
+
+    // 更新左侧列表的聊天内容和顺序
+    async renderChatSession(params) {
+      // 更新chatList 中的数据
+      this.doUiAction("updateChatListItem", {params});
+      // 消息在左侧列表，并且不是正在聊天中，更新左侧列表对应消息，上下下线的通知不渲染
+      if (params.noticeType !== 'errorNotice') {
+        if (this.existChatSession(params)) {
+          // 重排后再更新会话显示，否则会有取不到会话的情况
+          this.reFilterList();
+          // 更新未读消息
+          this.updateMessageCount(params);
+        } else {
+          // 消息不带头像，需要更新聊天会话列表，避免没头像
+          await this.doUiAction('getChatSessionList', {type: '消息不带头像，需要更新聊天会话列表，避免没头像'});
+        }
+      }
+      this.chatList = _.cloneDeep(this.chatList);
+      if (this.getDataId(params) === this.currentChatSessionId) {
+        this.doUiAction('scrollToBottom')
+      }
+      // 渲染聊天内容
+      if (this.$root.getDataId(params) === this.currentChatSessionId) {
+        this.doUiAction('updateMessageItem', {
+          message: params
+        });
+      }
+      return null;
+    },
+
+    // 更新未读消息
+    updateMessageCount(params) {
+      //如果不是是自己发的消息，未读+1
+      if (params.fromUserId !== this.userInfo.userId) {
+        this.chatList = this.chatList.map(v => {
+          const findSessionByParams = v.chatId === this.$root.getDataId(params);
+          if (findSessionByParams) {
+            v.offlineMessageCount += 1;
+          }
+          return v;
+        });
+      }
+    },
+    // 渲染通知消息UI
+    renderNoticeUI(params) {
+      if (params.hasOwnProperty('noticeType')) {
+        if (
+          params.noticeType === 'errorNotice' &&
+          params.errorCode === 'chat_not_user_friend'
+        ) {
+          this.doUiAction('updateMessageItem', {
+            message: {
+              ...params.errorReasonSupplement,
+              loading: false,
+              error: true
+            }
+          });
+        }
+      }
+    },
+
+    // 判断消息是否在聊天列表中
+    existChatSession(params) {
+      const dataId = this.$root.getDataId(params);
+      return this.chatList.some(chat => this.$root.getDataId(chat) === dataId);
+    },
+
+    // 播放消息提示音
+    async playBeep() {
+      try {
+        await this.doPlayBeep();
+      } catch (e) {
+        if (await window.confirmDialog({
+          title: '您的网页无法自动播放消息提示音，需要确认后播放',
+          titleClass: 'text-body-1'
+        })) {
+          this.doPlayBeep();
+        }
+      }
+    },
+
+    // 确认消息提示音
+    doPlayBeep() {
+      didaAudio.play();
+    },
+
+    // 通知处理
+    handleNoticeMessage(params) {
+      // 通知类
+      if (params.noticeType) {
+        if (!!params.messageContent) {
+          // 更新上下线状态改变
+          const excludeNoticeType = ['onlineNotice', 'offlineNotice'];
+          if (excludeNoticeType.includes(params.noticeType)) {
+            this.setOnlineStatus(params);
+            return;
+          }
+          // 显示通知
+          this.showNotify(getMessageContent(params), '通知')
+        }
+        return;
+      }
+      // 消息类，不是自己发送的消息, 不是通知类消息
+      if (params.fromUserId !== this.userInfo.userId) {
+        this.showNotify(`【您有一条新消息】${params.fromUsername}："${getMessageContent(params, true)}"`, '新消息')
+      }
+    },
+
+    // 用户上下线状态改变
+    setOnlineStatus(params) {
+      this.chatList.some(item => {
+        if (item.chatId === this.getDataId(params)) {
+          item['isOnline'] = params.noticeType === 'onlineNotice';
+        }
+      })
+    },
+
+    // 消息提醒
+    showNotify(msg, title) {
+      // 显示通知
+      window.vtoast.showAndNotify({
+        message: msg,
+        title: title
+      });
+      // 未静音，播放消息提示音
+      this.playBeep();
+    },
+    // ----------------------------------------
+    // ---- <<<<<<< 接收消息方法 ----------------
+    // ----------------------------------------
+
+    // ----------------------------------------
+    // ---- 发送消息方法 >>>>>>> ----------------
+    // ----------------------------------------
+    // 验证发送消息
+    prepareSendMsgValidata({messageContent, messageContentType}) {
+      // 不在线，不发送
+      if (window.socket && window.socket.online === false) {
+        window.vtoast.fail('离线中...，请稍后尝试发送');
+        throw new Error('离线中...，请稍后尝试发送');
+      }
+      // 超过7000个字，不发送
+      if (messageContent.length > 7000 && messageContentType === 'text') {
+        window.vtoast.fail('消息内容长度不得超过7000个文字', false, 'bottom');
+        throw new Error('消息内容长度不得超过7000个文字');
+      }
+      // 消息内容为空
+      if (messageContentType === 'text' && !messageContent) {
+        window.vtoast.fail('消息内容为空', false, 'bottom');
+        throw new Error('消息内容为空');
+      }
+    },
+    // 发送消息
+    async sendMsg(
+      {
+        messageContent = this.messageTextareaValue || '',
+        messageContentType = 'text',
+        messageFingerprint = uuid(),
+        file = null,
+        targetUserId = null
+      }
+    ) {
+      this.prepareSendMsgValidata({messageContent, messageContentType});
+
+      const socketParams = {
+        messageContent,
+        messageContentType,
+        toUserId: targetUserId || this.currentChatSessionId,
+        toRoomId: targetUserId || this.currentChatSessionId,
+        messageFingerprint
+      };
+      const tempParams = {
+        ...socketParams,
+        fromUserId: this.userInfo.userId,
+        fromUsername: this.userInfo.username,
+        fromUserAvatar: this.userInfo.userAvatar,
+        loading: true,
+        process: 0
+      };
+      // 先更新一个 loading 消息
+      this.doUiAction('updateMessageItem', {
+        message: tempParams
+      });
+      this.doUiAction('scrollToBottom');
+      this.setSendTimeout({file, tempParams});
+
+      if (file) {
+        await this.sendFileMsg({file, tempParams, socketParams});
+      } else {
+        await this.sendTextMsg({socketParams})
+      }
+      this.onSendSuccess();
+    },
+    // 消息发送成功后
+    onSendSuccess() {
+      this.$forceUpdate();
+      this.messageTextareaValue = '';
+      window.vtoast.dismiss();
+      this.doUiAction('scrollToBottom', {mustToBottom: true})
+    },
+    // 设定默认发送超时处理
+    setSendTimeout({file, tempParams}) {
+      setTimeout(
+        () => {
+          if (tempParams.loading === true) {
+            tempParams.loading = false;
+            tempParams.error = true;
+          }
+        },
+        file ? 5000000 : 10000
+      );
+    },
+    // 发送普通消息
+    async sendTextMsg({socketParams}) {
+      await window.socket.emitMsg({
+        actionData: socketParams,
+        actionId: this.sendMsgActionId
+      });
+    },
+    // 发送文件消息
+    async sendFileMsg({file, tempParams, socketParams}) {
+      const uploadResult = await this.uploadFileInMessage(file, tempParams);
+      const uploadFail = !uploadResult ||
+        !uploadResult.data.appData.resultData.filename ||
+        !uploadResult.data.appData.resultData.downloadPath ||
+        !uploadResult.data.appData.resultData.binarySize;
+      if (uploadFail) {
+        this.doUiAction('updateMessageItem', {
+          message: {
+            ...tempParams,
+            loading: false,
+            error: true
+          },
+          insert: false
+        });
+      } else {
+        const {filename, downloadPath, binarySize} = uploadResult.data.appData.resultData;
+        socketParams.messageContent = JSON.stringify({
+          filename,
+          downloadPath,
+          binarySize
+        });
+        await window.socket.emitMsg({
+          actionData: socketParams,
+          actionId: this.sendMsgActionId
+        });
+      }
+    },
+    // 上传文件图片消息
+    async uploadFileInMessage(file, tempParams) {
+      let uploadResult;
+      const fileDirectory = `${this.userInfo.userId || 'chatFile'}/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}/`;
+      // 文件流
+      if (file) {
+        try {
+          // 使用 progress-linear https://vuetifyjs.com/zh-Hans/components/progress-linear/#section-989c8272
+          const that = this
+          // 更新发送文件进度条
+          this.doUiAction('updateMessageItem', {
+            message: {
+              ...tempParams,
+              progress: 1
+            },
+            insert: false
+          });
+          uploadResult = await window.jianghuAxios.httpUploadByStream({
+            file, fileDirectory,
+            onProgress: (total, loaded) => {
+              let progress = Number((loaded * 100 / total).toFixed(2))
+              if (progress == 100) {
+                progress = 99
+              }
+              // 更新发送文件进度条
+              that.doUiAction('updateMessageItem', {
+                message: {
+                  ...tempParams,
+                  progress
+                },
+                insert: false
+              });
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+        // 更新发送文件进度条
+        this.doUiAction('updateMessageItem', {
+          message: {
+            ...tempParams,
+            progress: 100
+          },
+          insert: false
+        });
+      }
+      return uploadResult;
+    },
+    // ----------------------------------------
+    // ---- <<<<<<< 发送消息方法 ----------------
+    // ----------------------------------------
+  }
+});
+</script>
+{% endblock %}
